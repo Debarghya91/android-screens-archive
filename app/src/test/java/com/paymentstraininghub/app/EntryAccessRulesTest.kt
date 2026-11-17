@@ -1,8 +1,10 @@
 // EntryAccessRulesTest.kt
 // Tests for the search-index entry gating rules (FAQ, lab, test,
-// guide, lesson, situation), the test-to-chapters map, and the
-// pure chapter-unlock decision, all ported from iOS so the
-// platforms cannot drift. Realistic data shapes: FAQ and lab
+// guide, lesson, situation), the test-to-chapters map, the pure
+// chapter-unlock decision, and the test-quiz routing decision
+// (a locked test tap lands on the paywall, an unlocked test tap
+// opens the quiz), all ported from iOS so the platforms cannot
+// drift. Realistic data shapes: FAQ and lab
 // entries in catalogue order with the free-sample boundary on
 // both sides, a single-part test, a multi-part test, and an
 // unknown test id (fail closed), and an entry missing from the
@@ -15,6 +17,7 @@ package com.paymentstraininghub.app
 import com.paymentstraininghub.app.billing.EntitlementRules
 import com.paymentstraininghub.app.billing.EntryAccessRules
 import com.paymentstraininghub.app.billing.FreeSampleRules
+import com.paymentstraininghub.app.billing.TestQuizDestination
 import com.paymentstraininghub.app.data.ProductCatalogue
 import com.paymentstraininghub.app.data.model.SearchEntry
 import org.junit.Assert.assertEquals
@@ -194,6 +197,52 @@ class EntryAccessRulesTest {
         assertEquals(
             ProductCatalogue.integratedProductId,
             EntryAccessRules.testUnlockingProductId("t-apis")
+        )
+    }
+
+    @Test
+    fun testQuizDestinationOpensQuizWhenEveryChapterUnlocked() {
+        assertEquals(
+            "All chapters unlocked opens the quiz",
+            TestQuizDestination.Quiz,
+            EntryAccessRules.testQuizDestination("t-clearing") { true }
+        )
+        assertEquals(
+            "A multi-part test opens the quiz when every chapter is unlocked",
+            TestQuizDestination.Quiz,
+            EntryAccessRules.testQuizDestination("t-mock-1") { true }
+        )
+    }
+
+    @Test
+    fun testQuizDestinationShowsPaywallWhenAnyChapterLocked() {
+        val destination = EntryAccessRules.testQuizDestination("t-clearing") { it != "ch18" }
+        assertTrue(
+            "One locked chapter routes the tap to the paywall, never to the quiz",
+            destination is TestQuizDestination.Paywall
+        )
+        assertEquals(
+            "The paywall offers the single part that unlocks the test",
+            ProductCatalogue.productForChapter("ch17")?.productId,
+            (destination as TestQuizDestination.Paywall).productId
+        )
+    }
+
+    @Test
+    fun testQuizDestinationShowsIntegratedPaywallForMultiPartTest() {
+        assertEquals(
+            "A locked multi-part test routes to the Integrated paywall",
+            TestQuizDestination.Paywall(ProductCatalogue.integratedProductId),
+            EntryAccessRules.testQuizDestination("t-mock-1") { it != "ch1" }
+        )
+    }
+
+    @Test
+    fun testQuizDestinationFailsClosedForUnknownTest() {
+        assertEquals(
+            "An unknown test routes to the Integrated paywall even when every chapter reports unlocked",
+            TestQuizDestination.Paywall(ProductCatalogue.integratedProductId),
+            EntryAccessRules.testQuizDestination("t-unknown") { true }
         )
     }
 

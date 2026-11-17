@@ -70,6 +70,24 @@ object EntryAccessRules {
     }
 
     /**
+     * Where a tap on this test must land: the quiz when every
+     * chapter it draws on is unlocked, else the paywall view
+     * for the product that unlocks it. The quiz screen applies
+     * the answer, so a locked test never opens its questions
+     * from any tap path (search, tests list, deep link). An
+     * unknown test fails closed to the Integrated paywall.
+     */
+    fun testQuizDestination(
+        testId: String,
+        isChapterUnlocked: (String) -> Boolean
+    ): TestQuizDestination {
+        if (isTestLocked(testId, isChapterUnlocked)) {
+            return TestQuizDestination.Paywall(testUnlockingProductId(testId))
+        }
+        return TestQuizDestination.Quiz
+    }
+
+    /**
      * True when this entry's full text is locked.
      *
      * - FAQ: locked unless Interview Ready is unlocked, except
@@ -127,4 +145,16 @@ object EntryAccessRules {
             else -> null
         }
     }
+}
+
+/**
+ * Where a tap on a chapter test lands, decided by
+ * [EntryAccessRules.testQuizDestination]. [Quiz] opens the
+ * test questions; [Paywall] shows the paywall view with the
+ * buy button for [Paywall.productId], and the questions are
+ * never loaded.
+ */
+sealed interface TestQuizDestination {
+    data object Quiz : TestQuizDestination
+    data class Paywall(val productId: String) : TestQuizDestination
 }

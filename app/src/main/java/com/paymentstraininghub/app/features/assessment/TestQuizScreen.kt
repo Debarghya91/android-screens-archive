@@ -7,7 +7,10 @@
 // no countdown ends the attempt early. Questions stay in the page's
 // own order, so a retake asks the same questions in the same order.
 // Scores are not saved anywhere: the attempt lives only while this
-// screen is on screen. No gating: tests stay open to every learner.
+// screen is on screen. Gated like the lesson screen: a test opens
+// only when every chapter it draws on is unlocked
+// (EntryAccessRules.testQuizDestination); a locked test shows the
+// paywall view and its questions are never loaded.
 
 package com.paymentstraininghub.app.features.assessment
 
@@ -37,6 +40,7 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -45,7 +49,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.paymentstraininghub.app.auth.AuthManager
+import com.paymentstraininghub.app.billing.BillingManager
+import com.paymentstraininghub.app.billing.EntryAccessRules
+import com.paymentstraininghub.app.billing.TestQuizDestination
 import com.paymentstraininghub.app.data.ContentRepository
+import com.paymentstraininghub.app.data.ProductCatalogue
 import com.paymentstraininghub.app.data.ReadingOrder
 import com.paymentstraininghub.app.data.model.SearchEntry
 import com.paymentstraininghub.app.ui.navigation.Routes
@@ -54,6 +63,7 @@ import com.paymentstraininghub.app.ui.theme.PfBottomInset
 import com.paymentstraininghub.app.ui.theme.PfCard
 import com.paymentstraininghub.app.ui.theme.PfColors
 import com.paymentstraininghub.app.ui.theme.PfErrorStateView
+import com.paymentstraininghub.app.ui.theme.PfLockedGateCard
 import com.paymentstraininghub.app.ui.theme.PfPill
 import com.paymentstraininghub.app.ui.theme.PfPrimaryButton
 import com.paymentstraininghub.app.ui.theme.PfProgressBar
@@ -69,6 +79,7 @@ fun TestQuizScreen(entryId: String, onBack: () -> Unit, onNavigate: (String) -> 
     var entry by remember { mutableStateOf<SearchEntry?>(null) }
     var entryLoadFailed by remember { mutableStateOf(false) }
     var isLoading by remember { mutableStateOf(true) }
+    var isLocked by remember { mutableStateOf(false) }
     var loadError by remember { mutableStateOf<String?>(null) }
     var loadedInfo by remember { mutableStateOf<TestPageInfo?>(null) }
     var loadedQuestions by remember { mutableStateOf<List<TestQuizQuestion>>(emptyList()) }
@@ -81,10 +92,21 @@ fun TestQuizScreen(entryId: String, onBack: () -> Unit, onNavigate: (String) -> 
     var finishedAtMs by remember { mutableStateOf<Long?>(null) }
     var retryTick by remember { mutableStateOf(0) }
 
+    // Collected so the test gate refreshes when entitlements
+    // load or change, and when the admin flag lands on restore,
+    // matching the lesson and entry-detail screens. They are
+    // keys of the flip effect below, not of the load effect, so
+    // a billing refresh never resets the screen to the spinner.
+    val ownedIds by BillingManager.ownedProductIds.collectAsState()
+    val serverIds by BillingManager.serverEntitledProductIds.collectAsState()
+    val gateState by BillingManager.premiumGateState.collectAsState()
+    val isAdmin by AuthManager.isAdmin.collectAsState()
+
     LaunchedEffect(entryId, retryTick) {
         isLoading = true
         loadError = null
         entryLoadFailed = false
+        isLocked = false
         try {
             val found = ContentRepository.loadSearchIndex().entries
                 .firstOrNull { it.id == entryId && it.isTest }
@@ -92,9 +114,22 @@ fun TestQuizScreen(entryId: String, onBack: () -> Unit, onNavigate: (String) -> 
                 entryLoadFailed = true
             } else {
                 entry = found
-                val (info, questions) = TestPageLoader.load(found)
-                loadedInfo = info
-                loadedQuestions = questions
+                // The test gate, matching iOS: a test opens only
+                // when every chapter it draws on is unlocked. A
+                // locked test shows the paywall view and its
+                // questions are never loaded.
+                val destination = EntryAccessRules.testQuizDestination(entryId) { chapterId ->
+                    BillingManager.isChapterUnlocked(chapterId)
+                }
+                if (destination is TestQuizDestination.Paywall) {
+                    loadedInfo = null
+                    loadedQuestions = emptyList()
+                    isLocked = true
+                } else {
+                    val (info, questions) = TestPageLoader.load(found)
+                    loadedInfo = info
+                    loadedQuestions = questions
+                }
             }
         } catch (e: TestPageError) {
             loadError = e.message
@@ -102,6 +137,34 @@ fun TestQuizScreen(entryId: String, onBack: () -> Unit, onNavigate: (String) -> 
             loadError = TestPageError.BadResponse.message
         } finally {
             isLoading = false
+        }
+    }
+
+    // A gate flip while the screen is open unlocks or locks the
+    // test without leaving the screen: entitlements landing
+    // after entry (restore, purchase, admin flag) re-evaluate
+    // the gate, a flip to unlocked reloads the questions, and a
+    // flip to locked drops the loaded questions so no stale
+    // content stays on screen. The load effect owns the
+    // decision while it is running.
+    LaunchedEffect(ownedIds, serverIds, gateState, isAdmin) {
+        if (entry == null || isLoading) return@LaunchedEffect
+        val destination = EntryAccessRules.testQuizDestination(entryId) { chapterId ->
+            BillingManager.isChapterUnlocked(chapterId)
+        }
+        val nowLocked = destination is TestQuizDestination.Paywall
+        if (nowLocked == isLocked) return@LaunchedEffect
+        if (nowLocked) {
+            isLocked = true
+            loadedInfo = null
+            loadedQuestions = emptyList()
+            answers = emptyMap()
+            selectedOption = null
+            currentIndex = 0
+            isStarted = false
+            isFinished = false
+        } else {
+            retryTick++
         }
     }
 
@@ -181,6 +244,37 @@ fun TestQuizScreen(entryId: String, onBack: () -> Unit, onNavigate: (String) -> 
                         retryTitle = "Retry",
                         onRetry = { retryTick++ }
                     )
+                }
+            }
+            isLocked -> {
+                // The paywall view: title and type stay visible
+                // (discovery); the questions were never loaded.
+                // The buy button goes to checkout for the product
+                // that unlocks this test.
+                LazyColumn(
+                    state = rememberTopLazyListState(),
+                    modifier = Modifier.fillMaxSize(),
+                    contentPadding = androidx.compose.foundation.layout.PaddingValues(PfSpacing.large),
+                    verticalArrangement = Arrangement.spacedBy(PfSpacing.medium)
+                ) {
+                    item {
+                        PfPill(text = "Test")
+                    }
+                    item {
+                        Text(entry?.title ?: "Test", style = PfTypography.screenTitle, color = PfColors.navy)
+                    }
+                    item {
+                        val productId = EntryAccessRules.testUnlockingProductId(entryId)
+                        val product = ProductCatalogue.productFor(productId)
+                        PfLockedGateCard(
+                            title = "Test locked",
+                            bodyText = testLockCopy(catalogueInfo, product?.name),
+                            checkoutTitle = "Go to checkout",
+                            onCheckout = { onNavigate(Routes.checkout(productId)) },
+                            gateTestTag = "testLockedGate"
+                        )
+                    }
+                    item { PfBottomInset() }
                 }
             }
             loadedQuestions.isEmpty() -> {
@@ -397,6 +491,19 @@ fun TestQuizScreen(entryId: String, onBack: () -> Unit, onNavigate: (String) -> 
             }
         }
     }
+}
+
+/** What-to-expect copy for a locked test, matching the entry-detail lock copy. No question text is included. */
+private fun testLockCopy(info: TestEntryInfo?, productName: String?): String {
+    val what = if (info?.questionCount != null) {
+        "${info.questionCount} questions" +
+            (info.domainLabel?.let { " on $it" } ?: "") + ". "
+    } else {
+        ""
+    }
+    val bundle = productName ?: "The Integrated Course"
+    return "This test belongs to $bundle. $what" +
+        "Unlock it to take the test and see your score with explanations, with 1 year of access."
 }
 
 @Composable
