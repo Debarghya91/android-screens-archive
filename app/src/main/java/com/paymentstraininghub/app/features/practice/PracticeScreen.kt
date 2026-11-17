@@ -67,6 +67,7 @@ import com.paymentstraininghub.app.auth.AuthManager
 import com.paymentstraininghub.app.billing.BillingManager
 import com.paymentstraininghub.app.data.ContentRepository
 import com.paymentstraininghub.app.data.PracticeModeGate
+import com.paymentstraininghub.app.data.ProductCatalogue
 import com.paymentstraininghub.app.data.model.Situation
 import com.paymentstraininghub.app.data.model.SituationFlowStep
 import com.paymentstraininghub.app.features.growth.WeeklyFreeCaseSelector
@@ -75,6 +76,7 @@ import com.paymentstraininghub.app.ui.theme.PfBodyText
 import com.paymentstraininghub.app.ui.theme.PfCard
 import com.paymentstraininghub.app.ui.theme.PfColors
 import com.paymentstraininghub.app.ui.theme.PfPrimaryButton
+import com.paymentstraininghub.app.ui.theme.PfSecondaryButton
 import com.paymentstraininghub.app.ui.theme.PfSpacing
 import com.paymentstraininghub.app.ui.theme.PfTextStyles
 import com.paymentstraininghub.app.ui.theme.rememberTopScrollState
@@ -135,19 +137,23 @@ fun PracticeScreen(
         loading = false
     }
 
-    // The practice situation: the requested one when it is in
-    // the gated eligible pool (from "Practise this case"), else
-    // the first practice-eligible situation, matching the iOS
+    // The practice situation: the requested one when it names
+    // an existing situation (a locked request shows the locked
+    // branch in PracticeContent, with the paywall view, instead
+    // of silently substituting a different case), else the
+    // first practice-eligible situation, matching the iOS
     // sheet entry.
     val situation = remember(situations, isSituationsUnlocked, weeklyCaseId, initialSituationId) {
         val all = situations ?: return@remember null
+        val requested = initialSituationId?.let { id -> all.firstOrNull { it.id == id } }
+        if (requested != null) return@remember requested
         val pool = PracticeModeGate.eligiblePool(all, isSituationsUnlocked, weeklyCaseId)
         val eligible = pool.filter { candidate ->
             PracticeModeGate.isEligible(
                 candidate, all, isSituationsUnlocked, weeklyCaseId
             )
         }
-        eligible.firstOrNull { it.id == initialSituationId } ?: eligible.firstOrNull()
+        eligible.firstOrNull()
     }
 
     Column(modifier = Modifier.fillMaxSize()) {
@@ -268,17 +274,29 @@ private fun PracticeContent(
                 PfCard {
                     Column(verticalArrangement = Arrangement.spacedBy(PfSpacing.small)) {
                         Text(
-                            "Practice Mode is locked for this case",
+                            situation.title,
                             style = PfTextStyles.cardTitle,
                             fontWeight = FontWeight.Bold,
                             color = PfColors.navy
                         )
                         Text(
-                            "This case needs Practice Experiences. Practise a free case instead.",
+                            "Practice Mode is locked for this case",
+                            style = PfTextStyles.cardTitle,
+                            color = PfColors.navy
+                        )
+                        Text(
+                            "Practice Mode turns this situation into a decision exercise: read the business " +
+                                "problem, pick the best action, then answer a recall question and see your score. " +
+                                "Unlock Practice Experiences to practise all ${allSituations.size} situations. " +
+                                "The Integrated Course includes Practice Experiences too.",
                             style = PfTextStyles.body,
                             color = PfColors.secondaryText
                         )
                         PfPrimaryButton(
+                            title = "Go to checkout",
+                            onClick = { onNavigate(Routes.checkout(ProductCatalogue.practiceProductId)) }
+                        )
+                        PfSecondaryButton(
                             title = "Practise a free case instead",
                             onClick = { onNavigate(Routes.CASES) }
                         )

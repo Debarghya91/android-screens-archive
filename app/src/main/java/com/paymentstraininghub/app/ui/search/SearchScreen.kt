@@ -8,17 +8,21 @@
 // the index fails to load. Type filters are multi-select: the
 // filter runs before ranking, and selecting every type means
 // "everything", never "nothing" (see SearchRanking.filterAndRank).
-// Lessons respect gating when the chapter list has loaded;
-// situations open directly (the detail owns the D101
-// hard gate); labs open the lab; guides, FAQs and tests open
-// their in-app detail or quiz, never a dead row.
+// Lessons open the lesson route (the lesson screen owns its
+// gate and shows the paywall view when locked); situations open
+// directly (the detail owns the D101 hard gate); labs, guides
+// and FAQs open their in-app entry detail (gated by
+// EntryAccessRules, matching iOS); tests open their quiz, never
+// a dead row.
 //
 // Gating (iOS v69, SearchView.SearchResultRow): a locked situation
 // row shows teaser fields only (title, type pill, read time, Locked
 // pill) and NEVER excerpt text. A free sample situation shows a Free
-// pill. A locked lesson shows a Premium pill. Matching still checks
-// entry text, as on iOS: only titles render for locked rows, so a
-// match on body text never leaks the matched words.
+// pill. A locked lesson shows a Premium pill and no preview text.
+// A locked FAQ, lab or test entry shows a Locked pill and no
+// preview text. Matching still checks entry text, as on iOS:
+// only titles render for locked rows, so a match on body text
+// never leaks the matched words.
 // No em dashes in any user-facing text.
 
 package com.paymentstraininghub.app.ui.search
@@ -74,11 +78,11 @@ import androidx.compose.ui.unit.dp
 import com.paymentstraininghub.app.auth.AppStore
 import com.paymentstraininghub.app.auth.AuthManager
 import com.paymentstraininghub.app.billing.BillingManager
+import com.paymentstraininghub.app.billing.EntryAccessRules
 import com.paymentstraininghub.app.data.AgendaStore
 import com.paymentstraininghub.app.data.Agendas
 import com.paymentstraininghub.app.data.ContentRepository
 import com.paymentstraininghub.app.data.PAGE_SIZE
-import com.paymentstraininghub.app.data.ProductCatalogue
 import com.paymentstraininghub.app.data.ReadingOrder
 import com.paymentstraininghub.app.data.SearchRanking
 import com.paymentstraininghub.app.data.SituationGating
@@ -149,6 +153,11 @@ fun SearchScreen(onNavigate: (String) -> Unit, onOpenDrawer: () -> Unit) {
     val billingProducts by BillingManager.products.collectAsState()
     val situationsUnlocked = remember(ownedIds, serverIds, gateState, isAdmin) {
         BillingManager.isSituationsUnlocked()
+    }
+    // Interview Ready unlock, for the FAQ entry gate. Practice
+    // unlock is situationsUnlocked above: the same entitlement.
+    val interviewUnlocked = remember(ownedIds, serverIds, gateState, isAdmin) {
+        runCatching { BillingManager.isInterviewUnlocked() }.getOrDefault(false)
     }
     val agendas by AgendaStore.agendas.collectAsState()
     val context = LocalContext.current
@@ -408,11 +417,17 @@ fun SearchScreen(onNavigate: (String) -> Unit, onOpenDrawer: () -> Unit) {
                                 isSituationsUnlocked = situationsUnlocked
                             ),
                             isLockedLesson = isLessonLocked(entry, chapterList),
+                            isLockedEntry = isEntryLocked(
+                                entry,
+                                entries,
+                                situationsUnlocked,
+                                interviewUnlocked
+                            ),
                             isFreeSampleSituation = entry.isSituation &&
                                 ContentRepository.freeSampleSituationIds.contains(entry.id),
                             onClick = {
                                 recordRecent(trimmedQuery)
-                                onResultClick(entry, chapters, context, onNavigate)
+                                onResultClick(entry, context, onNavigate)
                             }
                         )
                     }
@@ -444,6 +459,7 @@ private fun SearchResultCard(
     thumbnailPath: String?,
     isLockedSituation: Boolean,
     isLockedLesson: Boolean,
+    isLockedEntry: Boolean = false,
     isFreeSampleSituation: Boolean,
     onClick: () -> Unit
 ) {
@@ -499,12 +515,15 @@ private fun SearchResultCard(
                 PfPill(text = "Free", background = PfColors.goldSoft, foreground = PfColors.goldText)
             } else if (isLockedLesson) {
                 PfPill(text = "Premium", background = PfColors.navySoft, foreground = PfColors.navy)
+            } else if (isLockedEntry) {
+                PfPill(text = "Locked", background = PfColors.navySoft, foreground = PfColors.navy)
             }
         }
         // Preview text renders only for unlocked rows. A locked
-        // situation shows no excerpt at all. The model preview
+        // situation, a locked lesson, and a locked FAQ, lab or
+        // test entry show no excerpt at all. The model preview
         // covers both files: full text, or the compact excerpt.
-        if (!isLockedSituation) {
+        if (!isLockedSituation && !isLockedLesson && !isLockedEntry) {
             val preview = entry.preview
             if (preview.isNotEmpty()) {
                 Text(
@@ -553,36 +572,21 @@ private fun isLessonLocked(entry: SearchEntry, chapters: List<Chapter>?): Boolea
 
 private fun onResultClick(
     entry: SearchEntry,
-    chapters: List<Chapter>?,
     context: Context,
     onNavigate: (String) -> Unit
 ) {
     when (typeKey(entry)) {
-        "lesson" -> {
-            val chapterId = chapterIdForLesson(entry.id)
-            val chapterList = chapters
-            if (chapterId != null && chapterList != null) {
-                val sample = ContentRepository.isSampleLesson(entry.id, chapterList)
-                val unlocked = sample || BillingManager.isLessonUnlocked(entry.id, chapterId)
-                if (unlocked) {
-                    onNavigate(Routes.lesson(entry.id))
-                } else {
-                    val productId = ProductCatalogue.productForChapter(chapterId)?.productId
-                    if (productId != null) onNavigate(Routes.checkout(productId))
-                    else onNavigate(Routes.CHECKOUT)
-                }
-            } else {
-                // Chapters did not load, so gating cannot be checked
-                // here. The lesson screen owns its own gate.
-                onNavigate(Routes.lesson(entry.id))
-            }
-        }
+        // Every lesson tap opens the lesson route: the lesson
+        // screen owns its gate and shows the paywall view when
+        // the lesson is locked. Search never jumps to checkout.
+        "lesson" -> onNavigate(Routes.lesson(entry.id))
         "situation" -> onNavigate(Routes.situation(entry.id))
-        "lab" -> onNavigate(Routes.LAB)
-        // Guides, FAQs and tests open in-app (Tester 2 A1): their
-        // index URLs are relative, so the old http-only browser
-        // branch left every one of these rows dead.
-        "guide", "faq" -> onNavigate(Routes.entry(entry.id))
+        // Guides, labs and FAQs open the entry detail for THIS
+        // entry (gated by EntryAccessRules there, matching the
+        // iOS search sheet). The old lab branch opened the
+        // Exception Lab list, which shows different content and
+        // never the tapped lab entry.
+        "guide", "lab", "faq" -> onNavigate(Routes.entry(entry.id))
         "test" -> onNavigate(Routes.testQuiz(entry.id))
         else -> {
             if (entry.url.startsWith("http")) {
@@ -590,6 +594,43 @@ private fun onResultClick(
             }
         }
     }
+}
+
+/**
+ * True when a FAQ, lab or test entry is locked under
+ * EntryAccessRules. The index position is the entry's position
+ * among entries of its type in catalogue order (the loaded index
+ * order). A test locks when any chapter it draws on is locked,
+ * matching iOS; an unknown test fails closed.
+ */
+private fun isEntryLocked(
+    entry: SearchEntry,
+    allEntries: List<SearchEntry>?,
+    isPracticeUnlocked: Boolean,
+    isInterviewUnlocked: Boolean
+): Boolean {
+    if (!entry.isFaq && !entry.isLab && !entry.isTest) return false
+    val indexInType = allEntries
+        ?.filter { it.type.equals(entry.type, ignoreCase = true) }
+        ?.indexOfFirst { it.id == entry.id }
+        ?.takeIf { it >= 0 }
+    // A test locks when any chapter it draws on is locked
+    // (EntryAccessRules.isTestLocked); an unknown test fails
+    // closed. Other entry types ignore this boolean.
+    val isChapterUnlocked = if (entry.isTest) {
+        !EntryAccessRules.isTestLocked(entry.id) { chapterId ->
+            BillingManager.isChapterUnlocked(chapterId)
+        }
+    } else {
+        true
+    }
+    return EntryAccessRules.isLocked(
+        entry,
+        indexInType = indexInType,
+        isPracticeUnlocked = isPracticeUnlocked,
+        isInterviewUnlocked = isInterviewUnlocked,
+        isChapterUnlocked = isChapterUnlocked
+    )
 }
 
 /** Display-number label for a lesson row ("Chapter 26, Lesson 1"), or null when no label applies. */

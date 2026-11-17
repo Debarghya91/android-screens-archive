@@ -116,6 +116,35 @@ object EntitlementRules {
         return baseProductIdFor(productId) in ProductCatalogue.allProductIds.toSet()
     }
 
+    /**
+     * True when a chapter is unlocked, in the same order as iOS
+     * StoreManager.isChapterUnlocked: an admin session unlocks
+     * every chapter; a held-out chapter (ch37, the only one) is
+     * always reachable, because it is in no product and is never
+     * sold, so it is never locked behind a product that does not
+     * exist; the Integrated Course unlocks every mapped chapter;
+     * otherwise the part containing the chapter must be owned.
+     * A chapter that is in no part and is not held out is LOCKED
+     * (fail closed): an unmapped chapter is a catalogue error and
+     * must never be given away silently. The premium access gate
+     * is deliberately not an input here: chapter and lesson
+     * unlocks do not consult it, matching the load effects that
+     * call them; only [BillingManager.isProductUnlocked] does.
+     */
+    fun isChapterUnlocked(
+        isAdmin: Boolean,
+        isHeldOutChapter: Boolean,
+        hasContainingPart: Boolean,
+        integratedOwned: Boolean,
+        containingPartOwned: Boolean
+    ): Boolean {
+        if (isAdmin) return true
+        if (isHeldOutChapter) return true
+        if (!hasContainingPart) return false
+        if (integratedOwned) return true
+        return containingPartOwned
+    }
+
     private val lessonIdRegex = Regex("^ch(\\d+)s(\\d+)$")
     private val chapterIdRegex = Regex("^ch(\\d+)$")
 
@@ -126,8 +155,11 @@ object EntitlementRules {
      * sequential rule: the first 2 lessons of a part, in reading
      * order, are free). [firstChapterIdOfPart] is the first
      * chapter id of the lesson's part in reading order, or null
-     * when the chapter maps to no part (ch37: only its first
-     * lesson is free). Supplemental ids never match.
+     * when the chapter maps to no part (ch37). This predicate
+     * only answers the sample question: whether a held-out
+     * chapter's later lessons open is decided by the chapter
+     * rule in [isChapterUnlocked], not here. Supplemental ids
+     * never match.
      */
     fun isFreeSampleLesson(
         lessonId: String,
@@ -160,6 +192,12 @@ object FreeSampleRules {
 
     /** Free interview questions. Interview Ready keeps 5. */
     const val INTERVIEW_FREE_SAMPLES: Int = 5
+
+    /** Free FAQ answers, in catalogue order. Interview Ready keeps 5. Matches iOS FreeSampleRules.faqFreeCount. */
+    const val FAQ_FREE_COUNT: Int = 5
+
+    /** Free search-index lab entries, in catalogue order. Practice Experiences keeps 2. Matches iOS FreeSampleRules.labFreeCount. */
+    const val LAB_FREE_COUNT: Int = 2
 
     /** The first [count] ids of an ordered list: its free samples. */
     fun sampleIds(orderedIds: List<String>, count: Int = SAMPLES_PER_PRODUCT): List<String> =

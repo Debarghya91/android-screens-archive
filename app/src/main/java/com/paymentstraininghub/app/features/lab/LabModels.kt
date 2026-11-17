@@ -190,20 +190,26 @@ object ExceptionLabScoring {
 }
 
 /**
- * Gating for the lab, mirroring iOS: a case grounded in a non-free situation
- * requires the Practice Experiences entitlement; a case grounded in a free-sample
- * situation is open to all; a purely authored practice exercise is open to all.
- * The free-sample list is ContentRepository's single source of truth; it is
- * never copied here. The practice product id is ProductCatalogue's.
+ * Gating for the lab, mirroring iOS InvestigationGate: a case grounded in a
+ * non-free situation requires the Investigation Lab entitlement; a case
+ * grounded in a free-sample situation is open to all; a purely authored
+ * practice exercise is open to all. The Investigation Experience screen
+ * gates on the same entitlement, so a case the list shows as open never
+ * hits a different gate inside. (The case property that marks
+ * situation-grounded cases is still named requiresSituationsUnlock; it
+ * means "grounded in a non-free situation", and the entitlement that
+ * opens it is the Investigation Lab.) The free-sample list is
+ * ContentRepository's single source of truth; it is never copied here.
+ * The lab product id is ProductCatalogue's.
  */
 object LabGating {
     val FREE_SAMPLE_SITUATION_IDS: Set<String> get() = ContentRepository.freeSampleSituationIds.toSet()
 
-    /** The Practice Experiences product id from ProductCatalogue. */
-    val PRACTICE_PRODUCT_ID: String get() = ProductCatalogue.practiceProductId
+    /** The Investigation Lab product id from ProductCatalogue. */
+    val LAB_PRODUCT_ID: String get() = ProductCatalogue.investigationLabProductId
 
-    fun isCaseOpen(case: ExceptionCase, situationsUnlocked: Boolean): Boolean =
-        !case.requiresSituationsUnlock || situationsUnlocked
+    fun isCaseOpen(case: ExceptionCase, labUnlocked: Boolean): Boolean =
+        !case.requiresSituationsUnlock || labUnlocked
 }
 
 /** The stored result for one investigation case. */

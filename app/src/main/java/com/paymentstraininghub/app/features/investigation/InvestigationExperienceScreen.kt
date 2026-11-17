@@ -308,9 +308,17 @@ fun InvestigationExperienceScreen(
     onBack: () -> Unit,
     onNavigate: (String) -> Unit
 ) {
-    // Collected so the gate refreshes when BillingManager loads.
+    // Collected so the gate refreshes when BillingManager loads,
+    // when a purchase or restore lands while the screen is open,
+    // and when the premium gate resolves.
     @Suppress("UNUSED_VARIABLE")
     val billingProducts by BillingManager.products.collectAsState()
+    @Suppress("UNUSED_VARIABLE")
+    val ownedIds by BillingManager.ownedProductIds.collectAsState()
+    @Suppress("UNUSED_VARIABLE")
+    val serverIds by BillingManager.serverEntitledProductIds.collectAsState()
+    @Suppress("UNUSED_VARIABLE")
+    val gateState by BillingManager.premiumGateState.collectAsState()
     // Collected so the lock state refreshes when the admin
     // flag lands on restore: the bare gate call below only
     // re-evaluates on recomposition.
@@ -763,6 +771,20 @@ private fun InvestigationLockedGateView(onCheckout: () -> Unit) {
                 style = PfTextStyles.body,
                 color = PfColors.secondaryText
             )
+            // What to expect: the six journey steps, as titles
+            // only. No case text of any kind renders here.
+            Text(
+                "What to expect:",
+                style = PfTextStyles.cardTitle,
+                color = PfColors.navy
+            )
+            InvestigationJourneyStep.entries.forEachIndexed { index, journeyStep ->
+                Text(
+                    "${index + 1}. ${journeyStep.title}",
+                    style = PfTextStyles.body,
+                    color = PfColors.secondaryText
+                )
+            }
             PfPrimaryButton(title = "Go to checkout", onClick = onCheckout)
         }
     }

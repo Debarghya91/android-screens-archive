@@ -128,9 +128,11 @@ fun SimulatorScreen(onNavigate: ((String) -> Unit)? = null) {
     // mode, until the Simulator is unlocked.
     val stageLocked = !simulatorUnlocked && current.number > freeStageCount
 
-    // Keep the current stage visited as the learner moves.
+    // Keep the current stage visited as the learner moves. A
+    // locked stage is never marked visited: the learner has
+    // seen only the paywall card, not the stage content.
     LaunchedEffect(currentNumber, runVersion) {
-        if (current !in journey.visitedStages) {
+        if (current !in journey.visitedStages && !stageLocked) {
             journey.visit(current)
         }
     }
@@ -263,14 +265,22 @@ fun SimulatorScreen(onNavigate: ((String) -> Unit)? = null) {
                 val next = LifecycleStages.nextOf(current)
                 val blockedByFault = injection != null &&
                     next != null && next.number > injection.stage.number
-                val blockedByGate = !simulatorUnlocked && next != null && next.number > freeStageCount
+                // The gate never disables Next: tapping Next from
+                // the last free stage lands on the locked stage's
+                // paywall card, which is the only way to reach it
+                // in Guided mode (there is no stage picker here).
+                // The visit and end-of-run marks below stay gated
+                // so locked stages earn no progress.
+                val nextLocked = !simulatorUnlocked && next != null && next.number > freeStageCount
                 Button(
-                    enabled = next != null && !blockedByFault && !blockedByGate,
+                    enabled = next != null && !blockedByFault,
                     onClick = {
                         if (next != null) {
                             currentNumber = next.number
-                            journey.visit(next)
-                            if (next.number == stages.size) journey.markReachedEnd()
+                            if (!nextLocked) {
+                                journey.visit(next)
+                                if (next.number == stages.size) journey.markReachedEnd()
+                            }
                             refresh()
                         }
                     }

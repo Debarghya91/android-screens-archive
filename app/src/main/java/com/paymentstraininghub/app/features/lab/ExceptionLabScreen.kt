@@ -25,7 +25,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import com.paymentstraininghub.app.auth.AuthManager
 import com.paymentstraininghub.app.billing.BillingManager
-import com.paymentstraininghub.app.data.ProductCatalogue
 import com.paymentstraininghub.app.features.investigation.InvestigationStore
 import com.paymentstraininghub.app.ui.navigation.Routes
 import com.paymentstraininghub.app.ui.theme.PfBottomInset
@@ -41,9 +40,11 @@ import com.paymentstraininghub.app.ui.theme.rememberTopScrollState
 
 @Composable
 fun ExceptionLabScreen(onNavigate: (String) -> Unit) {
-    // BillingManager.isSituationsUnlocked() is the Practice Experiences
-    // gate: Practice Experiences, or the Integrated Course, unlocks it.
-    var situationsUnlocked by remember { mutableStateOf(false) }
+    // BillingManager.isInvestigationLabUnlocked() is the
+    // Investigation Lab gate: the Investigation Lab, or the
+    // Integrated Course, unlocks it. The list and the
+    // Investigation Experience gate on the same entitlement.
+    var labUnlocked by remember { mutableStateOf(false) }
     var gatingChecked by remember { mutableStateOf(false) }
     // Collected so the gate refreshes when entitlements load or
     // change, when the premium gate resolves, and when the
@@ -54,8 +55,8 @@ fun ExceptionLabScreen(onNavigate: (String) -> Unit) {
     val gateState by BillingManager.premiumGateState.collectAsState()
     val isAdmin by AuthManager.isAdmin.collectAsState()
     LaunchedEffect(ownedIds, serverIds, gateState, isAdmin) {
-        situationsUnlocked = runCatching {
-            BillingManager.isSituationsUnlocked()
+        labUnlocked = runCatching {
+            BillingManager.isInvestigationLabUnlocked()
         }.getOrDefault(false)
         gatingChecked = true
     }
@@ -119,7 +120,7 @@ fun ExceptionLabScreen(onNavigate: (String) -> Unit) {
                     )
                 }
                 levelCases.forEach { case ->
-                    val open = LabGating.isCaseOpen(case, situationsUnlocked)
+                    val open = LabGating.isCaseOpen(case, labUnlocked)
                     val result = results.firstOrNull { it.caseID == case.id }
                     val investigationResult = InvestigationStore.resultFor(case.id)
                     LabCaseRow(
@@ -127,8 +128,12 @@ fun ExceptionLabScreen(onNavigate: (String) -> Unit) {
                         open = open,
                         result = result,
                         investigationBestOverall = investigationResult?.bestOverall,
+                        // Locked rows open the same case route:
+                        // the Investigation Experience shows the
+                        // paywall view for a locked case. Tapping
+                        // a locked row never jumps to checkout.
                         onOpen = { onNavigate(Routes.investigationLab(case.id)) },
-                        onLocked = { onNavigate(Routes.checkout(ProductCatalogue.practiceProductId)) }
+                        onLocked = { onNavigate(Routes.investigationLab(case.id)) }
                     )
                 }
             }
@@ -147,7 +152,10 @@ private fun LabCaseRow(
     onLocked: () -> Unit
 ) {
     PfCard(
-        modifier = Modifier.clickable(enabled = open, onClick = onOpen)
+        // Locked rows stay tappable: the tap opens the case
+        // route, where the paywall view explains the case and
+        // offers the buy button. A disabled row would dead-end.
+        modifier = Modifier.clickable(onClick = onOpen)
     ) {
         Column(verticalArrangement = Arrangement.spacedBy(PfSpacing.xs)) {
             Text(case.title, style = PfTextStyles.cardTitle, color = PfColors.navy)
@@ -178,12 +186,12 @@ private fun LabCaseRow(
             }
             if (!open) {
                 Text(
-                    "Locked. This case is grounded in a Payment Situation. Unlock Practice Experiences to open it.",
+                    "Locked. This case is grounded in a Payment Situation. Unlock the Investigation Lab to open it.",
                     style = PfTextStyles.body,
                     color = PfColors.secondaryText
                 )
                 PfSecondaryButton(
-                    title = "See Practice Experiences",
+                    title = "Unlock this case",
                     onClick = onLocked
                 )
             }

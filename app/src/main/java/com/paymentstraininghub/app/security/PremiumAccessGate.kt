@@ -17,12 +17,17 @@
 //      round trip on every launch; only passes are cached, and a
 //      failed verdict clears the cache.
 //
-// Fail-closed behaviour: before the first refresh finishes the
-// gate is Unknown and premium stays locked; a failed integrity
-// verdict, a non-Play installer, a signature mismatch or a rooted
-// device blocks premium outright. A transient integrity failure
-// (no network, Play services missing) blocks premium unless a
-// fresh cached pass exists. When the verify-integrity function is
+// Fail-open on Unknown, matching iOS (G32): before the first
+// refresh finishes the gate is Unknown and premium stays
+// available, so a slow or failed integrity check never locks
+// legitimately-purchased premium; only an explicit Blocked
+// verdict denies. A failed integrity verdict, a non-Play
+// installer, a signature mismatch or a rooted device blocks
+// premium outright. A transient integrity failure (no network,
+// Play services missing) blocks premium unless a fresh cached
+// pass exists. The gate is consulted only by
+// BillingManager.isProductUnlocked: chapter and lesson unlocks
+// do not check it. When the verify-integrity function is
 // not deployed or the Play secrets are unset, the gate runs in
 // DEGRADED mode: the other three checks still enforce, the state
 // records integrityVerified = false, and full enforcement starts

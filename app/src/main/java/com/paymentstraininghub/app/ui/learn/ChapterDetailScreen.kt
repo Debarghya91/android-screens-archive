@@ -3,9 +3,9 @@
 // CoursesView.swift: chapter title, completion summary, the
 // locked-chapter banner naming the unlocking bundle, lesson rows
 // with lock/sample states, "Showing N of M lessons" with Load
-// more (10 at a time). Locked lessons open Checkout for the
-// owning bundle; free-sample and unlocked lessons open the
-// lesson. Lesson rows show display numbers from the
+// more (10 at a time). Every lesson tap opens the lesson route:
+// the lesson screen shows the paywall view for a locked lesson
+// and content for an open one. Lesson rows show display numbers from the
 // reading-order map, never internal ids, and the chapter time
 // line ("About X in total, Y left") comes from the bundled
 // lesson-durations manifest; a lesson with no manifest entry
@@ -273,11 +273,13 @@ fun ChapterDetailScreen(chapterNumber: Int, onBack: () -> Unit, onNavigate: (Str
                             unlocked = unlocked,
                             thumbnailPath = agendas.lesson(lesson.id)?.thumbnail,
                             onClick = {
-                                if (unlocked) {
-                                    onNavigate(Routes.lesson(lesson.id))
-                                } else {
-                                    onNavigate(checkoutRouteForChapterId(chapterId))
-                                }
+                                // Every lesson tap opens the
+                                // lesson route: the lesson screen
+                                // shows the paywall view when the
+                                // lesson is locked, and content
+                                // when it is open. List rows never
+                                // jump straight to checkout.
+                                onNavigate(Routes.lesson(lesson.id))
                             }
                         )
                     }

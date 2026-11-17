@@ -243,7 +243,7 @@ fun AppNavGraph(initialRoute: String?) {
     fun navigateToTab(route: String, source: String) {
         val currentRoute = navController.currentBackStackEntry?.destination?.route
         logNavigationEvent(source, route, currentRoute)
-        navController.navigate(route) {
+        NavTrace.navigate(navController, source, route) {
             // Route-based popUpTo, never findStartDestination():
             // the graph's startDestinationId is the id hash of
             // the bare "home" route, while the Home destination's
@@ -277,9 +277,12 @@ fun AppNavGraph(initialRoute: String?) {
 
     var lastContentNavRoute by remember { mutableStateOf<String?>(null) }
     var lastContentNavMs by remember { mutableLongStateOf(0L) }
-    fun navigateContent(route: String) {
+    fun navigateContent(route: String, source: String = "CONTENT_NAV") {
         val nowMs = SystemClock.elapsedRealtime()
-        if (route == lastContentNavRoute && nowMs - lastContentNavMs < 500L) return
+        if (route == lastContentNavRoute && nowMs - lastContentNavMs < 500L) {
+            NavTrace.logDrop(source, route, "debounce-500ms")
+            return
+        }
         lastContentNavRoute = route
         lastContentNavMs = nowMs
         // Buy actions prompt sign-in while signed out: the
@@ -290,12 +293,12 @@ fun AppNavGraph(initialRoute: String?) {
         val target = AccessPolicy.routeForPurchaseAttempt(route, signedInNow)
         if (target != route) {
             pendingPurchaseRoute = route
-            navController.navigate(target) {
+            NavTrace.navigate(navController, source, target, "redirectFrom=$route") {
                 launchSingleTop = true
             }
             return
         }
-        navController.navigate(route) {
+        NavTrace.navigate(navController, source, route) {
             launchSingleTop = true
         }
     }
@@ -313,13 +316,13 @@ fun AppNavGraph(initialRoute: String?) {
         pendingPurchaseRoute = null
         if (pending != null) {
             navController.popBackStack(Routes.AUTH, inclusive = true)
-            navController.navigate(pending) {
+            NavTrace.navigate(navController, "AFTER_AUTH_PENDING", pending) {
                 launchSingleTop = true
             }
             return
         }
         if (!navController.popBackStack()) {
-            navController.navigate(Routes.HOME) {
+            NavTrace.navigate(navController, "AFTER_AUTH_HOME", Routes.HOME) {
                 popUpTo(Routes.AUTH) { inclusive = true }
                 launchSingleTop = true
             }
@@ -329,14 +332,25 @@ fun AppNavGraph(initialRoute: String?) {
     // Drawer navigation: tab routes switch tabs with the same
     // save/restore semantics as the tab bar; everything else is a
     // plain push, matching the iOS sheet presentation. Both paths
-    // log their source, like the tab bar.
+    // log their source, like the tab bar. The push uses
+    // launchSingleTop so re-tapping the drawer row for the
+    // screen already on top (Courses while on Courses, for
+    // example) does not stack a duplicate entry that Back
+    // would return to with identical content.
     fun navigateFromDrawer(route: String) {
         if (route in TAB_BASES) {
-            navigateToTab(route, "APP_DRAWER_TAB")
+            // The drawer source carries the tab, so the drawer
+            // path to My Progress reads APP_DRAWER_TAB_PROGRESS
+            // and is told apart from the bottom bar and the Home
+            // card. Tab routes are bare constants, so uppercasing
+            // is exact.
+            navigateToTab(route, "APP_DRAWER_TAB_${route.uppercase()}")
         } else {
             val currentRoute = navController.currentBackStackEntry?.destination?.route
             logNavigationEvent("APP_DRAWER_PUSH", route, currentRoute)
-            navController.navigate(route)
+            NavTrace.navigate(navController, "APP_DRAWER_PUSH", route) {
+                launchSingleTop = true
+            }
         }
     }
 
@@ -359,6 +373,16 @@ fun AppNavGraph(initialRoute: String?) {
                 drawerNavInProgress = false
             }
         }
+    }
+
+    // NavTrace destination listener: every landing, including
+    // Back presses and pops, is logged with its arguments and
+    // a back-stack snapshot, so a redirect seen on a device can
+    // be traced to the exact trigger. Logging only; it changes
+    // no route, option, or timing.
+    DisposableEffect(Unit) {
+        val listener = NavTrace.install(navController)
+        onDispose { navController.removeOnDestinationChangedListener(listener) }
     }
 
     // Start Google Play Billing once for the app session. BillingManager
@@ -409,6 +433,18 @@ fun AppNavGraph(initialRoute: String?) {
                 // A fresh cached pass makes this cheap.
                 scope.launch {
                     PremiumAccessGate.refresh(appContext)
+                }
+                // Re-check Play and server entitlements on every
+                // foreground return too: refreshEntitlements is
+                // the refund and revocation path, and its doc
+                // says the coordinator wires it here. Without
+                // this call, a refunded or expired purchase kept
+                // unlocking until the next restore or sign-in.
+                // The call is idempotent and swallows its own
+                // failures, so a failed refresh keeps the last
+                // known state.
+                scope.launch {
+                    BillingManager.refreshEntitlements()
                 }
             }
         }
@@ -548,7 +584,7 @@ fun AppNavGraph(initialRoute: String?) {
                     // the graph is already mounted this returns
                     // at once.
                     navController.currentBackStackEntryFlow.first { it != null }
-                    navController.navigate(decision.route)
+                    NavTrace.navigate(navController, source, decision.route)
                 }
                 is NavigationDecision.Drop -> {
                     EventLog.record(
@@ -600,7 +636,7 @@ fun AppNavGraph(initialRoute: String?) {
             postOnboardingRoute = null
             val currentRoute = navController.currentBackStackEntry?.destination?.route
             logNavigationEvent("POST_ONBOARDING_NAVIGATION", route, currentRoute)
-            navController.navigate(route)
+            NavTrace.navigate(navController, "POST_ONBOARDING_NAVIGATION", route)
         }
     }
 
@@ -749,7 +785,8 @@ fun AppNavGraph(initialRoute: String?) {
                         onNavigate = { navigateContent(it) },
                         onOpenDrawer = openDrawer,
                         initialSection = entry.arguments?.getString("section"),
-                        reselectTick = homeReselectTick
+                        reselectTick = homeReselectTick,
+                        onOpenProgress = { navigateContent(Routes.PROGRESS, "HOME_PROGRESS_CARD") }
                     )
                 }
                 // No separate Learn page: the Learn route renders
@@ -761,7 +798,8 @@ fun AppNavGraph(initialRoute: String?) {
                         onNavigate = { navigateContent(it) },
                         onOpenDrawer = openDrawer,
                         initialSection = Routes.HOME_SECTION_COURSES,
-                        reselectTick = homeReselectTick
+                        reselectTick = homeReselectTick,
+                        onOpenProgress = { navigateContent(Routes.PROGRESS, "HOME_PROGRESS_CARD") }
                     )
                 }
                 composable(Routes.SEARCH) {
@@ -928,7 +966,7 @@ fun AppNavGraph(initialRoute: String?) {
                 composable(Routes.LAB) { ExceptionLabScreen(onNavigate = { navigateContent(it) }) }
                 composable(Routes.STUDIO) { StudioScreen(onNavigate = { navigateContent(it) }) }
                 composable(Routes.WEEKLY_CASE) { WeeklyFreeCaseScreen(onNavigate = { navigateContent(it) }) }
-                composable(Routes.CHALLENGE) { CommunityChallengeScreen() }
+                composable(Routes.CHALLENGE) { CommunityChallengeScreen(onNavigate = { navigateContent(it) }) }
                 composable(Routes.DAILY_CHALLENGE) {
                     DailyChallengeScreen(
                         onBack = { navController.popBackStack() },
@@ -975,7 +1013,8 @@ fun AppNavGraph(initialRoute: String?) {
                     HelpSupportScreen(
                         onBack = { navController.popBackStack() },
                         onReplayTour = {},
-                        onOpenDiagnostics = { navigateContent(Routes.DIAGNOSTICS) }
+                        onOpenDiagnostics = { navigateContent(Routes.DIAGNOSTICS) },
+                        onNavigate = { navigateContent(it) }
                     )
                 }
                 composable(Routes.ABOUT) {
@@ -1051,7 +1090,8 @@ fun AppNavGraph(initialRoute: String?) {
                 ) { entry ->
                     EntryDetailScreen(
                         entryId = entry.arguments?.getString("entryId").orEmpty(),
-                        onBack = { navController.popBackStack() }
+                        onBack = { navController.popBackStack() },
+                        onNavigate = { navigateContent(it) }
                     )
                 }
                 composable(Routes.INTERVIEW) {

@@ -93,6 +93,7 @@ import com.paymentstraininghub.app.data.model.LessonDetail
 import com.paymentstraininghub.app.data.ProductCatalogue
 import com.paymentstraininghub.app.data.model.QuizQuestion
 import com.paymentstraininghub.app.media.AudioPlayer
+import com.paymentstraininghub.app.media.AudioTrace
 import com.paymentstraininghub.app.media.LessonDownloadStore
 import com.paymentstraininghub.app.security.EventLog
 import com.paymentstraininghub.app.ui.theme.PfBodyText
@@ -102,6 +103,7 @@ import com.paymentstraininghub.app.ui.theme.PfTypography
 import com.paymentstraininghub.app.ui.theme.AgendaBlock
 import com.paymentstraininghub.app.ui.theme.ThumbnailTile
 import com.paymentstraininghub.app.ui.theme.rememberTopScrollState
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -117,10 +119,12 @@ import kotlinx.coroutines.launch
  * flow in [BeatsFlowContent] is the only visual.
  *
  * Gating: a lesson whose chapter is not unlocked and which is not the
- * free sample lesson shows the locked state: title, lock explanation
- * and a Buy button. No transcript, beats, audio or quiz is shown for a
- * locked lesson. The detail is still fetched so the real title can be
- * shown; only the title and chapter line are displayed while locked.
+ * free sample lesson shows the locked state: title, lock explanation,
+ * a What to expect section (key takeaways plus the beat titles only)
+ * and a Buy button. No transcript, beat notes, beat times, audio or
+ * quiz is shown for a locked lesson. The detail is still fetched so
+ * the real title can be shown; only the title, chapter line,
+ * takeaways and beat titles are displayed while locked.
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -282,6 +286,18 @@ fun LessonScreen(
     // gate, matching the load effect above. The admin flag is a
     // key too: it flips on restore, after composition.
     LaunchedEffect(ownedIds, serverIds, gateState, isAdmin) {
+        // Trace the effect lifecycle: a restart cancels the
+        // previous run, and the cancel line proves whether a
+        // stop request belonged to the run that was current.
+        coroutineContext[Job]?.invokeOnCompletion { cause ->
+            if (cause is CancellationException) {
+                AudioTrace.log("GATE_FLIP_EFFECT_CANCEL", detail = "lesson=$lessonId")
+            }
+        }
+        AudioTrace.log(
+            "GATE_FLIP_EFFECT_START",
+            detail = "lesson=$lessonId gate=$gateState admin=$isAdmin"
+        )
         val chapterId = chapterIdFromLessonId(lessonId) ?: return@LaunchedEffect
         val unlocked = BillingManager.isLessonUnlocked(lessonId, chapterId)
         if (unlocked == isUnlocked) return@LaunchedEffect
@@ -296,6 +312,10 @@ fun LessonScreen(
                 // lesson's playback as it locks, and drop any
                 // pending autoplay handoff for it.
                 if (AudioPlayer.currentLessonId.value == lessonId) {
+                    AudioTrace.log(
+                        "GATE_FLIP_STOP_REQUEST",
+                        detail = "lesson=$lessonId current=${AudioPlayer.currentLessonId.value}"
+                    )
                     AudioPlayer.stop()
                 }
                 if (AudioPlayer.pendingAutoPlayLessonId == lessonId) {
@@ -589,6 +609,49 @@ private fun LockedLessonContent(
                     style = MaterialTheme.typography.bodySmall,
                     color = PfColors.secondaryText
                 )
+            }
+        }
+        // What to expect: key takeaways plus the beat outline.
+        // Beat TITLES only, numbered and non-tappable: never the
+        // beat note, never the beat times, never the transcript,
+        // never the quiz, and no audio control of any kind.
+        if (detail.takeaways.isNotEmpty() || detail.beats.isNotEmpty()) {
+            LessonCard {
+                Column(verticalArrangement = Arrangement.spacedBy(PfSpacing.medium)) {
+                    Text(
+                        text = "What to expect",
+                        style = MaterialTheme.typography.titleMedium,
+                        fontWeight = FontWeight.SemiBold,
+                        color = PfColors.navy
+                    )
+                    detail.takeaways.take(5).forEach { takeaway ->
+                        Row(
+                            horizontalArrangement = Arrangement.spacedBy(PfSpacing.medium),
+                            verticalAlignment = Alignment.Top
+                        ) {
+                            Icon(
+                                imageVector = Icons.Filled.CheckCircle,
+                                contentDescription = null,
+                                tint = PfColors.gold,
+                                modifier = Modifier
+                                    .size(20.dp)
+                                    .padding(top = 2.dp)
+                            )
+                            Text(
+                                text = takeaway,
+                                style = MaterialTheme.typography.bodyMedium,
+                                color = PfColors.navy
+                            )
+                        }
+                    }
+                    detail.beats.forEachIndexed { index, beat ->
+                        Text(
+                            text = "${index + 1}. ${beat.title}",
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = PfColors.secondaryText
+                        )
+                    }
+                }
             }
         }
     }

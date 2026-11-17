@@ -50,6 +50,7 @@ class AudioPlaybackService : MediaSessionService() {
         // Foreground FIRST, before the player or the session is
         // built: nothing slow may run ahead of this call.
         promoteToForeground()
+        AudioTrace.log("SERVICE_CREATE_ENTER", detail = "session=$SESSION_ID")
         // Explicit small icon (audit fix 8): Media3's bundled
         // default is fine, but a branded icon removes any
         // OEM-specific doubt for one line. setSmallIcon lives on
@@ -72,11 +73,17 @@ class AudioPlaybackService : MediaSessionService() {
                 .setId(SESSION_ID)
                 .build()
         } catch (e: Exception) {
+            AudioTrace.log(
+                "SERVICE_CREATE_FAILED",
+                detail = "session=$SESSION_ID",
+                throwable = e
+            )
             AudioPlayer.notePlaybackServiceAlive(false)
             throw e
         }
         CrashBreadcrumbs.record("service created")
         EventLog.record("AUDIO", "SERVICE_CREATED session=$SESSION_ID thread=${Thread.currentThread().name}")
+        AudioTrace.log("SERVICE_CREATE_EXIT", detail = "session=$SESSION_ID")
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
@@ -90,6 +97,10 @@ class AudioPlaybackService : MediaSessionService() {
         // playback notification is only briefly replaced by the
         // placeholder until Media3 posts its next update.
         promoteToForeground()
+        AudioTrace.log(
+            "SERVICE_START",
+            detail = "startId=$startId action=${intent?.action ?: "?"} session=$SESSION_ID"
+        )
         return super.onStartCommand(intent, flags, startId)
     }
 
@@ -131,16 +142,21 @@ class AudioPlaybackService : MediaSessionService() {
     }
 
     override fun onDestroy() {
+        AudioTrace.log("SERVICE_DESTROY_ENTER", detail = "session=$SESSION_ID")
         // Ownership (solved-APK defect 1): releasing the session
         // must not release the shared player. The session is
         // released here; the player stays owned by AudioPlayer,
         // which is only notified that the service is going away
-        // and decides about release itself.
+        // and decides about release itself. Nothing in this app
+        // calls stopSelf on this service: the system and
+        // MediaSessionService own its lifetime, and this
+        // teardown line is the stop record.
         mediaSession?.release()
         mediaSession = null
         AudioPlayer.notePlaybackServiceAlive(false)
         CrashBreadcrumbs.record("service destroyed")
         EventLog.record("AUDIO", "SERVICE_DESTROYED session=$SESSION_ID thread=${Thread.currentThread().name}")
+        AudioTrace.log("SERVICE_DESTROY_EXIT", detail = "session=$SESSION_ID")
         super.onDestroy()
     }
 

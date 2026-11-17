@@ -55,6 +55,7 @@ import com.paymentstraininghub.app.auth.AuthManager
 import com.paymentstraininghub.app.billing.BillingManager
 import com.paymentstraininghub.app.billing.FreeSampleRules
 import com.paymentstraininghub.app.data.ContentRepository
+import com.paymentstraininghub.app.data.PAGE_SIZE
 import com.paymentstraininghub.app.data.ProductCatalogue
 import com.paymentstraininghub.app.features.growth.WeeklyFreeCaseSelector
 import com.paymentstraininghub.app.ui.navigation.Routes
@@ -142,6 +143,14 @@ fun StudioScreen(onNavigate: ((String) -> Unit)? = null) {
     var openGuide by remember { mutableStateOf<StudioCareerGuide?>(null) }
     var selectedKind by remember { mutableStateOf<StudioLessonKind?>(null) }
     var selectedType by remember { mutableStateOf<StudioTaskType?>(null) }
+    // Paging for the two long lists: the lesson list (156
+    // lessons) and the exercise list used to compose every card
+    // on entry, in one verticalScroll Column with no
+    // virtualization. Twenty at a time keeps first paint fast
+    // on slow devices; Load more extends the same list in
+    // place, without resetting the scroll position.
+    var visibleLessonCount by remember { mutableStateOf(PAGE_SIZE) }
+    var visibleExerciseCount by remember { mutableStateOf(PAGE_SIZE) }
 
     // System Back mirrors the on-screen Back through the detail
     // stack, innermost first: an exercise returns to its lesson,
@@ -176,8 +185,25 @@ fun StudioScreen(onNavigate: ((String) -> Unit)? = null) {
         val guide = openGuide
         when {
             exercise != null -> {
+                // The exercise gate and its checkout product are
+                // computed once here: the detail shows the
+                // paywall view when locked, never the editor.
+                val exerciseOpen = StudioGating.isExerciseOpen(
+                    exercise,
+                    isLessonUnlocked,
+                    situationsUnlocked,
+                    weeklyCaseId
+                )
+                val exerciseCheckoutProductId = when (exercise.sourceKind) {
+                    StudioExerciseSource.SITUATION -> ProductCatalogue.practiceProductId
+                    StudioExerciseSource.LESSON -> ProductCatalogue.productForChapter(
+                        StudioGating.chapterIdForLesson(exercise.sourceID)
+                    )?.productId
+                }
                 StudioDetail(
                     exercise = exercise,
+                    isOpen = exerciseOpen,
+                    checkoutProductId = exerciseCheckoutProductId,
                     onBack = { openExercise = null },
                     onNavigate = onNavigate
                 )
@@ -187,6 +213,7 @@ fun StudioScreen(onNavigate: ((String) -> Unit)? = null) {
             lesson != null -> {
                 StudioLessonDetail(
                     lesson = lesson,
+                    isOpen = isStudioLessonOpen(lesson),
                     onBack = { openLesson = null },
                     onOpenExercise = { openExercise = it },
                     isExerciseOpen = { exercise ->
@@ -217,7 +244,9 @@ fun StudioScreen(onNavigate: ((String) -> Unit)? = null) {
             guide != null -> {
                 StudioCareerGuideContent(
                     guide = guide,
-                    onBack = { openGuide = null }
+                    isOpen = isStudioGuideOpen(guide),
+                    onBack = { openGuide = null },
+                    onNavigate = onNavigate
                 )
                 Spacer(modifier = Modifier.height(PfSpacing.small))
                 return@Column
@@ -277,15 +306,12 @@ fun StudioScreen(onNavigate: ((String) -> Unit)? = null) {
                     draftLesson != null -> {
                         // Gated like the lesson list: opening a
                         // saved draft must not bypass the Studio
-                        // gate. Locked drafts show the lock and do
-                        // not open.
+                        // gate. A locked draft opens the lesson
+                        // detail, which shows the paywall view;
+                        // the workspace never renders locked.
                         val lessonOpen = isStudioLessonOpen(draftLesson)
                         PfCard(
-                            onClick = if (lessonOpen) {
-                                { openLesson = draftLesson }
-                            } else {
-                                null
-                            }
+                            onClick = { openLesson = draftLesson }
                         ) {
                             Text(
                                 "Write your own: ${draftLesson.outputName}",
@@ -310,8 +336,9 @@ fun StudioScreen(onNavigate: ((String) -> Unit)? = null) {
                     draftExercise != null -> {
                         // Gated like the exercise list (Tester 2 A7):
                         // opening a saved draft must not bypass the
-                        // exercise gate. Locked drafts show the lock
-                        // and do not open.
+                        // exercise gate. A locked draft opens the
+                        // exercise detail, which shows the paywall
+                        // view; the editor never renders locked.
                         val exerciseOpen = StudioGating.isExerciseOpen(
                             draftExercise,
                             isLessonUnlocked,
@@ -319,11 +346,7 @@ fun StudioScreen(onNavigate: ((String) -> Unit)? = null) {
                             weeklyCaseId
                         )
                         PfCard(
-                            onClick = if (exerciseOpen) {
-                                { openExercise = draftExercise }
-                            } else {
-                                null
-                            }
+                            onClick = { openExercise = draftExercise }
                         ) {
                             Text(draftExercise.title, style = PfTypography.cardTitle, color = PfColors.navy)
                             Text(
@@ -370,21 +393,27 @@ fun StudioScreen(onNavigate: ((String) -> Unit)? = null) {
                 PfChip(
                     text = "All",
                     isSelected = selectedKind == null,
-                    onClick = { selectedKind = null }
+                    onClick = { selectedKind = null; visibleLessonCount = PAGE_SIZE }
                 )
                 StudioLessonKind.entries.forEach { kind ->
                     PfChip(
                         text = kind.displayName,
                         isSelected = selectedKind == kind,
-                        onClick = { selectedKind = kind }
+                        onClick = { selectedKind = kind; visibleLessonCount = PAGE_SIZE }
                     )
                 }
             }
-            val visibleLessons = if (selectedKind == null) {
+            val filteredLessons = if (selectedKind == null) {
                 lessons
             } else {
                 lessons.filter { it.kindEnum == selectedKind }
             }
+            val visibleLessons = filteredLessons.take(visibleLessonCount)
+            Text(
+                "Showing ${visibleLessons.size} of ${filteredLessons.size} lessons",
+                style = PfTypography.body,
+                color = PfColors.secondaryText
+            )
             StudioLevel.entries.forEach { level ->
                 val levelLessons = visibleLessons.filter { it.levelEnum == level }
                 Text(level.displayName, style = PfTypography.cardTitle, color = PfColors.navy)
@@ -397,12 +426,10 @@ fun StudioScreen(onNavigate: ((String) -> Unit)? = null) {
                 levelLessons.forEach { item ->
                     val draft = drafts.firstOrNull { it.exerciseID == item.id }
                     val lessonOpen = isStudioLessonOpen(item)
+                    // Locked lessons open the detail too: the
+                    // detail shows the paywall view when locked.
                     PfCard(
-                        onClick = if (lessonOpen) {
-                            { openLesson = item }
-                        } else {
-                            null
-                        }
+                        onClick = { openLesson = item }
                     ) {
                         Text(item.title, style = PfTypography.cardTitle, color = PfColors.navy)
                         Text(item.subtitle, style = PfTypography.body, color = PfColors.secondaryText)
@@ -438,6 +465,12 @@ fun StudioScreen(onNavigate: ((String) -> Unit)? = null) {
                     }
                 }
             }
+            if (visibleLessons.size < filteredLessons.size) {
+                PfSecondaryButton(
+                    title = "Load more lessons",
+                    onClick = { visibleLessonCount += PAGE_SIZE }
+                )
+            }
 
             // Browse by knowledge area.
             Text("Browse by knowledge area", style = PfTypography.sectionTitle, color = PfColors.navy)
@@ -470,12 +503,10 @@ fun StudioScreen(onNavigate: ((String) -> Unit)? = null) {
             )
             guides.forEach { careerGuide ->
                 val guideOpen = isStudioGuideOpen(careerGuide)
+                // Locked guides open the detail too: the detail
+                // shows the paywall view when locked.
                 PfCard(
-                    onClick = if (guideOpen) {
-                        { openGuide = careerGuide }
-                    } else {
-                        null
-                    }
+                    onClick = { openGuide = careerGuide }
                 ) {
                     Text(careerGuide.title, style = PfTypography.cardTitle, color = PfColors.navy)
                     Text(careerGuide.audience, style = PfTypography.body, color = PfColors.secondaryText)
@@ -513,21 +544,27 @@ fun StudioScreen(onNavigate: ((String) -> Unit)? = null) {
             PfChip(
                 text = "All",
                 isSelected = selectedType == null,
-                onClick = { selectedType = null }
+                onClick = { selectedType = null; visibleExerciseCount = PAGE_SIZE }
             )
             StudioTaskType.entries.forEach { type ->
                 PfChip(
                     text = type.displayName,
                     isSelected = selectedType == type,
-                    onClick = { selectedType = type }
+                    onClick = { selectedType = type; visibleExerciseCount = PAGE_SIZE }
                 )
             }
         }
-        val visibleExercises = if (selectedType == null) {
+        val filteredExercises = if (selectedType == null) {
             StudioExercises.all
         } else {
             StudioExercises.all.filter { it.taskType == selectedType }
         }
+        val visibleExercises = filteredExercises.take(visibleExerciseCount)
+        Text(
+            "Showing ${visibleExercises.size} of ${filteredExercises.size} exercises",
+            style = PfTypography.body,
+            color = PfColors.secondaryText
+        )
         visibleExercises.forEach { exercise ->
             val open = StudioGating.isExerciseOpen(
                 exercise,
@@ -536,12 +573,10 @@ fun StudioScreen(onNavigate: ((String) -> Unit)? = null) {
                 weeklyCaseId
             )
             val draft = drafts.firstOrNull { it.exerciseID == exercise.id }
+            // Locked exercises open the detail too: the detail
+            // shows the paywall view when locked.
             PfCard(
-                onClick = if (open) {
-                    { openExercise = exercise }
-                } else {
-                    null
-                }
+                onClick = { openExercise = exercise }
             ) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Column(modifier = Modifier.weight(1f)) {
@@ -596,6 +631,12 @@ fun StudioScreen(onNavigate: ((String) -> Unit)? = null) {
                 }
             }
         }
+        if (visibleExercises.size < filteredExercises.size) {
+            PfSecondaryButton(
+                title = "Load more exercises",
+                onClick = { visibleExerciseCount += PAGE_SIZE }
+            )
+        }
         Spacer(modifier = Modifier.height(PfSpacing.small))
     }
 }
@@ -620,11 +661,64 @@ private fun StudioBulletList(items: List<String>) {
 @Composable
 private fun StudioLessonDetail(
     lesson: StudioLesson,
+    isOpen: Boolean,
     onBack: () -> Unit,
     onOpenExercise: (StudioExercise) -> Unit,
     isExerciseOpen: (StudioExercise) -> Boolean,
     onNavigate: ((String) -> Unit)?
 ) {
+    if (!isOpen) {
+        // The paywall view: title, subtitle, kind and level,
+        // key points, and the output name plus the output
+        // structure TITLES only. The explanation, section
+        // guidance, how-to-write text, worked example, practice
+        // and workspace never render while locked.
+        Column(verticalArrangement = Arrangement.spacedBy(PfSpacing.mediumSmall)) {
+            PfOutlineButton(title = "Back", onClick = onBack)
+            lesson.knowledgeAreaEnum?.let { area ->
+                Text(area.displayName, style = PfTypography.body, color = PfColors.secondaryText)
+            }
+            Text(lesson.title, style = PfTypography.screenTitle, color = PfColors.navy)
+            Text(lesson.subtitle, style = PfTypography.body, color = PfColors.secondaryText)
+            Row(horizontalArrangement = Arrangement.spacedBy(PfSpacing.small)) {
+                PfPill(text = lesson.kindEnum.displayName)
+                PfPill(text = lesson.levelEnum.shortName)
+            }
+            PfPill(text = "Locked", background = PfColors.navySoft, foreground = PfColors.navy)
+            if (lesson.keyPoints.isNotEmpty()) {
+                Text("Key points", style = PfTypography.cardTitle, color = PfColors.navy)
+                StudioBulletList(items = lesson.keyPoints)
+            }
+            Text(
+                "How to write: ${lesson.outputName}",
+                style = PfTypography.sectionTitle,
+                color = PfColors.navy
+            )
+            Text("What goes in, in order", style = PfTypography.cardTitle, color = PfColors.navy)
+            lesson.outputStructure.forEachIndexed { index, section ->
+                Text(
+                    "${index + 1}. ${section.title}",
+                    style = PfTypography.body,
+                    fontWeight = FontWeight.Medium,
+                    color = PfColors.navy
+                )
+            }
+            Text(
+                "Locked. The first 2 lessons are free. Unlock BA/PO Studio to read the teaching, " +
+                    "the worked example and the practice, and to write your own ${lesson.outputName}.",
+                style = PfTypography.body,
+                color = PfColors.secondaryText
+            )
+            val navigate = onNavigate
+            if (navigate != null) {
+                PfPrimaryButton(
+                    title = "Go to checkout",
+                    onClick = { navigate(Routes.checkout(ProductCatalogue.studioProductId)) }
+                )
+            }
+        }
+        return
+    }
     Column(verticalArrangement = Arrangement.spacedBy(PfSpacing.mediumSmall)) {
         PfOutlineButton(title = "Back", onClick = onBack)
         lesson.knowledgeAreaEnum?.let { area ->
@@ -758,16 +852,12 @@ private fun StudioLessonDetail(
             )
             linkedExercises.forEach { exercise ->
                 // Gated like the exercise list (Tester 2 A7): a
-                // linked exercise grounded in locked content stays
-                // locked here too; the card shows the lock and does
-                // not open.
+                // linked exercise grounded in locked content
+                // opens its detail, which shows the paywall view
+                // when locked; the editor never renders locked.
                 val open = isExerciseOpen(exercise)
                 PfCard(
-                    onClick = if (open) {
-                        { onOpenExercise(exercise) }
-                    } else {
-                        null
-                    }
+                    onClick = { onOpenExercise(exercise) }
                 ) {
                     Text(exercise.title, style = PfTypography.cardTitle, color = PfColors.navy)
                     Text(exercise.sourceCitation, style = PfTypography.body, color = PfColors.secondaryText)
@@ -976,12 +1066,10 @@ private fun StudioKnowledgeAreaContent(
         )
         tasks.forEach { task ->
             val taskOpen = isLessonOpen(task)
+            // Locked tasks open the detail too: the detail
+            // shows the paywall view when locked.
             PfCard(
-                onClick = if (taskOpen) {
-                    { onOpenLesson(task) }
-                } else {
-                    null
-                }
+                onClick = { onOpenLesson(task) }
             ) {
                 Text(task.title, style = PfTypography.cardTitle, color = PfColors.navy)
                 Text(task.subtitle, style = PfTypography.body, color = PfColors.secondaryText)
@@ -1015,8 +1103,58 @@ private fun StudioKnowledgeAreaContent(
 @Composable
 private fun StudioCareerGuideContent(
     guide: StudioCareerGuide,
-    onBack: () -> Unit
+    isOpen: Boolean,
+    onBack: () -> Unit,
+    onNavigate: ((String) -> Unit)?
 ) {
+    if (!isOpen) {
+        // The paywall view: title, audience, timeframe,
+        // description, section headings, skills and tools. The
+        // section paragraphs, steps, key points, portfolio
+        // artifacts, mistakes and certification notes never
+        // render while locked.
+        Column(verticalArrangement = Arrangement.spacedBy(PfSpacing.mediumSmall)) {
+            PfOutlineButton(title = "Back", onClick = onBack)
+            Text(guide.title, style = PfTypography.screenTitle, color = PfColors.navy)
+            Text("For: ${guide.audience}", style = PfTypography.body, color = PfColors.secondaryText)
+            Text(guide.timeframe, style = PfTypography.body, color = PfColors.secondaryText)
+            PfPill(text = "Locked", background = PfColors.navySoft, foreground = PfColors.navy)
+            PfBodyText(
+                text = guide.description.joinToString("\n\n"),
+                style = PfTypography.body,
+                color = PfColors.navy
+            )
+            guide.sections.forEachIndexed { index, section ->
+                Text(
+                    "${index + 1}. ${section.heading}",
+                    style = PfTypography.sectionTitle,
+                    color = PfColors.navy
+                )
+            }
+            if (guide.skills.isNotEmpty()) {
+                Text("Skills to build", style = PfTypography.sectionTitle, color = PfColors.navy)
+                StudioBulletList(items = guide.skills)
+            }
+            if (guide.tools.isNotEmpty()) {
+                Text("Tools to learn", style = PfTypography.sectionTitle, color = PfColors.navy)
+                StudioBulletList(items = guide.tools)
+            }
+            Text(
+                "Locked. The first 2 career guides are free. Unlock BA/PO Studio to read the full route, " +
+                    "the steps, the portfolio artifacts and the common mistakes.",
+                style = PfTypography.body,
+                color = PfColors.secondaryText
+            )
+            val navigate = onNavigate
+            if (navigate != null) {
+                PfPrimaryButton(
+                    title = "Go to checkout",
+                    onClick = { navigate(Routes.checkout(ProductCatalogue.studioProductId)) }
+                )
+            }
+        }
+        return
+    }
     Column(verticalArrangement = Arrangement.spacedBy(PfSpacing.mediumSmall)) {
         PfOutlineButton(title = "Back", onClick = onBack)
         Text(guide.title, style = PfTypography.screenTitle, color = PfColors.navy)
@@ -1100,6 +1238,8 @@ private fun StudioCareerGuideContent(
 @Composable
 private fun StudioDetail(
     exercise: StudioExercise,
+    isOpen: Boolean,
+    checkoutProductId: String?,
     onBack: () -> Unit,
     onNavigate: ((String) -> Unit)?
 ) {
@@ -1111,6 +1251,55 @@ private fun StudioDetail(
     }
     var showReview by remember(exercise.id) { mutableStateOf(false) }
     var savedNote by remember(exercise.id) { mutableStateOf(false) }
+
+    if (!isOpen) {
+        // The paywall view: title, task type, citation, brief,
+        // required-section titles and word guidance. The
+        // grounding note, worked example, editor and review
+        // never render while locked.
+        Column(verticalArrangement = Arrangement.spacedBy(PfSpacing.mediumSmall)) {
+            PfOutlineButton(title = "All exercises", onClick = onBack)
+            Text(exercise.title, style = PfTypography.screenTitle, color = PfColors.navy)
+            Text(exercise.taskType.displayName, style = PfTypography.body, color = PfColors.secondaryText)
+            Text(exercise.sourceCitation, style = PfTypography.body, color = PfColors.secondaryText)
+            PfPill(text = "Locked", background = PfColors.navySoft, foreground = PfColors.navy)
+            Text("Task brief", style = PfTypography.sectionTitle, color = PfColors.navy)
+            PfBodyText(text = exercise.brief, style = PfTypography.body, color = PfColors.navy)
+            PfBodyText(text = exercise.wordCountGuidance, style = PfTypography.body, color = PfColors.navy)
+            Text("Sections to cover", style = PfTypography.sectionTitle, color = PfColors.navy)
+            exercise.requiredSections.forEachIndexed { index, section ->
+                Text(
+                    "${index + 1}. ${section.title}",
+                    style = PfTypography.body,
+                    color = PfColors.navy
+                )
+            }
+            Text(
+                when (exercise.sourceKind) {
+                    StudioExerciseSource.LESSON ->
+                        "Locked. This exercise is grounded in a lesson that needs unlocking."
+                    StudioExerciseSource.SITUATION ->
+                        "Locked. This exercise is grounded in a Payment Situation. Unlock Practice Experiences to open it."
+                },
+                style = PfTypography.body,
+                color = PfColors.secondaryText
+            )
+            val navigate = onNavigate
+            if (navigate != null) {
+                PfPrimaryButton(
+                    title = "Go to checkout",
+                    onClick = {
+                        if (checkoutProductId != null) {
+                            navigate(Routes.checkout(checkoutProductId))
+                        } else {
+                            navigate(Routes.CHECKOUT)
+                        }
+                    }
+                )
+            }
+        }
+        return
+    }
 
     Column(verticalArrangement = Arrangement.spacedBy(PfSpacing.mediumSmall)) {
         PfOutlineButton(title = "All exercises", onClick = onBack)

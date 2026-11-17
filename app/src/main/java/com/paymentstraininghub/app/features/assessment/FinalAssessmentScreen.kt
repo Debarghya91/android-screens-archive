@@ -58,6 +58,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import com.paymentstraininghub.app.auth.AppStore
 import com.paymentstraininghub.app.auth.AuthManager
+import com.paymentstraininghub.app.billing.BillingManager
 import com.paymentstraininghub.app.data.ContentRepository
 import com.paymentstraininghub.app.data.ProductCatalogue
 import com.paymentstraininghub.app.ui.navigation.Routes
@@ -127,6 +128,23 @@ fun FinalAssessmentScreen(
     val attemptsRemaining = course?.let { FinalAssessmentStore.attemptsRemaining(it.productId) } ?: 0
     val isLocked = course?.let { FinalAssessmentStore.isLocked(it.productId) } ?: false
 
+    // The destination-level ownership guard: entry points (the
+    // certificates list, checkout) only offer this screen when
+    // the course is owned, but the route itself is deep-linkable,
+    // so the screen re-checks. A learner without the course (and
+    // without the Integrated Course or admin) sees the paywall
+    // view, never the exam. Collected flows make a purchase or a
+    // session restore refresh the guard while the screen is open.
+    // An exam already started or finished is never paywalled
+    // away: the guard branch below runs only before a start.
+    val ownedIds by BillingManager.ownedProductIds.collectAsState()
+    val serverIds by BillingManager.serverEntitledProductIds.collectAsState()
+    val gateState by BillingManager.premiumGateState.collectAsState()
+    val isAdmin by AuthManager.isAdmin.collectAsState()
+    val isOwned = remember(productId, ownedIds, serverIds, gateState, isAdmin) {
+        runCatching { BillingManager.isProductUnlocked(productId) }.getOrDefault(false)
+    }
+
     val endTimeKey = remember(productId) {
         "pf.finalAssessment.endTime.$productId.v1"
     }
@@ -147,10 +165,18 @@ fun FinalAssessmentScreen(
     // in chapter order. Lesson pages are loaded in batches of 8
     // at a time; a lesson whose page fails to load is skipped,
     // never invented. Stops as soon as 20 questions are found.
-    LaunchedEffect(retryTick, storeLoaded) {
+    LaunchedEffect(retryTick, storeLoaded, isOwned) {
         if (!storeLoaded) return@LaunchedEffect
         val targetCourse = course ?: return@LaunchedEffect
         if (existingCertificate != null || isLocked) {
+            isLoading = false
+            return@LaunchedEffect
+        }
+        // No questions are fetched for a learner who does not
+        // own the course: the paywall view needs none. A purchase
+        // while the screen is open flips isOwned and re-runs
+        // this effect, so the exam loads without re-entry.
+        if (!isOwned) {
             isLoading = false
             return@LaunchedEffect
         }
@@ -506,6 +532,35 @@ fun FinalAssessmentScreen(
                 }
                 isLocked -> {
                     LockedCard(courseName = course.name)
+                }
+                // The paywall view: a learner without the
+                // course sees what to expect plus the buy
+                // button, never questions. It sits after the
+                // finished, certificate and locked branches
+                // so a certificate earned earlier still shows
+                // even after the entitlement lapses, and a
+                // failed-attempt lock still shows its wait
+                // message.
+                !isOwned && !isStarted -> {
+                    Text(
+                        "Final assessment: ${course.name}",
+                        style = PfTypography.screenTitle, color = PfColors.navy
+                    )
+                    Spacer(Modifier.padding(PfSpacing.xSmall))
+                    Text(
+                        "20 questions drawn from the real lesson quizzes for this course. " +
+                            "You have 30 minutes for all 20 questions. You need more than 70 percent " +
+                            "to pass, that is at least ${FinalAssessmentStore.PASS_CORRECT_COUNT} out of 20 correct. " +
+                            "Pass it to earn a certificate for ${course.name}. You get " +
+                            "${FinalAssessmentStore.MAX_ATTEMPTS} attempts. " +
+                            "Unlock ${course.name} to take the assessment.",
+                        style = PfTypography.body, color = PfColors.secondaryText
+                    )
+                    Spacer(Modifier.padding(PfSpacing.medium))
+                    PfPrimaryButton(
+                        title = "Go to checkout",
+                        onClick = { onNavigate(Routes.checkout(productId)) }
+                    )
                 }
                 isLoading -> {
                     PfLoadingView(message = "Loading real quiz questions...")

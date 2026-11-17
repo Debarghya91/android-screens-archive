@@ -185,6 +185,18 @@ object AudioPlayer {
     @Volatile
     private var playerReleased = true
 
+    /**
+     * True when [stop] detached the shared listener from the
+     * live player. The next [getPlayer] call re-attaches it
+     * before returning the player, so no playback ever runs
+     * without the listener: detaching on stop keeps a queued
+     * state callback from a stopped player from mutating state
+     * after the stop, and re-attaching on build or reuse keeps
+     * the state flows live. Only ever touched on the main
+     * thread, like the player itself.
+     */
+    private var listenerDetached = false
+
     /** The live player, or null when no player exists or the player was released. */
     private fun livePlayer(): ExoPlayer? = if (playerReleased) null else player
 
@@ -267,17 +279,75 @@ object AudioPlayer {
      */
     fun notePlaybackServiceAlive(alive: Boolean) {
         serviceAlive = alive
+        AudioTrace.log(
+            if (alive) "SERVICE_ALIVE" else "SERVICE_DESTROYED",
+            generation = playGeneration,
+            playerInstanceId = playerInstanceId,
+            detail = "serviceAlive=$alive"
+        )
+        if (!alive) {
+            // Service teardown invalidates the generation: an
+            // in-flight play start or error fallback captured an
+            // older generation aborts instead of touching a
+            // player whose session is gone. The starting flag is
+            // cleared with it, so a start aborted this way can
+            // never wedge the play button on "Starting...".
+            playGeneration++
+            startingGeneration = -1
+            _playStarting.value = false
+            AudioTrace.log(
+                "GENERATION_INVALIDATED",
+                generation = playGeneration,
+                detail = "reason=service-teardown"
+            )
+        }
         logAudio(if (alive) "SERVICE_ALIVE" else "SERVICE_DESTROYED")
     }
 
+    /**
+     * The shared player listener. Media3 delivers these
+     * callbacks synchronously on the main looper, so a callback
+     * cannot go stale halfway through handling on this thread;
+     * the guards that matter are the released-flag check at the
+     * entry of every callback (a callback that arrives after
+     * the player was released must touch nothing) and the
+     * instance and generation captured here and threaded into
+     * the asynchronous error fallback, which re-proves them
+     * before touching the player.
+     */
     private val listener = object : Player.Listener {
         override fun onPlaybackStateChanged(playbackState: Int) {
+            val instanceAtCallback = playerInstanceId
+            val generationAtCallback = playGeneration
+            AudioTrace.log(
+                "LISTENER_STATE",
+                generation = generationAtCallback,
+                playerInstanceId = instanceAtCallback,
+                player = player,
+                detail = "state=$playbackState lesson=${_currentLessonId.value ?: "?"}"
+            )
+            if (playerReleased) {
+                AudioTrace.log(
+                    "LISTENER_STALE",
+                    generation = generationAtCallback,
+                    playerInstanceId = instanceAtCallback,
+                    detail = "state=$playbackState released"
+                )
+                return
+            }
             logAudio("PLAYBACK_STATE_CHANGED", "state=$playbackState lesson=${_currentLessonId.value ?: "?"}")
             when (playbackState) {
                 Player.STATE_BUFFERING -> _isBuffering.value = true
                 Player.STATE_READY -> {
                     _isBuffering.value = false
                     _errorMessage.value = null
+                    AudioTrace.log(
+                        "PLAYER_PREPARED",
+                        generation = generationAtCallback,
+                        playerInstanceId = instanceAtCallback,
+                        player = player,
+                        detail = "lesson=${_currentLessonId.value ?: "?"}"
+                    )
                     refreshDuration()
                 }
                 Player.STATE_ENDED -> {
@@ -313,6 +383,24 @@ object AudioPlayer {
         }
 
         override fun onIsPlayingChanged(isPlaying: Boolean) {
+            val instanceAtCallback = playerInstanceId
+            val generationAtCallback = playGeneration
+            AudioTrace.log(
+                "LISTENER_IS_PLAYING",
+                generation = generationAtCallback,
+                playerInstanceId = instanceAtCallback,
+                player = player,
+                detail = "isPlaying=$isPlaying lesson=${_currentLessonId.value ?: "?"}"
+            )
+            if (playerReleased) {
+                AudioTrace.log(
+                    "LISTENER_STALE",
+                    generation = generationAtCallback,
+                    playerInstanceId = instanceAtCallback,
+                    detail = "isPlaying=$isPlaying released"
+                )
+                return
+            }
             _isPlaying.value = isPlaying
             logAudio("IS_PLAYING_CHANGED", "isPlaying=$isPlaying lesson=${_currentLessonId.value ?: "?"}")
             if (isPlaying) {
@@ -325,9 +413,19 @@ object AudioPlayer {
         }
 
         override fun onPlayerError(error: PlaybackException) {
+            val instanceAtCallback = playerInstanceId
+            val generationAtCallback = playGeneration
+            AudioTrace.log(
+                "LISTENER_ERROR",
+                generation = generationAtCallback,
+                playerInstanceId = instanceAtCallback,
+                player = player,
+                detail = "code=${error.errorCodeName} lesson=${currentDetail?.id ?: "?"}",
+                throwable = error
+            )
             CrashBreadcrumbs.record("error ${currentDetail?.id ?: "?"}: ${error.errorCodeName}")
             logAudio("PLAYER_ERROR", "code=${error.errorCodeName} lesson=${currentDetail?.id ?: "?"}")
-            handlePlayerError()
+            handlePlayerError(error, instanceAtCallback, generationAtCallback)
         }
     }
 
@@ -343,9 +441,45 @@ object AudioPlayer {
      */
     @SuppressLint("UnsafeOptInUsageError")
     fun getPlayer(context: Context): ExoPlayer {
-        player?.let { return it }
+        // A released player is never reused: the reference is
+        // dropped here so the build path below always makes a
+        // fresh instance. The serialised release path already
+        // nulls the reference, so this is the proof, not the
+        // mechanism.
+        if (playerReleased) {
+            AudioTrace.log(
+                "PLAYER_RELEASED_REUSE_BLOCKED",
+                generation = playGeneration,
+                playerInstanceId = playerInstanceId
+            )
+            player = null
+        }
+        player?.let { existing ->
+            if (listenerDetached) {
+                existing.addListener(listener)
+                listenerDetached = false
+                AudioTrace.log(
+                    "LISTENER_REATTACHED",
+                    generation = playGeneration,
+                    playerInstanceId = playerInstanceId,
+                    player = existing
+                )
+            }
+            AudioTrace.log(
+                "PLAYER_REUSED",
+                generation = playGeneration,
+                playerInstanceId = playerInstanceId,
+                player = existing
+            )
+            return existing
+        }
         val appContext = context.applicationContext
         appContextRef = appContext
+        AudioTrace.log(
+            "PLAYER_CREATE",
+            generation = playGeneration,
+            detail = "lesson=${currentDetail?.id ?: "?"}"
+        )
         val audioAttributes = AudioAttributes.Builder()
             .setContentType(C.AUDIO_CONTENT_TYPE_SPEECH)
             .setUsage(C.USAGE_MEDIA)
@@ -366,7 +500,15 @@ object AudioPlayer {
         built.volume = if (_isMuted.value) 0f else 1f
         player = built
         playerReleased = false
+        listenerDetached = false
         playerInstanceId++
+        AudioTrace.log(
+            "PLAYER_CREATED",
+            generation = playGeneration,
+            playerInstanceId = playerInstanceId,
+            player = built,
+            detail = "lesson=${currentDetail?.id ?: "?"}"
+        )
         logAudio("PLAYER_CREATED", "lesson=${currentDetail?.id ?: "?"}")
         return built
     }
@@ -387,19 +529,40 @@ object AudioPlayer {
      */
     fun releaseIfIdle() {
         scope.launch {
+            val opId = AudioTrace.nextOpId()
+            AudioTrace.log("MUTEX_WAIT", opId = opId, generation = playGeneration, detail = "releaseIfIdle")
             playMutex.withLock {
-                val current = player ?: return@withLock
-                if (playerReleased) return@withLock
-                if (current.isPlaying || _isPlaying.value) return@withLock
-                if (serviceAlive) return@withLock
-                if (startingGeneration != -1) return@withLock
-                stopPositionPolling()
-                runCatching { current.removeListener(listener) }
-                runCatching { current.release() }
-                player = null
-                playerReleased = true
-                logAudio("PLAYER_RELEASED")
-                Log.i(TAG, "Player released while idle")
+                try {
+                    AudioTrace.log("MUTEX_ACQUIRED", opId = opId, generation = playGeneration, detail = "releaseIfIdle")
+                    val current = player ?: return@withLock
+                    if (playerReleased) return@withLock
+                    if (current.isPlaying || _isPlaying.value) return@withLock
+                    if (serviceAlive) return@withLock
+                    if (startingGeneration != -1) return@withLock
+                    stopPositionPolling()
+                    AudioTrace.log(
+                        "PLAYER_RELEASE",
+                        opId = opId,
+                        generation = playGeneration,
+                        playerInstanceId = playerInstanceId,
+                        player = current
+                    )
+                    runCatching { current.removeListener(listener) }
+                    runCatching { current.release() }
+                    player = null
+                    playerReleased = true
+                    listenerDetached = false
+                    AudioTrace.log(
+                        "PLAYER_RELEASED",
+                        opId = opId,
+                        generation = playGeneration,
+                        playerInstanceId = playerInstanceId
+                    )
+                    logAudio("PLAYER_RELEASED")
+                    Log.i(TAG, "Player released while idle")
+                } finally {
+                    AudioTrace.log("MUTEX_RELEASED", opId = opId, generation = playGeneration, detail = "releaseIfIdle")
+                }
             }
         }
     }
@@ -442,8 +605,16 @@ object AudioPlayer {
         startingGeneration = playGeneration
         _playStarting.value = true
         userIntendedPlaying = true
+        val opId = AudioTrace.nextOpId()
         CrashBreadcrumbs.record("play ${detail.id} @${startMs}ms")
         logAudio("PLAY_REQUESTED", "lesson=${detail.id} startMs=$startMs")
+        AudioTrace.log(
+            "PLAY_REQUEST",
+            opId = opId,
+            generation = playGeneration,
+            playerInstanceId = playerInstanceId,
+            detail = "lesson=${detail.id} startMs=$startMs"
+        )
         // Start the playback service so the MediaSession exists: without
         // it there are no notification/lock-screen controls and no
         // background playback. The service promotes itself to the
@@ -469,64 +640,104 @@ object AudioPlayer {
             // Serialised (audit fix 4): a newer playLesson, stop or
             // pause increments the generation, and the older
             // coroutine aborts instead of interleaving player calls.
+            AudioTrace.log("MUTEX_WAIT", opId = opId, generation = generationAtStart, detail = "play lesson=${detail.id}")
             playMutex.withLock {
-                if (generationAtStart != playGeneration) {
-                    clearPlayStarting(generationAtStart)
-                    return@withLock
-                }
-                _errorMessage.value = null
-                val player = getPlayer(appContext)
-                val instanceAtStart = playerInstanceId
-                currentDetail = detail
-                fallbackAttempted = false
-                _isUsingFallback.value = false
+                try {
+                    AudioTrace.log("MUTEX_ACQUIRED", opId = opId, generation = generationAtStart, detail = "play lesson=${detail.id}")
+                    if (generationAtStart != playGeneration) {
+                        AudioTrace.log(
+                            "PLAY_ABORTED",
+                            opId = opId,
+                            generation = playGeneration,
+                            detail = "lesson=${detail.id} reason=generation"
+                        )
+                        clearPlayStarting(generationAtStart)
+                        return@withLock
+                    }
+                    _errorMessage.value = null
+                    val player = getPlayer(appContext)
+                    val instanceAtStart = playerInstanceId
+                    currentDetail = detail
+                    fallbackAttempted = false
+                    _isUsingFallback.value = false
 
-                val savedRate = AppStore.getString("audio.rate")
-                    ?.toFloatOrNull()
-                    ?.takeIf { playbackSpeeds.contains(it) }
-                if (savedRate != null) {
-                    _playbackSpeed.value = savedRate
-                    player.setPlaybackSpeed(savedRate)
-                }
+                    val savedRate = AppStore.getString("audio.rate")
+                        ?.toFloatOrNull()
+                        ?.takeIf { playbackSpeeds.contains(it) }
+                    if (savedRate != null) {
+                        _playbackSpeed.value = savedRate
+                        player.setPlaybackSpeed(savedRate)
+                    }
 
-                val startPosition: Long
-                if (startMs > 0) {
-                    startPosition = startMs
-                    _resumedFromMs.value = null
-                } else {
-                    val saved = AppStore.getLong("audio.position.${detail.id}") ?: 0L
-                    startPosition = saved
-                    _resumedFromMs.value = if (saved > 0) saved else null
-                }
+                    val startPosition: Long
+                    if (startMs > 0) {
+                        startPosition = startMs
+                        _resumedFromMs.value = null
+                    } else {
+                        val saved = AppStore.getLong("audio.position.${detail.id}") ?: 0L
+                        startPosition = saved
+                        _resumedFromMs.value = if (saved > 0) saved else null
+                    }
 
-                val downloaded = LessonDownloadStore.downloadedFile(appContext, detail.id)
-                _isPlayingDownloadedCopy.value = downloaded != null
-                val mediaItem = if (downloaded != null) {
-                    MediaItem.fromUri(Uri.fromFile(downloaded))
-                } else {
-                    MediaItem.fromUri(ContentRepository.audioUrl(detail.audioFileName, true))
+                    val downloaded = LessonDownloadStore.downloadedFile(appContext, detail.id)
+                    _isPlayingDownloadedCopy.value = downloaded != null
+                    val mediaItem = if (downloaded != null) {
+                        MediaItem.fromUri(Uri.fromFile(downloaded))
+                    } else {
+                        MediaItem.fromUri(ContentRepository.audioUrl(detail.audioFileName, true))
+                    }
+                    _currentLessonId.value = detail.id
+                    _positionMs.value = startPosition
+                    refreshDuration()
+                    // Use-after-release guard (solved-APK defect 1):
+                    // the DataStore reads above suspend, so re-prove
+                    // the captured player is still the live one and
+                    // this start is still current before touching it.
+                    // The serialised release path should already make
+                    // this impossible; the check is the proof. The
+                    // reference check proves the captured player is
+                    // the same object the singleton still holds, not
+                    // merely an instance with a matching id.
+                    if (generationAtStart != playGeneration ||
+                        playerInstanceId != instanceAtStart || playerReleased ||
+                        this@AudioPlayer.player !== player
+                    ) {
+                        AudioTrace.log(
+                            "PLAY_ABORTED",
+                            opId = opId,
+                            generation = playGeneration,
+                            playerInstanceId = playerInstanceId,
+                            player = player,
+                            detail = "lesson=${detail.id} reason=stale-player"
+                        )
+                        logAudio("PLAY_START_ABORTED", "lesson=${detail.id} gen=$generationAtStart")
+                        clearPlayStarting(generationAtStart)
+                        return@withLock
+                    }
+                    player.setMediaItem(mediaItem)
+                    if (startPosition > 0) player.seekTo(startPosition)
+                    AudioTrace.log(
+                        "PLAYER_PREPARE",
+                        opId = opId,
+                        generation = playGeneration,
+                        playerInstanceId = playerInstanceId,
+                        player = player,
+                        detail = "lesson=${detail.id}"
+                    )
+                    player.prepare()
+                    player.play()
+                    AudioTrace.log(
+                        "PLAYER_START",
+                        opId = opId,
+                        generation = playGeneration,
+                        playerInstanceId = playerInstanceId,
+                        player = player,
+                        detail = "lesson=${detail.id} startMs=$startPosition"
+                    )
+                    lastPositionSavedAtMs = 0L
+                } finally {
+                    AudioTrace.log("MUTEX_RELEASED", opId = opId, generation = playGeneration, detail = "play lesson=${detail.id}")
                 }
-                _currentLessonId.value = detail.id
-                _positionMs.value = startPosition
-                refreshDuration()
-                // Use-after-release guard (solved-APK defect 1):
-                // the DataStore reads above suspend, so re-prove
-                // the captured player is still the live one and
-                // this start is still current before touching it.
-                // The serialised release path should already make
-                // this impossible; the check is the proof.
-                if (generationAtStart != playGeneration ||
-                    playerInstanceId != instanceAtStart || playerReleased
-                ) {
-                    logAudio("PLAY_START_ABORTED", "lesson=${detail.id} gen=$generationAtStart")
-                    clearPlayStarting(generationAtStart)
-                    return@withLock
-                }
-                player.setMediaItem(mediaItem)
-                if (startPosition > 0) player.seekTo(startPosition)
-                player.prepare()
-                player.play()
-                lastPositionSavedAtMs = 0L
             }
         }
     }
@@ -537,7 +748,16 @@ object AudioPlayer {
         // ready yet, so a toggle now would pause the wrong lesson
         // or no-op. The play button shows "Starting..." until
         // playback begins.
-        if (_playStarting.value) return
+        AudioTrace.log(
+            "TOGGLE_REQUEST",
+            generation = playGeneration,
+            playerInstanceId = playerInstanceId,
+            detail = "lesson=${_currentLessonId.value ?: "?"} starting=${_playStarting.value}"
+        )
+        if (_playStarting.value) {
+            AudioTrace.log("TOGGLE_IGNORED", generation = playGeneration, detail = "reason=start-in-flight")
+            return
+        }
         val detail = currentDetail
         val player = livePlayer()
         if (player == null) {
@@ -545,6 +765,7 @@ object AudioPlayer {
             // rebuild playback for the loaded lesson from the
             // current position instead of doing nothing.
             if (detail != null) {
+                AudioTrace.log("TOGGLE_REBUILD", generation = playGeneration, detail = "lesson=${detail.id}")
                 appContextRef?.let { playLesson(it, detail, _positionMs.value) }
             }
             return
@@ -554,6 +775,13 @@ object AudioPlayer {
             userIntendedPlaying = false
             playGeneration++
             logAudio("PAUSE", "lesson=${detail?.id ?: "?"}")
+            AudioTrace.log(
+                "TOGGLE_PAUSE",
+                generation = playGeneration,
+                playerInstanceId = playerInstanceId,
+                player = player,
+                detail = "lesson=${detail?.id ?: "?"}"
+            )
             player.pause()
             return
         }
@@ -561,6 +789,7 @@ object AudioPlayer {
         // external stop reports STATE_IDLE. Re-run playLesson for
         // the loaded lesson instead of no-op play().
         if (player.playbackState == Player.STATE_IDLE && detail != null) {
+            AudioTrace.log("TOGGLE_REBUILD", generation = playGeneration, detail = "lesson=${detail.id} reason=idle-empty")
             appContextRef?.let { playLesson(it, detail, _positionMs.value) }
             return
         }
@@ -570,6 +799,13 @@ object AudioPlayer {
         userIntendedPlaying = true
         CrashBreadcrumbs.record("resume ${detail?.id ?: "?"}")
         logAudio("RESUME", "lesson=${detail?.id ?: "?"}")
+        AudioTrace.log(
+            "TOGGLE_RESUME",
+            generation = playGeneration,
+            playerInstanceId = playerInstanceId,
+            player = player,
+            detail = "lesson=${detail?.id ?: "?"}"
+        )
         player.play()
     }
 
@@ -655,8 +891,36 @@ object AudioPlayer {
         }
     }
 
-    /** Stop playback. The saved position is kept, so playing again resumes from it. */
+    /**
+     * Stop playback. The saved position is kept, so playing again
+     * resumes from it. Idempotent: a second stop finds no loaded
+     * lesson and an idle or absent player, skips the player
+     * call, and repeats only the already-idle state reset. The
+     * player call is guarded to legal states only: it runs only
+     * when a live player exists and holds media or is out of
+     * the idle state, so stop on an empty idle player is a
+     * no-op instead of a state churn. The shared listener is
+     * detached from the stopped player, so a queued state
+     * callback from it can never mutate state after the stop;
+     * the next [getPlayer] call re-attaches it before the
+     * player is used again. The player instance itself is
+     * reused after a stop: ExoPlayer documents stop to idle
+     * followed by setMediaItem and prepare as the reuse path,
+     * and the playback service's MediaSession holds this same
+     * instance, so replacing it on every stop would strand the
+     * session and the notification controls. A released player
+     * is never reused: release nulls the reference, and
+     * [getPlayer] rebuilds a fresh instance.
+     */
     fun stop() {
+        val opId = AudioTrace.nextOpId()
+        AudioTrace.log(
+            "STOP_REQUEST",
+            opId = opId,
+            generation = playGeneration,
+            playerInstanceId = playerInstanceId,
+            detail = "lesson=${_currentLessonId.value ?: "?"}"
+        )
         CrashBreadcrumbs.record("stop ${_currentLessonId.value ?: "?"}")
         playGeneration++
         startingGeneration = -1
@@ -665,47 +929,121 @@ object AudioPlayer {
         persistPosition()
         setSleepTimer(null)
         logAudio("STOPPED", "lesson=${_currentLessonId.value ?: "?"}")
-        livePlayer()?.stop()
+        val current = livePlayer()
+        if (current != null &&
+            (current.playbackState != Player.STATE_IDLE || current.mediaItemCount > 0)
+        ) {
+            AudioTrace.log(
+                "STOP_PLAYER_CALL",
+                opId = opId,
+                generation = playGeneration,
+                playerInstanceId = playerInstanceId,
+                player = current,
+                detail = "state=${current.playbackState} items=${current.mediaItemCount}"
+            )
+            runCatching { current.stop() }
+                .onFailure {
+                    AudioTrace.log(
+                        "STOP_PLAYER_FAILED",
+                        opId = opId,
+                        generation = playGeneration,
+                        playerInstanceId = playerInstanceId,
+                        player = current,
+                        throwable = it
+                    )
+                }
+            runCatching { current.removeListener(listener) }
+            listenerDetached = true
+        } else {
+            AudioTrace.log(
+                "STOP_PLAYER_SKIPPED",
+                opId = opId,
+                generation = playGeneration,
+                playerInstanceId = playerInstanceId,
+                detail = "no-live-player-or-idle-empty"
+            )
+        }
         _isPlaying.value = false
         _isBuffering.value = false
         stopPositionPolling()
         _currentLessonId.value = null
         _resumedFromMs.value = null
         _positionMs.value = 0L
+        AudioTrace.log("STOP_EXIT", opId = opId, generation = playGeneration)
     }
 
-    private fun handlePlayerError() {
-        val player = livePlayer() ?: return
+    /**
+     * The error fallback. [instanceAtError] and
+     * [generationAtError] are captured by the listener callback
+     * that observed the error, so the fallback coroutine
+     * re-proves the exact player and generation that failed,
+     * rather than whatever is live when it runs.
+     */
+    private fun handlePlayerError(
+        error: PlaybackException,
+        instanceAtError: Int,
+        generationAtError: Int
+    ) {
+        val player = livePlayer()
+        if (player == null) {
+            AudioTrace.log(
+                "FALLBACK_SKIPPED",
+                generation = generationAtError,
+                playerInstanceId = instanceAtError,
+                detail = "no-live-player code=${error.errorCodeName}"
+            )
+            return
+        }
         val detail = currentDetail
         if (!fallbackAttempted && detail != null) {
             fallbackAttempted = true
-            val generationAtError = playGeneration
-            val instanceAtError = playerInstanceId
             val resumeAt = player.currentPosition.coerceAtLeast(0L)
+            val opId = AudioTrace.nextOpId()
             scope.launch {
                 // Serialised with playLesson (audit fix 4), and
                 // guarded (audit fix 5): abort when the user
                 // paused, stopped, or moved to another lesson
                 // between the error and this relaunch, or when
                 // the player was released and rebuilt meanwhile.
+                AudioTrace.log("MUTEX_WAIT", opId = opId, generation = generationAtError, detail = "fallback lesson=${detail.id}")
                 playMutex.withLock {
-                    val aborted = generationAtError != playGeneration ||
-                        !userIntendedPlaying ||
-                        _currentLessonId.value != detail.id ||
-                        this@AudioPlayer.player !== player ||
-                        playerInstanceId != instanceAtError || playerReleased
-                    if (aborted) {
-                        clearPlayStarting(generationAtError)
-                        return@withLock
+                    try {
+                        AudioTrace.log("MUTEX_ACQUIRED", opId = opId, generation = generationAtError, detail = "fallback lesson=${detail.id}")
+                        val aborted = generationAtError != playGeneration ||
+                            !userIntendedPlaying ||
+                            _currentLessonId.value != detail.id ||
+                            this@AudioPlayer.player !== player ||
+                            playerInstanceId != instanceAtError || playerReleased
+                        if (aborted) {
+                            AudioTrace.log(
+                                "FALLBACK_ABORTED",
+                                opId = opId,
+                                generation = playGeneration,
+                                playerInstanceId = playerInstanceId,
+                                detail = "lesson=${detail.id}"
+                            )
+                            clearPlayStarting(generationAtError)
+                            return@withLock
+                        }
+                        _isUsingFallback.value = true
+                        _isPlayingDownloadedCopy.value = false
+                        CrashBreadcrumbs.record("fallback ${detail.id} @${resumeAt}ms")
+                        AudioTrace.log(
+                            "FALLBACK_START",
+                            opId = opId,
+                            generation = playGeneration,
+                            playerInstanceId = playerInstanceId,
+                            player = player,
+                            detail = "lesson=${detail.id} resumeAt=$resumeAt"
+                        )
+                        val fallbackUrl = ContentRepository.audioUrl(detail.audioFileName, false)
+                        player.setMediaItem(MediaItem.fromUri(fallbackUrl))
+                        if (resumeAt > 0) player.seekTo(resumeAt)
+                        player.prepare()
+                        player.play()
+                    } finally {
+                        AudioTrace.log("MUTEX_RELEASED", opId = opId, generation = playGeneration, detail = "fallback lesson=${detail.id}")
                     }
-                    _isUsingFallback.value = true
-                    _isPlayingDownloadedCopy.value = false
-                    CrashBreadcrumbs.record("fallback ${detail.id} @${resumeAt}ms")
-                    val fallbackUrl = ContentRepository.audioUrl(detail.audioFileName, false)
-                    player.setMediaItem(MediaItem.fromUri(fallbackUrl))
-                    if (resumeAt > 0) player.seekTo(resumeAt)
-                    player.prepare()
-                    player.play()
                 }
             }
         } else {

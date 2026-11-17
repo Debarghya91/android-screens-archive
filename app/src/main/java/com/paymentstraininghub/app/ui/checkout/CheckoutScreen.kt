@@ -264,7 +264,16 @@ fun CheckoutScreen(
                         scope.launch {
                             try {
                                 BillingManager.purchase(activity, product.productId)
-                                message = "Returned from Google Play. If the purchase completed, the content is now unlocked."
+                                // The purchase-events collector may
+                                // already have set a more specific
+                                // outcome message while the flow
+                                // was in flight. Only fall back to
+                                // the generic message when it has
+                                // not: overwriting here used to
+                                // lose the specific outcome.
+                                if (message == null) {
+                                    message = "Returned from Google Play. If the purchase completed, the content is now unlocked."
+                                }
                             } catch (e: Exception) {
                                 message = "Purchase did not complete. Please try again."
                             } finally {
@@ -291,7 +300,12 @@ fun CheckoutScreen(
                         scope.launch {
                             try {
                                 BillingManager.purchaseRenewal(activity, product.productId)
-                                message = "Returned from Google Play. If the renewal completed, access continues for 1 more year."
+                                // Same guard as Buy: a specific
+                                // outcome event from the collector
+                                // wins over the generic message.
+                                if (message == null) {
+                                    message = "Returned from Google Play. If the renewal completed, access continues for 1 more year."
+                                }
                             } catch (e: Exception) {
                                 message = "Renewal did not complete. Please try again."
                             } finally {
@@ -368,7 +382,12 @@ fun CheckoutScreen(
                         scope.launch {
                             try {
                                 BillingManager.restore()
-                                message = "Restore request finished. Any courses you own are now unlocked on this device."
+                                // Same guard as Buy: a specific
+                                // outcome event from the collector
+                                // wins over the generic message.
+                                if (message == null) {
+                                    message = "Restore request finished. Any courses you own are now unlocked on this device."
+                                }
                             } catch (e: Exception) {
                                 message = "Restore did not complete. Please try again."
                             } finally {

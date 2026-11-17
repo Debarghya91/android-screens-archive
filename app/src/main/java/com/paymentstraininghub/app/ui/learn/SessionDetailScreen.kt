@@ -230,11 +230,12 @@ fun SessionDetailScreen(sessionId: Int, onBack: () -> Unit, onNavigate: (String)
                             unlocked = unlocked,
                             thumbnailPath = agendas.lesson(lesson.id)?.thumbnail,
                             onClick = {
-                                if (unlocked) {
-                                    onNavigate(Routes.lesson(lesson.id))
-                                } else {
-                                    onNavigate(checkoutRouteForChapterId(chapterId))
-                                }
+                                // Every lesson tap opens the
+                                // lesson route: the lesson screen
+                                // shows the paywall view when the
+                                // lesson is locked. List rows never
+                                // jump straight to checkout.
+                                onNavigate(Routes.lesson(lesson.id))
                             }
                         )
                     }

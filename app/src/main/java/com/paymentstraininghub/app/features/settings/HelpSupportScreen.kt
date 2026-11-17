@@ -5,6 +5,10 @@
 // search index. Tapping
 // a question expands it to the full answer, rendered with
 // PfBodyText; tapping again collapses it to the 3-line preview.
+// FAQ answers belong to Interview Ready, matching iOS: the first
+// 5 in catalogue order are free samples. A locked FAQ shows its
+// title only, never preview text, and expanding it shows the
+// paywall view with the checkout button.
 
 package com.paymentstraininghub.app.features.settings
 
@@ -28,6 +32,7 @@ import androidx.compose.material.icons.filled.ChevronRight
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
+import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedButton
@@ -37,6 +42,7 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -47,11 +53,18 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
+import com.paymentstraininghub.app.auth.AuthManager
+import com.paymentstraininghub.app.billing.BillingManager
+import com.paymentstraininghub.app.billing.EntryAccessRules
+import com.paymentstraininghub.app.data.ContentManifest
 import com.paymentstraininghub.app.data.ContentRepository
+import com.paymentstraininghub.app.data.ProductCatalogue
 import com.paymentstraininghub.app.data.model.SearchEntry
+import com.paymentstraininghub.app.ui.navigation.Routes
 import com.paymentstraininghub.app.ui.theme.PfBodyText
 import com.paymentstraininghub.app.ui.theme.PfCard
 import com.paymentstraininghub.app.ui.theme.PfColors
+import com.paymentstraininghub.app.ui.theme.PfPrimaryButton
 import com.paymentstraininghub.app.ui.theme.PfSpacing
 import com.paymentstraininghub.app.ui.theme.PfTextStyles
 import com.paymentstraininghub.app.ui.theme.rememberTopScrollState
@@ -65,13 +78,26 @@ fun HelpSupportScreen(
     // Kept for call-site compatibility: the guided tour was
     // removed, so this callback is never invoked.
     @Suppress("UNUSED_PARAMETER") onReplayTour: () -> Unit,
-    onOpenDiagnostics: () -> Unit
+    onOpenDiagnostics: () -> Unit,
+    onNavigate: (String) -> Unit = {}
 ) {
     val context = LocalContext.current
     var faqs by remember { mutableStateOf<List<SearchEntry>>(emptyList()) }
     var expandedFaqId by remember { mutableStateOf<String?>(null) }
     var showAllFaqs by remember { mutableStateOf(false) }
     var emailCopied by remember { mutableStateOf(false) }
+    // Collected so the FAQ gate refreshes when entitlements load
+    // or change, and when the admin flag lands on restore.
+    @Suppress("UNUSED_VARIABLE")
+    val ownedIds by BillingManager.ownedProductIds.collectAsState()
+    @Suppress("UNUSED_VARIABLE")
+    val serverIds by BillingManager.serverEntitledProductIds.collectAsState()
+    @Suppress("UNUSED_VARIABLE")
+    val gateState by BillingManager.premiumGateState.collectAsState()
+    val isAdmin by AuthManager.isAdmin.collectAsState()
+    val interviewUnlocked = remember(ownedIds, serverIds, gateState, isAdmin) {
+        runCatching { BillingManager.isInterviewUnlocked() }.getOrDefault(false)
+    }
 
     LaunchedEffect(Unit) {
         val entries = runCatching { ContentRepository.loadSearchIndex().entries }
@@ -192,8 +218,21 @@ fun HelpSupportScreen(
                     Column(
                         verticalArrangement = Arrangement.spacedBy(PfSpacing.small)
                     ) {
-                        displayedFaqs.forEach { faq ->
+                        displayedFaqs.forEachIndexed { _, faq ->
                             val isExpanded = expandedFaqId == faq.id
+                            // The index is the FAQ's position in
+                            // the full FAQ list in catalogue
+                            // order, not its position in the
+                            // displayed page: the first 5 are the
+                            // free samples.
+                            val indexInType = faqs.indexOfFirst { it.id == faq.id }.takeIf { it >= 0 }
+                            val isLocked = EntryAccessRules.isLocked(
+                                faq,
+                                indexInType = indexInType,
+                                isPracticeUnlocked = false,
+                                isInterviewUnlocked = interviewUnlocked,
+                                isChapterUnlocked = true
+                            )
                             Column(
                                 modifier = Modifier
                                     .fillMaxWidth()
@@ -201,7 +240,9 @@ fun HelpSupportScreen(
                                         expandedFaqId = if (isExpanded) null else faq.id
                                     }
                                     .semantics {
-                                        contentDescription = if (isExpanded) {
+                                        contentDescription = if (isLocked) {
+                                            "${faq.title}. Answer locked. Tap to see how to unlock this answer."
+                                        } else if (isExpanded) {
                                             "${faq.title}. ${faq.text}. Tap to collapse this answer."
                                         } else {
                                             "${faq.title}. ${faq.preview}. Tap to read the full answer."
@@ -215,6 +256,13 @@ fun HelpSupportScreen(
                                         color = PfColors.navy,
                                         modifier = Modifier.weight(1f)
                                     )
+                                    if (isLocked) {
+                                        Icon(
+                                            Icons.Filled.Lock,
+                                            contentDescription = "Answer locked",
+                                            tint = PfColors.secondaryText
+                                        )
+                                    }
                                     Icon(
                                         if (isExpanded) Icons.Filled.KeyboardArrowUp
                                         else Icons.Filled.KeyboardArrowDown,
@@ -224,12 +272,30 @@ fun HelpSupportScreen(
                                 }
                                 Spacer(modifier = Modifier.height(PfSpacing.small))
                                 if (isExpanded) {
-                                    PfBodyText(
-                                        text = faq.text,
-                                        style = PfTextStyles.callout,
-                                        color = PfColors.secondaryText
-                                    )
-                                } else {
+                                    if (isLocked) {
+                                        Text(
+                                            "This FAQ answer is part of Interview Ready: " +
+                                                "${ContentManifest.faqCount} FAQ answers and " +
+                                                "${ContentManifest.interviewQuestionCount} interview questions, " +
+                                                "with 1 year of access. The Integrated Course includes " +
+                                                "Interview Ready too.",
+                                            style = PfTextStyles.callout,
+                                            color = PfColors.secondaryText
+                                        )
+                                        PfPrimaryButton(
+                                            title = "View Interview Ready",
+                                            onClick = {
+                                                onNavigate(Routes.checkout(ProductCatalogue.interviewProductId))
+                                            }
+                                        )
+                                    } else {
+                                        PfBodyText(
+                                            text = faq.text,
+                                            style = PfTextStyles.callout,
+                                            color = PfColors.secondaryText
+                                        )
+                                    }
+                                } else if (!isLocked) {
                                     Text(
                                         faq.preview,
                                         style = PfTextStyles.callout,

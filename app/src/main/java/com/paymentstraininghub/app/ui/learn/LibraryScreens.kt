@@ -5,7 +5,12 @@
 // "Showing N of M" and a Load more button. Guide and lab rows
 // open the reading view, which shows the entry's own catalogue
 // text; test rows open the real quiz. Counts come from the loaded
-// search index only. No em dashes in any user-facing text.
+// search index only. Gating matches iOS EntryAccessRules: FAQ
+// answers need Interview Ready (first 5 free), lab entries need
+// Practice Experiences (first 2 free), test entries need their
+// chapter unlocked; guides never lock. A locked entry shows its
+// title plus the paywall view, never its text or preview.
+// No em dashes in any user-facing text.
 
 package com.paymentstraininghub.app.ui.learn
 
@@ -18,6 +23,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Book
@@ -33,6 +39,7 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -41,7 +48,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
+import com.paymentstraininghub.app.auth.AuthManager
+import com.paymentstraininghub.app.billing.BillingManager
+import com.paymentstraininghub.app.billing.EntryAccessRules
+import com.paymentstraininghub.app.billing.FreeSampleRules
+import com.paymentstraininghub.app.data.ContentManifest
 import com.paymentstraininghub.app.data.ContentRepository
+import com.paymentstraininghub.app.data.ProductCatalogue
 import com.paymentstraininghub.app.data.model.SearchEntry
 import com.paymentstraininghub.app.features.assessment.TestEntryInfo
 import com.paymentstraininghub.app.ui.navigation.Routes
@@ -52,6 +65,8 @@ import com.paymentstraininghub.app.ui.theme.PfColors
 import com.paymentstraininghub.app.ui.theme.PfErrorStateView
 import com.paymentstraininghub.app.ui.theme.PfIconTile
 import com.paymentstraininghub.app.ui.theme.PfLoadingView
+import com.paymentstraininghub.app.ui.theme.PfLockedGateCard
+import com.paymentstraininghub.app.ui.theme.PfPill
 import com.paymentstraininghub.app.ui.theme.PfSecondaryButton
 import com.paymentstraininghub.app.ui.theme.PfSpacing
 import com.paymentstraininghub.app.ui.theme.PfTypography
@@ -87,7 +102,13 @@ private fun LibraryTopBar(title: String, onBack: () -> Unit) {
  * the icon tile renders as the fallback through [ThumbnailTile];
  * the wiring is in place if thumbnails are ever supplied.
  */
-private fun EntryRow(entry: SearchEntry, icon: ImageVector, thumbnailPath: String? = null, onClick: () -> Unit) {
+private fun EntryRow(
+    entry: SearchEntry,
+    icon: ImageVector,
+    thumbnailPath: String? = null,
+    locked: Boolean = false,
+    onClick: () -> Unit
+) {
     PfCard(onClick = onClick) {
         Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(PfSpacing.medium)) {
             ThumbnailTile(
@@ -97,7 +118,13 @@ private fun EntryRow(entry: SearchEntry, icon: ImageVector, thumbnailPath: Strin
             )
             Column(modifier = Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(PfSpacing.xSmall)) {
                 Text(entry.title, style = PfTypography.cardTitle, color = PfColors.navy)
-                Text(entry.preview(), style = PfTypography.callout, color = PfColors.secondaryText)
+                if (locked) {
+                    // A locked entry shows its title only: no
+                    // preview text leaks the gated content.
+                    PfPill(text = "Locked", background = PfColors.navySoft, foreground = PfColors.navy)
+                } else {
+                    Text(entry.preview(), style = PfTypography.callout, color = PfColors.secondaryText)
+                }
             }
             Icon(Icons.Filled.ChevronRight, contentDescription = null, tint = PfColors.secondaryText)
         }
@@ -190,6 +217,18 @@ fun LabListScreen(onBack: () -> Unit, onNavigate: (String) -> Unit) {
     var loadFailed by remember { mutableStateOf(false) }
     var visibleCount by remember { mutableStateOf(PAGE_SIZE) }
     var retryTick by remember { mutableStateOf(0) }
+    // Collected so the lab gate refreshes when entitlements load
+    // or change, and when the admin flag lands on restore.
+    @Suppress("UNUSED_VARIABLE")
+    val ownedIds by BillingManager.ownedProductIds.collectAsState()
+    @Suppress("UNUSED_VARIABLE")
+    val serverIds by BillingManager.serverEntitledProductIds.collectAsState()
+    @Suppress("UNUSED_VARIABLE")
+    val gateState by BillingManager.premiumGateState.collectAsState()
+    val isAdmin by AuthManager.isAdmin.collectAsState()
+    val practiceUnlocked = remember(ownedIds, serverIds, gateState, isAdmin) {
+        runCatching { BillingManager.isSituationsUnlocked() }.getOrDefault(false)
+    }
 
     LaunchedEffect(retryTick) {
         loadFailed = false
@@ -236,8 +275,18 @@ fun LabListScreen(onBack: () -> Unit, onNavigate: (String) -> Unit) {
                     contentPadding = androidx.compose.foundation.layout.PaddingValues(PfSpacing.large),
                     verticalArrangement = Arrangement.spacedBy(PfSpacing.medium)
                 ) {
-                    items(visible, key = { it.id }) { entry ->
-                        EntryRow(entry = entry, icon = Icons.Filled.Science) {
+                    itemsIndexed(visible, key = { _, item -> item.id }) { index, entry ->
+                        // The index is the entry's position among
+                        // lab entries in catalogue order: the
+                        // first 2 are free samples.
+                        val locked = EntryAccessRules.isLocked(
+                            entry,
+                            indexInType = index,
+                            isPracticeUnlocked = practiceUnlocked,
+                            isInterviewUnlocked = false,
+                            isChapterUnlocked = true
+                        )
+                        EntryRow(entry = entry, icon = Icons.Filled.Science, locked = locked) {
                             onNavigate(Routes.entry(entry.id))
                         }
                     }
@@ -374,27 +423,78 @@ private fun TestRow(entry: SearchEntry, thumbnailPath: String? = null, onClick: 
 }
 
 /**
- * The shared reading view for guide and lab entries: the entry
- * title and its own catalogue text, in paragraphs. No page fetch:
- * the catalogue text is the content, as on iOS.
+ * The shared reading view for guide, lab, FAQ and test entries:
+ * the entry title and its own catalogue text, in paragraphs. No
+ * page fetch: the catalogue text is the content, as on iOS.
+ * Gating matches iOS EntryAccessRules: a locked entry shows its
+ * title plus the paywall view (what to expect plus the buy
+ * button), never its text.
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun EntryDetailScreen(entryId: String, onBack: () -> Unit) {
+fun EntryDetailScreen(entryId: String, onBack: () -> Unit, onNavigate: (String) -> Unit = {}) {
     var entry by remember { mutableStateOf<SearchEntry?>(null) }
+    var allEntries by remember { mutableStateOf<List<SearchEntry>>(emptyList()) }
     var loadFailed by remember { mutableStateOf(false) }
     var loaded by remember { mutableStateOf(false) }
     var retryTick by remember { mutableStateOf(0) }
+    // Collected so the entry gate refreshes when entitlements
+    // load or change, and when the admin flag lands on restore.
+    @Suppress("UNUSED_VARIABLE")
+    val ownedIds by BillingManager.ownedProductIds.collectAsState()
+    @Suppress("UNUSED_VARIABLE")
+    val serverIds by BillingManager.serverEntitledProductIds.collectAsState()
+    @Suppress("UNUSED_VARIABLE")
+    val gateState by BillingManager.premiumGateState.collectAsState()
+    val isAdmin by AuthManager.isAdmin.collectAsState()
+    val practiceUnlocked = remember(ownedIds, serverIds, gateState, isAdmin) {
+        runCatching { BillingManager.isSituationsUnlocked() }.getOrDefault(false)
+    }
+    val interviewUnlocked = remember(ownedIds, serverIds, gateState, isAdmin) {
+        runCatching { BillingManager.isInterviewUnlocked() }.getOrDefault(false)
+    }
 
     LaunchedEffect(entryId, retryTick) {
         loadFailed = false
         loaded = false
-        entry = runCatching { ContentRepository.loadSearchIndex().entries.firstOrNull { it.id == entryId } }
+        val loadedEntries = runCatching { ContentRepository.loadSearchIndex().entries }
             .getOrElse {
                 loadFailed = true
-                null
+                emptyList()
             }
+        allEntries = loadedEntries
+        entry = loadedEntries.firstOrNull { it.id == entryId }
         loaded = true
+    }
+
+    // The entry gate, evaluated only once the entry has loaded.
+    // The index is the entry's position among entries of its type
+    // in catalogue order. A test locks when any chapter it draws
+    // on is locked, matching iOS; an unknown test fails closed.
+    val found = entry
+    val indexInType = found?.let { item ->
+        allEntries.filter { it.type.equals(item.type, ignoreCase = true) }
+            .indexOfFirst { it.id == item.id }
+            .takeIf { it >= 0 }
+    }
+    val isChapterUnlocked = if (found != null && found.isTest) {
+        !EntryAccessRules.isTestLocked(found.id) { chapterId ->
+            BillingManager.isChapterUnlocked(chapterId)
+        }
+    } else {
+        true
+    }
+    val isLocked = found?.let {
+        EntryAccessRules.isLocked(
+            it,
+            indexInType = indexInType,
+            isPracticeUnlocked = practiceUnlocked,
+            isInterviewUnlocked = interviewUnlocked,
+            isChapterUnlocked = isChapterUnlocked
+        )
+    } ?: false
+    val unlockingProductId = found?.let {
+        EntryAccessRules.unlockingProductId(it)
     }
 
     Column(modifier = Modifier.fillMaxSize()) {
@@ -436,6 +536,42 @@ fun EntryDetailScreen(entryId: String, onBack: () -> Unit) {
                     )
                 }
             }
+            isLocked -> {
+                // The paywall view: title and type stay visible
+                // (discovery); only the text is gated. The buy
+                // button goes to checkout for the owning bundle.
+                LazyColumn(
+                    state = rememberTopLazyListState(),
+                    modifier = Modifier.fillMaxSize(),
+                    contentPadding = androidx.compose.foundation.layout.PaddingValues(PfSpacing.large),
+                    verticalArrangement = Arrangement.spacedBy(PfSpacing.medium)
+                ) {
+                    item {
+                        PfPill(text = found!!.typeDisplayName)
+                    }
+                    item {
+                        Text(found!!.title, style = PfTypography.screenTitle, color = PfColors.navy)
+                    }
+                    item {
+                        val info = if (found!!.isTest) TestEntryInfo.from(found!!) else null
+                        val product = unlockingProductId?.let { ProductCatalogue.productFor(it) }
+                        PfLockedGateCard(
+                            title = "${found!!.typeDisplayName} locked",
+                            bodyText = entryLockCopy(found!!, info, product?.name),
+                            checkoutTitle = "Go to checkout",
+                            onCheckout = {
+                                if (unlockingProductId != null) {
+                                    onNavigate(Routes.checkout(unlockingProductId))
+                                } else {
+                                    onNavigate(Routes.CHECKOUT)
+                                }
+                            },
+                            gateTestTag = "entryLockedGate"
+                        )
+                    }
+                    item { PfBottomInset() }
+                }
+            }
             else -> {
                 LazyColumn(
                     state = rememberTopLazyListState(),
@@ -453,5 +589,31 @@ fun EntryDetailScreen(entryId: String, onBack: () -> Unit) {
                 }
             }
         }
+    }
+}
+
+/** What-to-expect copy for a locked entry, by type. No entry text is included. */
+private fun entryLockCopy(entry: SearchEntry, info: TestEntryInfo?, productName: String?): String {
+    return when {
+        entry.isFaq -> "This answer is part of Interview Ready: ${ContentManifest.faqCount} FAQ answers and " +
+            "${ContentManifest.interviewQuestionCount} interview questions, with 1 year of access. " +
+            "The first ${FreeSampleRules.FAQ_FREE_COUNT} answers are free. " +
+            "The Integrated Course includes Interview Ready too."
+        entry.isLab -> "This lab is part of Practice Experiences: ${ContentManifest.situationCount} situations, " +
+            "Practice Mode, the Daily Challenge, labs, ISO exercises and weekly cases, with 1 year of access. " +
+            "The first ${FreeSampleRules.LAB_FREE_COUNT} labs are free. " +
+            "The Integrated Course includes Practice Experiences too."
+        entry.isTest -> {
+            val what = if (info?.questionCount != null) {
+                "${info.questionCount} questions" +
+                    (info.domainLabel?.let { " on $it" } ?: "") + ". "
+            } else {
+                ""
+            }
+            val bundle = productName ?: "The Integrated Course"
+            "This test belongs to $bundle. $what" +
+                "Unlock it to take the test and see your score with explanations, with 1 year of access."
+        }
+        else -> "This item is locked. Unlock it to read the full text."
     }
 }

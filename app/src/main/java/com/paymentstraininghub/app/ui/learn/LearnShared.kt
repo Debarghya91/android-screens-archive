@@ -1,10 +1,11 @@
 // LearnShared.kt
 // Shared rows and helpers for the Learn detail screens: the
-// lesson row with lock/sample states and the checkout route for
-// a locked lesson's owning bundle. Lock rules match iOS: a lesson
+// lesson row with lock/sample states. Lock rules match iOS: a lesson
 // is open when it is the free sample (first lesson of its
-// chapter) or its chapter is unlocked; anything else opens
-// Checkout for the owning bundle. No em dashes in any
+// chapter) or its chapter is unlocked. A locked lesson tap always
+// opens the lesson route, where the lesson screen shows the
+// paywall view (what to expect plus the buy button); list rows
+// never jump straight to checkout. No em dashes in any
 // user-facing text.
 
 package com.paymentstraininghub.app.ui.learn
@@ -29,8 +30,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.paymentstraininghub.app.billing.BillingManager
-import com.paymentstraininghub.app.data.ProductCatalogue
-import com.paymentstraininghub.app.ui.navigation.Routes
 import com.paymentstraininghub.app.ui.theme.PfColors
 import com.paymentstraininghub.app.ui.theme.PfSpacing
 import com.paymentstraininghub.app.ui.theme.ThumbnailTile
@@ -97,16 +96,6 @@ internal fun LearnLessonRow(
             }
         }
     }
-}
-
-/** The chapter bundle containing this chapter, not counting the full course. */
-internal fun owningProductIdForChapter(chapterId: String): String? {
-    return ProductCatalogue.productForChapter(chapterId)?.productId
-}
-
-internal fun checkoutRouteForChapterId(chapterId: String): String {
-    val productId = owningProductIdForChapter(chapterId)
-    return if (productId != null) Routes.checkout(productId) else Routes.CHECKOUT
 }
 
 /** Whether a lesson opens: free sample, or its chapter is unlocked. */

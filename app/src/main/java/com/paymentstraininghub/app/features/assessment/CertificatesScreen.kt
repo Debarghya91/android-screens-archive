@@ -192,8 +192,13 @@ fun CertificatesScreen(onBack: () -> Unit, onNavigate: (String) -> Unit) {
                         }
                     }
                     else -> {
+                        // Paywall-view-first: an unowned course
+                        // row opens the Final Assessment screen,
+                        // which shows what to expect plus the
+                        // buy button, instead of jumping straight
+                        // to checkout.
                         PfCard(
-                            onClick = { onNavigate(Routes.checkout(course.productId)) }
+                            onClick = { onNavigate(Routes.finalAssessment(course.productId)) }
                         ) {
                             CertificateRowContent(
                                 icon = Icons.Filled.WorkspacePremium,

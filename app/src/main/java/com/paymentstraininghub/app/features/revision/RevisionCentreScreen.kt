@@ -46,7 +46,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
+import com.paymentstraininghub.app.billing.BillingManager
 import com.paymentstraininghub.app.data.ContentRepository
+import com.paymentstraininghub.app.data.ProductCatalogue
 import com.paymentstraininghub.app.data.model.SearchEntry
 import com.paymentstraininghub.app.features.habit.HabitStore
 import com.paymentstraininghub.app.ui.navigation.Routes
@@ -361,17 +363,49 @@ private fun ReviewDialog(
                         if (revealed) {
                             val entry = entries.firstOrNull { it.id == concept.id }
                             if (entry != null) {
-                                PfBodyText(text = entry.text)
-                                androidx.compose.material3.TextButton(
-                                    onClick = {
-                                        onDismiss()
-                                        onNavigate(Routes.lesson(entry.id))
+                                // The summary text is gated: a
+                                // concept comes from a completed
+                                // lesson, but the entitlement may
+                                // have lapsed since completion.
+                                // An entry with no chapter number
+                                // has no owning bundle and stays
+                                // open, matching the entry rules.
+                                val chapterId = entry.chapterNumber?.let { "ch$it" }
+                                val unlocked = chapterId == null || runCatching {
+                                    BillingManager.isLessonUnlocked(entry.id, chapterId)
+                                }.getOrDefault(false)
+                                if (unlocked) {
+                                    PfBodyText(text = entry.text)
+                                    androidx.compose.material3.TextButton(
+                                        onClick = {
+                                            onDismiss()
+                                            onNavigate(Routes.lesson(entry.id))
+                                        }
+                                    ) {
+                                        Text(
+                                            "Open the lesson to check yourself",
+                                            style = MaterialTheme.typography.bodyMedium,
+                                            color = PfColors.royal
+                                        )
                                     }
-                                ) {
+                                } else {
+                                    val productId = ProductCatalogue.productForChapter(chapterId)?.productId
                                     Text(
-                                        "Open the lesson to check yourself",
+                                        "This lesson is locked. Your access to its course has ended. " +
+                                            "Unlock the course to see the summary again.",
                                         style = MaterialTheme.typography.bodyMedium,
-                                        color = PfColors.royal
+                                        color = PfColors.secondaryText
+                                    )
+                                    PfPrimaryButton(
+                                        title = "Go to checkout",
+                                        onClick = {
+                                            onDismiss()
+                                            if (productId != null) {
+                                                onNavigate(Routes.checkout(productId))
+                                            } else {
+                                                onNavigate(Routes.CHECKOUT)
+                                            }
+                                        }
                                     )
                                 }
                             } else {

@@ -73,10 +73,11 @@ import com.paymentstraininghub.app.data.model.ProductScope
 ///     of it, an active renewal subscription for it, or an active
 ///     Integrated purchase or subscription. Expired entitlements
 ///     lock again.
-///   A chapter no part contains is LOCKED (fail closed): an
-///     unmapped chapter is a catalogue error and must never be
-///     given away silently. ch37 is the only such chapter, held
-///     out on purpose; only its first lesson stays free.
+///   A chapter in no part that is not held out is LOCKED
+///     (fail closed): an unmapped chapter is a catalogue error
+///     and must never be given away silently. ch37 is held out
+///     on purpose: it is in no product, is never sold, and is
+///     always reachable, matching iOS and the website.
 object ProductCatalogue {
 
     /// All 16 buyable products, in catalogue order: the Integrated

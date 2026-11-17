@@ -141,7 +141,14 @@ fun HomeScreen(
     onOpenDrawer: () -> Unit,
     initialSection: String? = null,
     /** Increments whenever the Home bottom-bar tab is tapped while Home is already showing: Home resets to the top of the Learning Journey tab. */
-    reselectTick: Int = 0
+    reselectTick: Int = 0,
+    /**
+     * The "Open Progress" card action, when the caller wants it
+     * traced under its own source id (HOME_PROGRESS_CARD) rather
+     * than the generic content-navigation source. Null falls
+     * back to [onNavigate] with the Progress route, as before.
+     */
+    onOpenProgress: (() -> Unit)? = null
 ) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
@@ -428,7 +435,7 @@ fun HomeScreen(
                             completedThisWeek = completedThisWeek,
                             weeklyGoal = weeklyGoal,
                             streak = streak,
-                            onOpenProgress = { onNavigate(Routes.PROGRESS) },
+                            onOpenProgress = onOpenProgress ?: { onNavigate(Routes.PROGRESS) },
                             onStartLearning = { onNavigate(Routes.homeSection(Routes.HOME_SECTION_COURSES)) }
                         )
                     }
@@ -645,7 +652,14 @@ fun HomeScreen(
         )
         LazyColumn(
             state = listState,
-            modifier = Modifier.fillMaxSize(),
+            modifier = Modifier
+                .fillMaxSize()
+                // Log-only gesture observer: records press,
+                // release, throttled move, and scroll-state
+                // events with the active tab, so a fast scroll
+                // can be told apart from a tap. It never
+                // consumes an event and never changes layout.
+                .scrollTrace("home/${selectedTab.name}", listState),
             contentPadding = PaddingValues(PfSpacing.medium),
             verticalArrangement = Arrangement.spacedBy(PfSpacing.medium)
         ) {

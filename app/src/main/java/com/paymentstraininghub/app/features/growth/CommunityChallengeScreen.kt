@@ -36,16 +36,17 @@ import com.paymentstraininghub.app.features.analytics.AnalyticsService
 import com.paymentstraininghub.app.features.lab.ExceptionLabStore
 import com.paymentstraininghub.app.features.lab.LabCasePlayer
 import com.paymentstraininghub.app.features.lab.LabGating
+import com.paymentstraininghub.app.ui.navigation.Routes
 import com.paymentstraininghub.app.ui.theme.rememberTopScrollState
 
 @Composable
-fun CommunityChallengeScreen() {
+fun CommunityChallengeScreen(onNavigate: ((String) -> Unit)? = null) {
     val context = LocalContext.current
     val weekKey = CommunityChallenge.weekKey()
     val weekLabel = CommunityChallenge.weekLabel()
     val weeklyCase = CommunityChallenge.caseFor()
 
-    var situationsUnlocked by remember { mutableStateOf(false) }
+    var labUnlocked by remember { mutableStateOf(false) }
     // Collected so the unlock flag refreshes when entitlements load
     // or change, and when the premium gate resolves.
     val ownedIds by BillingManager.ownedProductIds.collectAsState()
@@ -58,8 +59,11 @@ fun CommunityChallengeScreen() {
         AnalyticsService.track(AnalyticsEvent.ChallengeViewed)
     }
     LaunchedEffect(ownedIds, serverIds, gateState, isAdmin) {
-        situationsUnlocked = runCatching {
-            BillingManager.isSituationsUnlocked()
+        // The challenge case is an investigation case, so it
+        // gates on the Investigation Lab, matching iOS and the
+        // Investigation Experience screen.
+        labUnlocked = runCatching {
+            BillingManager.isInvestigationLabUnlocked()
         }.getOrDefault(false)
     }
     val attempts by CommunityChallengeStore.attempts.collectAsState()
@@ -98,7 +102,7 @@ fun CommunityChallengeScreen() {
         if (weeklyCase == null) {
             Text("This week's challenge is not available yet.")
         } else {
-            val open = LabGating.isCaseOpen(weeklyCase, situationsUnlocked)
+            val open = LabGating.isCaseOpen(weeklyCase, labUnlocked)
             Card(modifier = Modifier.fillMaxWidth()) {
                 Column(
                     modifier = Modifier.padding(12.dp),
@@ -137,10 +141,19 @@ fun CommunityChallengeScreen() {
                     } else {
                         Text(
                             "Locked. This week's case is grounded in a Payment Situation. " +
-                                "Unlock Practice Experiences to play it.",
+                                "Unlock the Investigation Lab to play it.",
                             style = MaterialTheme.typography.bodyMedium,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
+                        // The unlock button opens the case route,
+                        // where the paywall view explains the case
+                        // and offers the buy button. Without it
+                        // the locked state was a dead end.
+                        if (onNavigate != null) {
+                            OutlinedButton(
+                                onClick = { onNavigate(Routes.investigationLab(weeklyCase.id)) }
+                            ) { Text("Unlock this case") }
+                        }
                     }
                 }
             }

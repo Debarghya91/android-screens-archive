@@ -61,11 +61,13 @@ package com.paymentstraininghub.app.billing
  * (see ServerSync); the read mirrors iOS, which trusts the server
  * row the record-purchase function wrote for Apple purchases.
  *
- * Fail closed (M1): a chapter no part contains is LOCKED. An
- * unmapped chapter is a catalogue error and must never be given
- * away silently. ch37 is the only such chapter, held out on
- * purpose; only its first lesson stays free. A lesson id with no
- * chapter number is never locked, matching iOS LessonView.
+ * Fail closed (M1): a chapter no part contains and which is
+ * not held out is LOCKED. An unmapped chapter is a catalogue
+ * error and must never be given away silently. ch37 is held out
+ * on purpose: it is in no product and is never sold, so it is
+ * always reachable, matching iOS and the website. A lesson id
+ * with no chapter number is never locked, matching iOS
+ * LessonView.
  *
  * Local verification: a purchase is accepted only when its state is
  * PURCHASED and both its purchase token and its Play signature are
@@ -105,6 +107,7 @@ import com.paymentstraininghub.app.BuildConfig
 import com.paymentstraininghub.app.auth.AuthManager
 import com.paymentstraininghub.app.auth.SupabaseClient
 import com.paymentstraininghub.app.data.ProductCatalogue
+import com.paymentstraininghub.app.data.ReadingOrder
 import com.paymentstraininghub.app.data.model.CourseProduct
 import com.paymentstraininghub.app.media.LessonDownloadStore
 import com.paymentstraininghub.app.security.PremiumAccessGate
@@ -557,20 +560,25 @@ object BillingManager {
 
     /**
      * True when a chapter is unlocked: an admin session unlocks
-     * every chapter, the Integrated Course is owned and active,
-     * or the part containing this chapter is owned and active. A
-     * chapter no part contains is LOCKED for non-admin learners
-     * (fail closed): an unmapped chapter is a catalogue error,
-     * and it must never be given away silently. ch37 is the only
-     * such chapter, held out on purpose.
+     * every chapter, a held-out chapter (ch37, the only one) is
+     * always reachable because it is in no product and is never
+     * sold, the Integrated Course unlocks every mapped chapter,
+     * or the part containing this chapter is owned and active.
+     * A chapter in no part that is not held out is LOCKED for
+     * non-admin learners (fail closed): an unmapped chapter is
+     * a catalogue error, and it must never be given away
+     * silently. The decision itself is the pure rule in
+     * [EntitlementRules.isChapterUnlocked], matching iOS.
      */
     fun isChapterUnlocked(chapterId: String): Boolean {
-        // Admin bypass, as in isProductUnlocked: an admin sees
-        // every chapter, including chapters no part contains.
-        if (AuthManager.isCurrentUserAdmin()) return true
-        if (isProductOwned(ProductCatalogue.integratedProductId)) return true
-        val part = ProductCatalogue.productForChapter(chapterId) ?: return false
-        return isProductOwned(part.productId)
+        val part = ProductCatalogue.productForChapter(chapterId)
+        return EntitlementRules.isChapterUnlocked(
+            isAdmin = AuthManager.isCurrentUserAdmin(),
+            isHeldOutChapter = chapterId in ReadingOrder.heldOutIds,
+            hasContainingPart = part != null,
+            integratedOwned = isProductOwned(ProductCatalogue.integratedProductId),
+            containingPartOwned = part?.let { isProductOwned(it.productId) } ?: false
+        )
     }
 
     /**
@@ -587,8 +595,9 @@ object BillingManager {
      * True when a lesson is unlocked: it is a free sample lesson
      * (the first lesson of its chapter, or the second lesson of
      * its part's first chapter), or its chapter is unlocked. A
-     * chapter no part contains stays LOCKED (fail closed), apart
-     * from its free first lesson. chapterId is "ch{n}".
+     * held-out chapter (ch37) is always unlocked. A chapter in
+     * no part that is not held out stays LOCKED (fail closed).
+     * chapterId is "ch{n}".
      */
     fun isLessonUnlocked(lessonId: String, chapterId: String): Boolean {
         val firstChapterId = ProductCatalogue.productForChapter(chapterId)?.chapterIds?.firstOrNull()
