@@ -19,6 +19,9 @@ jobs:
         run: |
           yes | "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" --licenses > /dev/null
           "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" "platforms;android-36" "build-tools;36.0.0"
+      - name: Restore sideload keystore
+        shell: bash
+        run: echo "${{ secrets.ANDROID_SIDELOAD_KEYSTORE_B64 }}" | base64 --decode > "$GITHUB_WORKSPACE/../persistent-sideload.keystore"
       - name: Build debug APK
         run: chmod +x gradlew && ./gradlew assembleDebug --no-daemon --stacktrace
       - name: Upload APK
