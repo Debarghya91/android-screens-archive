@@ -62,32 +62,40 @@ android {
         // certificate shared with QA builds. The password lives
         // ONLY in ../release-signing.properties (mode 600,
         // outside any git repo, never committed, never printed).
-        // The build fails loudly if the properties file, either
-        // password, or the keystore is missing.
+        // On machines without the properties file or the keystore
+        // (CI runners), release signing stays unconfigured and only
+        // release packaging fails; debug and QA builds are unaffected.
         create("release") {
+            // CI debug/QA builds run on runners without release
+            // credentials (17 Nov 2026): only configure release signing
+            // when the properties file AND the upload keystore are both
+            // present. When either is missing, the signing config stays
+            // unpopulated: debug and QA tasks are unaffected, and a
+            // release packaging task fails at execution with a clear
+            // error. When both files exist, the strict checks below
+            // behave exactly as before.
             val propsFile = rootDir.resolve("../release-signing.properties")
-            require(propsFile.exists()) {
-                "Missing release signing properties: $propsFile. " +
-                    "Release builds need the upload keystore password file (mode 600, never committed)."
-            }
-            val props = Properties()
-            propsFile.inputStream().use { props.load(it) }
-            val storePw = props.getProperty("storePassword")
-                ?: error("release-signing.properties must define storePassword.")
-            val keyPw = props.getProperty("keyPassword")
-                ?: error("release-signing.properties must define keyPassword.")
-            require(storePw.isNotBlank() && keyPw.isNotBlank()) {
-                "release-signing.properties has a blank storePassword or keyPassword."
-            }
             val keystoreFile = rootDir.resolve("../upload-release.keystore")
-            require(keystoreFile.exists()) {
-                "Missing upload keystore: $keystoreFile. " +
-                    "Release builds must be signed with the upload keystore, never the sideload keystore."
+            if (!propsFile.exists() || !keystoreFile.exists()) {
+                logger.warn(
+                    "Release signing credentials not found; release signing is unconfigured. " +
+                        "Debug and QA builds are unaffected."
+                )
+            } else {
+                val props = Properties()
+                propsFile.inputStream().use { props.load(it) }
+                val storePw = props.getProperty("storePassword")
+                    ?: error("release-signing.properties must define storePassword.")
+                val keyPw = props.getProperty("keyPassword")
+                    ?: error("release-signing.properties must define keyPassword.")
+                require(storePw.isNotBlank() && keyPw.isNotBlank()) {
+                    "release-signing.properties has a blank storePassword or keyPassword."
+                }
+                storeFile = keystoreFile
+                storePassword = storePw
+                keyAlias = "upload"
+                keyPassword = keyPw
             }
-            storeFile = keystoreFile
-            storePassword = storePw
-            keyAlias = "upload"
-            keyPassword = keyPw
         }
     }
 
