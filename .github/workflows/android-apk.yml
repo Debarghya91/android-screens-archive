@@ -22,6 +22,11 @@ jobs:
       - name: Restore sideload keystore
         shell: bash
         run: echo "${{ secrets.ANDROID_SIDELOAD_KEYSTORE_B64 }}" | base64 --decode > "$GITHUB_WORKSPACE/../persistent-sideload.keystore"
+      - name: Diagnose restored keystore
+        run: |
+          ls -l "$GITHUB_WORKSPACE/../persistent-sideload.keystore"
+          sha256sum "$GITHUB_WORKSPACE/../persistent-sideload.keystore"
+          keytool -list -v -keystore "$GITHUB_WORKSPACE/../persistent-sideload.keystore" -storepass android | grep -E "Alias name|SHA256:"
       - name: Build debug APK
         run: chmod +x gradlew && ./gradlew assembleQa --no-daemon --stacktrace
       - name: Upload APK
