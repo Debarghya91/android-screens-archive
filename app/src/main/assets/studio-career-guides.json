@@ -1,0 +1,1490 @@
+[
+ {
+  "id": "how-to-become-a-business-analyst",
+  "title": "How to Become a Business Analyst",
+  "level": "foundation",
+  "description": [
+   "This guide explains what a business analyst does, which skills to build, and how to gather proof of your work, step by step from first principles to your first role. It focuses on practical habits, clear documents, and honest preparation rather than theory alone."
+  ],
+  "audience": "This guide is for complete beginners and career switchers from operations, support, testing, development, finance, customer service, and similar roles who want a practical route into business analysis.",
+  "timeframe": "Most beginners need 6 to 12 months of steady part-time study and practice to be ready to apply for a first BA role, depending on prior experience and the time available each week.",
+  "sections": [
+   {
+    "heading": "What a business analyst actually does",
+    "paragraphs": [
+     "A business analyst helps a business understand a problem, agree what should change, and describe that change clearly enough for other people to build, test, and support it. The work sits between the people who need the change and the people who deliver it. A BA listens, asks questions, checks facts, and turns messy conversations into clear, agreed records that a team can act on.",
+     "What a BA delivers depends on the project, but it usually includes a clear statement of the problem, an analysis of how work happens today, options for how it could happen in future, and written requirements that describe what is needed. A BA may also produce process flows, data definitions, acceptance criteria, and notes from workshops and decisions. The value is not the document itself. The value is shared understanding, so everyone works from the same agreed picture.",
+     "The role is different from project management and testing, although the three roles work closely together. A project manager plans the schedule, budget, risks, and coordination of delivery. A tester checks that what was built matches what was agreed and finds defects before release. A BA focuses on the need itself: what problem to solve, for whom, and what good looks like when the change is done.",
+     "BAs work in many industries, including banking, insurance, healthcare, retail, government, and technology. In banking and payments, for example, a BA might work on how customer payments are processed, how exceptions are handled when a payment fails, or how operations teams reconcile accounts at the end of the day. The core craft stays the same across industries: understand the need, involve the right people, and describe the change clearly."
+    ],
+    "steps": [
+     {
+      "title": "Define the role in your own words",
+      "action": "Write a short paragraph that explains what a business analyst does, in plain language, without copying a job listing. Include who a BA works with, what a BA produces, and what good looks like when the work is done well. Read it aloud and rewrite any sentence that sounds vague or copied, until a friend outside the field could understand it.",
+      "timeframe": "Weeks 1-2"
+     },
+     {
+      "title": "List what a BA delivers",
+      "action": "Make a list of typical BA deliverables, such as a problem statement, process flows, requirements, acceptance criteria, and workshop notes. For each item, write one sentence on what it contains and one sentence on who uses it. Keep the list for later steps, and add to it as you learn new artifact types.",
+      "timeframe": "Weeks 1-2"
+     },
+     {
+      "title": "Compare BA, PM, and tester roles",
+      "action": "Draw a simple three-column comparison of the BA, project manager, and tester roles, covering focus, main outputs, and how each role measures success. Add one example of a task where the roles overlap and note who leads and who supports in that case. Use the comparison to explain the difference to someone else in under two minutes.",
+      "timeframe": "Weeks 1-2"
+     },
+     {
+      "title": "Research where BAs work",
+      "action": "Read a range of BA job listings across different industries, including banking and payments, and note the common duties, skills, and domain knowledge they ask for. Record the patterns you see, and mark which patterns match your background and which are new to you. Use what you find to shape your learning plan, not to judge whether you belong in the role yet.",
+      "timeframe": "Weeks 2-3"
+     }
+    ],
+    "keyPoints": [
+     "A BA turns messy needs into clear, agreed records a team can act on.",
+     "Deliverables serve shared understanding, not paperwork for its own sake.",
+     "BA, project management, and testing have different focuses and work together.",
+     "The core craft transfers across industries, including banking and payments."
+    ]
+   },
+   {
+    "heading": "Start from where you are",
+    "paragraphs": [
+     "Starting well means starting honestly. Before choosing courses or certifications, take stock of what you already do well and where you are less confident. Look at real tasks from your current or past work, not at job titles. A clear picture of your starting point stops you from studying topics you already know and helps you spend limited time on the gaps that matter most.",
+     "Almost every previous role brings transferable skills. Operations work builds process knowledge and attention to detail. Support and customer service build listening skills, patience, and the habit of explaining things clearly. Testing builds precision and a habit of checking edge cases. Development builds comfort with systems and technical language. Finance builds care with numbers, controls, and reconciliation. Name these skills in plain terms, with examples of work you actually did, so you can use them later in your CV and interviews.",
+     "Gaps are normal, and closing them in the right order matters more than closing all of them at once. Most beginners need to strengthen requirements writing, stakeholder handling, and modelling before they worry about advanced topics. Pick a small number of gaps, work on them in short focused sessions, and practise with realistic examples rather than reading alone. Progress comes from repeated practice with feedback, not from collecting notes.",
+     "A learning routine only works if it fits around work and life. Short regular sessions beat occasional long sessions that leave you tired and behind. Set a fixed number of sessions per week, protect that time, and give each session one clear outcome, such as drafting one process flow or rewriting one requirement. Review your plan every few weeks, keep what helps, and change what does not."
+    ],
+    "steps": [
+     {
+      "title": "Audit your current skills honestly",
+      "action": "List the skills you use in your current or most recent role, with a concrete example for each skill. Rate each skill honestly as strong, developing, or new, based on real work you have done rather than topics you have read about. Keep the audit private and blunt, because an honest starting point makes the rest of the plan realistic.",
+      "timeframe": "Weeks 2-3"
+     },
+     {
+      "title": "List transferable skills from past roles",
+      "action": "For each previous role, write down two or three skills that transfer directly to business analysis, such as interviewing, process knowledge, or careful documentation. Add one work example for each skill that you could describe in an interview. Save this list, because it becomes the evidence base for your CV later in this guide.",
+      "timeframe": "Weeks 3-4"
+     },
+     {
+      "title": "Pick your three biggest gaps",
+      "action": "Compare your audit with the patterns from job listings and choose the three gaps that would hold you back most in a first BA role. Write each gap as a skill to build, not as a vague worry, and note how you will practise it. Leave other gaps for later, so your effort stays focused on a small number of clear priorities.",
+      "timeframe": "Weeks 3-4"
+     },
+     {
+      "title": "Build a weekly learning routine",
+      "action": "Choose a fixed number of study sessions per week that you can sustain alongside work, and block that time in your calendar. Give each session one outcome, such as completing one exercise or drafting one document, and end each session by noting what you learned and what to do next. Review the routine after three weeks and adjust the timing or workload if it is not working.",
+      "timeframe": "Weeks 4-5"
+     }
+    ],
+    "keyPoints": [
+     "An honest audit of current skills makes the learning plan realistic.",
+     "Previous roles bring transferable skills worth naming with examples.",
+     "Close a small number of gaps first, in order of importance.",
+     "Short regular sessions beat occasional long sessions."
+    ]
+   },
+   {
+    "heading": "Learn the core craft",
+    "paragraphs": [
+     "The core craft of business analysis is learning what people really need, not just what they first ask for. Elicitation means drawing out needs through interviews, observation, document review, and workshops, then checking what you heard with the people who said it. Good elicitation is patient and curious. It asks open questions, listens without jumping to a solution, and follows up when answers conflict or leave gaps.",
+     "Stakeholder analysis helps you work out who is affected by a change, who decides, who provides knowledge, and who will live with the result. A change that helps one team can create extra work for another, and a BA needs to surface those effects early. Map stakeholders by their interest and influence, note what each person needs from the change, and plan how and when to involve each group. Keeping stakeholders involved through the work prevents late surprises.",
+     "Requirements writing and modelling turn what you learn into records a team can build and test. Requirements should be clear, testable, and free of unnecessary jargon, with each requirement covering one need. Models help people see the same picture: process flows show steps and decisions, use cases show how a user interacts with a system to reach a goal, and user stories describe a need from a user point of view with the value it brings. Choose the model that helps the conversation, and keep it simple enough for non-specialists to follow.",
+     "Acceptance criteria and traceability connect the need to the finished work. Acceptance criteria state the conditions that must be true for a requirement to count as done, in terms a tester can check. Traceability links each requirement back to the business need it serves and forward to the design, build, and test work that covers it. Together they help a team spot missing work, manage change, and show why each piece of work exists."
+    ],
+    "steps": [
+     {
+      "title": "Practise elicitation interviews",
+      "action": "Practise interviewing with a friend or colleague playing the role of a stakeholder with a vague request. Ask open questions, summarise what you heard, and check your summary with the stakeholder before moving on. After each practice interview, write up the needs you captured and note which questions worked best and which missed useful detail.",
+      "timeframe": "Weeks 5-7"
+     },
+     {
+      "title": "Map stakeholders for a sample project",
+      "action": "Choose a realistic sample change, such as improving how a team handles failed payments, and list everyone affected by it. Group stakeholders by interest and influence, note what each group needs, and plan how you would involve each group during the work. Review the map with someone else and add any stakeholder or need you missed.",
+      "timeframe": "Weeks 6-8"
+     },
+     {
+      "title": "Write requirements and process flows",
+      "action": "For your sample change, draw the current process flow and a future process flow, showing steps, decisions, and handoffs between teams. Write a short set of requirements in clear, testable language, with one need per requirement, using a diagramming tool such as Lucidchart and a spreadsheet such as Excel to keep the work tidy. Ask a reviewer to read the flows and requirements without your help, and revise anything they find unclear.",
+      "timeframe": "Weeks 7-10"
+     },
+     {
+      "title": "Write acceptance criteria and trace links",
+      "action": "For each requirement in your sample set, write acceptance criteria that state clearly when the requirement counts as done. Build a simple traceability list that links each requirement to the business need it serves and to the test checks that would cover it. Check the list for requirements with no need behind them and needs with no requirement covering them, and fix both kinds of gap.",
+      "timeframe": "Weeks 8-10"
+     }
+    ],
+    "keyPoints": [
+     "Elicitation checks what people really need, not only what they first ask for.",
+     "Stakeholder analysis surfaces effects on every affected group early.",
+     "Clear requirements and simple models help everyone see the same picture.",
+     "Acceptance criteria and traceability link needs to finished work."
+    ]
+   },
+   {
+    "heading": "Learn how teams deliver",
+    "paragraphs": [
+     "Teams deliver change in different ways, and a BA needs to adapt to the approach in use. Agile delivery breaks work into small pieces, delivers in short cycles, and welcomes change as learning grows. Scrum is one common Agile framework, with fixed-length sprints, a prioritised backlog, and regular events for planning, review, and reflection. In Agile teams, a BA often refines backlog items, clarifies needs during the sprint, and works closely with the team every day.",
+     "Waterfall delivery plans the whole change in sequence, with each phase finishing before the next begins. It suits work where needs are stable, well understood, and tightly controlled, such as some regulated or large-scale changes. Many organisations use a hybrid approach, with upfront planning for scope and governance combined with iterative delivery for build and test. A BA should understand each approach well enough to adjust documents, meetings, and level of detail to fit.",
+     "Working well with developers and testers is a daily part of the role. Developers need requirements that are clear about behaviour, data, rules, and edge cases, and they will ask questions that expose gaps. Testers need acceptance criteria they can turn into checks, and they often spot risks the BA missed. Answer questions promptly, record agreed decisions, and treat challenge as useful: a hard question during analysis costs far less than a defect found after release.",
+     "Workshops and facilitation bring groups together to agree a need, a process, or a decision in the time available. A good facilitator prepares a clear purpose and agenda, keeps discussion on topic, draws out quieter voices, and records outcomes and actions before people leave. Facilitation is a skill that improves with practice and honest reflection. Start with small sessions, ask for feedback on how the session ran, and build up to larger or more difficult groups over time."
+    ],
+    "steps": [
+     {
+      "title": "Learn Agile and Scrum basics",
+      "action": "Study the basics of Agile delivery and Scrum, including sprints, the product backlog, sprint planning, reviews, and retrospectives. Practise writing user stories with acceptance criteria and ordering a small backlog by value and risk, using a backlog tool such as Jira to record the work. Explain the Scrum events in your own words to someone else, and note any part you cannot yet explain clearly.",
+      "timeframe": "Weeks 9-12"
+     },
+     {
+      "title": "Compare Waterfall and hybrid delivery",
+      "action": "Write a short comparison of Waterfall, Agile, and hybrid delivery, covering when each fits, how requirements are handled, and how change is managed. For each approach, note what a BA produces and when, and what happens when a requirement changes late in the work. Use a real or realistic example to test your comparison, and revise it where the example does not fit.",
+      "timeframe": "Weeks 10-12"
+     },
+     {
+      "title": "Practise working with delivery teams",
+      "action": "Ask a developer or tester you know to review your sample requirements and raise every question or gap they can find. Answer each question in writing, record any decision you agree, and update the requirements so the agreed answer is visible in the document. Reflect on which questions surprised you, and use them to improve how you write the next set of requirements.",
+      "timeframe": "Weeks 11-14"
+     },
+     {
+      "title": "Run a practice workshop",
+      "action": "Plan and run a short practice workshop with two or three people, with a clear purpose, a timed agenda, and a written outcome to agree by the end. Facilitate the discussion, keep notes visible, draw out quieter participants, and close by confirming decisions and actions. Ask participants for feedback on how the session ran, and write down one facilitation habit to keep and one to improve.",
+      "timeframe": "Weeks 12-14"
+     }
+    ],
+    "keyPoints": [
+     "Agile, Waterfall, and hybrid approaches need different BA habits.",
+     "Scrum basics include sprints, a backlog, and regular review events.",
+     "Developers and testers expose gaps that strengthen requirements.",
+     "Good facilitation needs preparation, inclusion, and recorded outcomes."
+    ]
+   },
+   {
+    "heading": "Build proof you can do the work",
+    "paragraphs": [
+     "Employers need proof that you can do the work, not just a list of topics you studied. A portfolio of practice artifacts shows how you think, how you write, and how you handle a realistic problem from start to finish. Build it from practice projects based on everyday processes you understand, such as handling a customer request, processing a refund, or reconciling a daily report. Keep each artifact tidy, realistic, and honest about what is practice work and what came from a real job.",
+     "Your current job, if you have one, is often the best source of real practice. Volunteer for analysis tasks that others avoid, such as documenting a process, writing up meeting outcomes, clarifying a confusing request, or mapping how a handoff works between teams. Ask your manager for small, bounded tasks first, deliver them well, and build trust for larger pieces of work. Real tasks done carefully teach stakeholder handling in a way that study alone cannot.",
+     "One full end-to-end example is worth more than several fragments. Pick a single realistic change and take it through every stage: the problem statement, stakeholder map, current and future process flows, requirements, acceptance criteria, and a short summary of decisions and open questions. Show your working, including what you assumed, what you checked, and what changed after feedback. A complete example lets a reviewer follow your reasoning without guessing.",
+     "Feedback from a practising BA will improve your work faster than working alone. Ask a BA you know, or someone in a professional community, to review one artifact and tell you what is unclear, missing, or unrealistic. Listen for patterns in the feedback rather than defending each point, then revise the artifact and note what you changed and why. Keep the revised version in your portfolio, so your learning is visible in the work itself."
+    ],
+    "steps": [
+     {
+      "title": "Start a practice project portfolio",
+      "action": "Create a tidy portfolio folder with a short index page that lists each artifact, the problem it addresses, and what it shows about your work. Add your best artifacts from earlier steps, cleaned up and consistently formatted, and record them in a tracking board such as Trello so you can see what is finished and what still needs work. Keep the portfolio honest by labelling practice work as practice work.",
+      "timeframe": "Weeks 13-16"
+     },
+     {
+      "title": "Volunteer for analysis tasks at work",
+      "action": "Ask your manager for a small, bounded analysis task, such as documenting a process, clarifying a request, or writing up the outcome of a meeting. Deliver the task on time, check your work with the people involved, and ask for feedback on clarity and usefulness. Record the task, what you produced, and what you learned, so you can add it to your portfolio and CV with permission.",
+      "timeframe": "Weeks 14-20"
+     },
+     {
+      "title": "Document one end-to-end example",
+      "action": "Choose one realistic change and document it fully, from problem statement and stakeholder map through process flows, requirements, acceptance criteria, and decisions. Show your working throughout, including assumptions, checks you made, and changes you made after feedback. Read the full example as a stranger would, and fix any place where the reasoning jumps or the evidence is missing.",
+      "timeframe": "Weeks 16-22"
+     },
+     {
+      "title": "Get feedback from a practising BA",
+      "action": "Ask a practising BA to review your end-to-end example and tell you what is unclear, missing, or unrealistic. Listen for repeated themes in the feedback, revise the example to address them, and note what you changed and why. Thank the reviewer, keep the revised version in your portfolio, and apply the same lessons to your other artifacts.",
+      "timeframe": "Weeks 18-24"
+     }
+    ],
+    "keyPoints": [
+     "A portfolio proves what you can do, beyond a list of topics studied.",
+     "Small real tasks at work build stakeholder skills that study cannot.",
+     "One complete end-to-end example beats several fragments.",
+     "Feedback from a practising BA improves work faster than working alone."
+    ]
+   },
+   {
+    "heading": "Certification, CV, and the first role",
+    "paragraphs": [
+     "Certification can support your move into business analysis, but it does not replace evidence of work. An entry-level certification shows commitment and a shared vocabulary, and it can help a CV pass an initial screen. Hiring decisions still rest on what you can show and explain: your portfolio, your examples, and how you handle interview questions. Treat certification as one part of the plan, alongside practice, feedback, and real tasks, not as a guarantee of a role.",
+     "Choose a first certification that fits your experience level and the time you can give to preparation. Entry-level options suit beginners with little or no BA experience, while intermediate and advanced options expect years of BA work and suit later career stages. Check the eligibility rules and syllabus for any certification you consider, and prepare by studying the topics and practising application, not by memorising answers. If a certification needs experience you do not yet have, treat it as a later goal and focus first on building that experience.",
+     "A BA CV should lead with evidence. For each role, describe the analysis work you did, the problem you helped solve, and the outcome, using plain language and concrete detail. Include your portfolio artifacts, practice projects, and any volunteering or internal analysis tasks, labelled honestly. Tailor the CV to each role by matching your strongest relevant examples to the needs described in the listing, and keep it clear, short, and free of claims you cannot support in an interview.",
+     "Interview preparation means turning your experience into clear situational examples. For each example, practise explaining the situation, what you did, and what happened as a result, with enough detail to show judgement without overloading the listener. Prepare examples for common themes: handling a difficult stakeholder, clarifying a vague request, managing a change to requirements, and resolving conflicting needs. In your first 90 days, listen more than you speak, learn the domain and the people, deliver small pieces of work well, and ask for feedback early so you can adjust quickly."
+    ],
+    "steps": [
+     {
+      "title": "Choose a first certification",
+      "action": "Compare entry-level certification options against your experience, budget, and available study time, and check the eligibility rules before committing. Choose one first certification that fits your current level, and treat intermediate and advanced certifications as later goals once you have BA experience. Build a study plan that covers the syllabus through reading and applied practice, not memorisation alone.",
+      "timeframe": "Weeks 20-26"
+     },
+     {
+      "title": "Write a CV built on evidence",
+      "action": "Draft a CV that leads with analysis evidence, describing the work you did, the problem you helped solve, and the outcome for each role or project. Include your portfolio artifacts and practice projects, labelled honestly, and tailor the strongest examples to each role you apply for. Ask a reviewer to check the CV for vague claims, and rewrite any claim you could not support with an example in an interview.",
+      "timeframe": "Weeks 22-28"
+     },
+     {
+      "title": "Prepare situational interview examples",
+      "action": "Prepare five or six situational examples covering difficult stakeholders, vague requests, changed requirements, conflicting needs, and a workshop or facilitation task. For each example, practise a clear account of the situation, what you did, and what happened, with enough detail to show judgement. Rehearse the examples aloud, time them, and trim any part that does not help the listener follow your reasoning.",
+      "timeframe": "Weeks 24-30"
+     },
+     {
+      "title": "Plan your first 90 days",
+      "action": "Write a first 90 days plan that starts with listening, learning the domain, meeting stakeholders, and understanding how work flows today. Set small, deliverable goals for each month, such as owning one analysis task well, building one trusted relationship in each key team, and asking for feedback at regular points. Keep the plan flexible, because your first weeks will teach you what the role really needs.",
+      "timeframe": "Months 6-12"
+     }
+    ],
+    "keyPoints": [
+     "Certification supports evidence of work, and does not replace it.",
+     "Choose a first certification that fits your current experience level.",
+     "A BA CV should lead with evidence, tailored to each role.",
+     "In the first 90 days, listen, learn, deliver small wins, and seek feedback."
+    ]
+   }
+  ],
+  "skills": [
+   "Elicitation and interviewing",
+   "Stakeholder analysis",
+   "Requirements writing",
+   "Process modelling",
+   "User story writing",
+   "Acceptance criteria",
+   "Workshop facilitation",
+   "Data analysis basics",
+   "Communication and presentation",
+   "Problem solving"
+  ],
+  "tools": [
+   "Jira",
+   "Confluence",
+   "Excel",
+   "Lucidchart",
+   "Miro",
+   "Figma",
+   "Trello",
+   "Notion",
+   "Balsamiq",
+   "Postman"
+  ],
+  "certifications": [
+   {
+    "name": "ECBA",
+    "body": "IIBA",
+    "note": "Suits beginners with little or no BA experience who want an entry-level credential early in the journey."
+   },
+   {
+    "name": "CCBA",
+    "body": "IIBA",
+    "note": "Suits analysts with some BA work experience who want an intermediate credential after building practical evidence."
+   },
+   {
+    "name": "CBAP",
+    "body": "IIBA",
+    "note": "Suits experienced analysts as a later goal, once years of BA work meet the eligibility requirements."
+   },
+   {
+    "name": "PMI-PBA",
+    "body": "PMI",
+    "note": "Suits analysts who work closely with projects and want a credential focused on business analysis within project delivery."
+   },
+   {
+    "name": "PSPO",
+    "body": "Scrum.org",
+    "note": "Suits analysts working in Scrum teams who want a related option focused on the product owner role and backlog ownership."
+   }
+  ],
+  "portfolio": [
+   "Business requirements document for a practice project",
+   "Current and future process flows for one change",
+   "Stakeholder map with engagement plan",
+   "User stories with acceptance criteria",
+   "Traceability list linking needs to test checks",
+   "Workshop plan, notes, and agreed actions",
+   "End-to-end case study with decisions and revisions"
+  ],
+  "mistakes": [
+   "Collecting courses and notes without practising the work leaves no proof that you can do analysis.",
+   "Studying advanced topics before requirements writing, stakeholder handling, and modelling wastes limited study time.",
+   "Writing vague requirements that no tester could check creates rework and confusion for the whole team.",
+   "Skipping stakeholder analysis leads to late surprises from groups who were not involved early enough.",
+   "Copying example documents without understanding them produces a portfolio you cannot explain in an interview.",
+   "Treating certification as a guarantee of a role ignores the portfolio and interview evidence that hiring decisions rest on.",
+   "Applying with a generic CV that lists duties instead of analysis evidence hides the strengths a reviewer needs to see."
+  ]
+ },
+ {
+  "id": "how-to-become-a-payments-and-banking-ba",
+  "title": "How to Become a Payments and Banking BA",
+  "level": "practitioner",
+  "description": [
+   "This guide shows working analysts and operations staff how to build payments and banking knowledge step by step, from payment rails and messages to controls and a portfolio that proves the specialism. Each section combines plain-language study text with practical steps you can complete alongside work."
+  ],
+  "audience": "This guide is for working business analysts who want to specialise in payments and banking, and for payments operations, reconciliation, or support staff who want to move into a business analyst role.",
+  "timeframe": "A realistic range is 6 to 12 months of steady study alongside work, depending on prior experience, familiarity with banking, and the time available each week.",
+  "sections": [
+   {
+    "heading": "The banking and payments landscape",
+    "paragraphs": [
+     "Banks and payment providers work together to move money for people and businesses. A bank typically holds accounts, offers payment services, and connects to clearing and settlement systems that move funds between banks. A payment provider may offer a narrower service, such as helping a business accept payments or send payouts, and it often relies on a bank for accounts and settlement. As a business analyst, it helps to start with this simple picture: customers and businesses give instructions, banks and providers process them, and shared systems settle the movement of funds.",
+     "Retail banking serves individuals and small businesses, with high numbers of relatively small payments such as salary credits, bill payments, and card purchases. Corporate banking serves larger businesses, which need bulk payments, payroll runs, supplier payments, collections, and detailed reporting for reconciliation. The same bank may serve both groups, but the products, channels, volumes, and reporting needs differ. A corporate client, for example, may send a single file containing many payment instructions, while an individual customer usually makes one payment at a time through an app or a branch.",
+     "Every payment follows a life cycle, even when the steps happen quickly. It starts with an instruction that states who pays, who receives, how much, in which currency, and when value should be given. The instruction is checked for completeness, funds, limits, and controls, then processed and sent through the relevant clearing or messaging route. Settlement moves the funds between accounts, confirmation goes back to the parties involved, and reconciliation checks that records match at each stage. When any step fails or needs review, the payment becomes an exception that the operations team must investigate and resolve.",
+     "A business analyst adds value by making this life cycle clear, complete, and testable. That work includes mapping current flows, writing requirements for new payment products or changes, spotting gaps between business needs and system behaviour, and helping stakeholders agree on rules for cut-offs, fees, limits, and exceptions. The analyst also supports testing by defining realistic scenarios, including failures and edge cases, and helps operations teams prepare for the change. In a bank, that clarity matters because a small gap in a requirement can affect many payments, many customers, and many downstream records."
+    ],
+    "steps": [
+     {
+      "title": "Map the banking landscape",
+      "action": "Draw a one-page map showing customers, the bank, payment providers, and clearing and settlement systems, with arrows for instructions and funds. Label each party in plain words and add one sentence for what each party does. Keep the map simple enough to explain to a colleague in two minutes.",
+      "timeframe": "Weeks 1-2"
+     },
+     {
+      "title": "Compare retail and corporate needs",
+      "action": "Make a two-column comparison of retail and corporate banking needs, covering payment types, channels, volumes, and reporting. Add one example payment for each side and note where the needs differ. Use the comparison to practise explaining why one design rarely fits both groups.",
+      "timeframe": "Weeks 2-3"
+     },
+     {
+      "title": "Trace one payment end to end",
+      "action": "Choose one simple payment, such as a domestic transfer between accounts at different banks, and write out each step from instruction to reconciliation. Note who acts at each step, what is checked, and what happens if the step fails. Ask a colleague in operations to review the trace and correct any missing steps.",
+      "timeframe": "Weeks 3-4"
+     },
+     {
+      "title": "List where a BA adds value",
+      "action": "Write a short list of business analyst contributions for a payment change, such as flow mapping, requirements, gap analysis, scenario definition, and readiness support. For each contribution, add one example of what good looks like. Keep the list to use when you explain your role to stakeholders.",
+      "timeframe": "Weeks 4-5"
+     }
+    ],
+    "keyPoints": [
+     "Banks hold accounts and connect to shared systems; providers often rely on banks for settlement.",
+     "Retail and corporate customers need different payment products, channels, and reporting.",
+     "Every payment moves from instruction through checks, clearing, settlement, and reconciliation.",
+     "A BA adds value by making flows, rules, and exceptions clear and testable."
+    ]
+   },
+   {
+    "heading": "Payments rails and clearing",
+    "paragraphs": [
+     "A payment rail is the route a payment travels to reach its destination, including the systems, rules, and timetables that govern the journey. Domestic clearing brings together payment instructions from different banks, checks and sorts them, and prepares them for settlement. Some systems process payments in batches at set times, while others process payments one by one in near real time. As an analyst, you need to know which rail a payment uses, because the rail decides timing, data needs, limits, and what happens when something goes wrong.",
+     "Real-time payments settle quickly and are available for much of the day and week in many domestic systems. That speed changes requirements: checks must happen before release, balances and limits must be current, and exception handling must be fast because there is little time to fix a payment after it has gone. Batch payments, by contrast, are grouped and processed at agreed times, which allows more time for validation and repair but means the recipient waits longer. A good requirements pack states which model applies and what the customer and the operations team should expect at each stage.",
+     "Cross-border payments often travel through correspondent banking, where banks hold accounts with each other to settle payments in currencies and places where they have no direct presence. A payment may pass through one or more intermediary banks, each checking the instruction and passing it on with the details needed for the next step. Fees, currency conversion, and time zones can affect the amount received and the date value is given. The analyst must capture these steps, the parties involved, and the information that must travel with the payment so it is not delayed or returned.",
+     "Cut-off times and value dating control when a payment counts as made. A cut-off time is the latest time an instruction can be accepted for processing on a given day; an instruction received after the cut-off is normally processed on the next working day. Value dating states the date on which funds are treated as available to the recipient or debited from the sender, which may differ from the date the instruction was sent. Requirements must state cut-offs, working day rules, and value dating clearly, because customers, operations teams, and reconciliation all depend on the same dates."
+    ],
+    "steps": [
+     {
+      "title": "Learn domestic clearing basics",
+      "action": "Write a plain-language summary of how domestic clearing works, covering instruction collection, sorting, checks, and preparation for settlement. Include batch and single-payment processing and note when each is used. Test your summary by explaining it without notes to a colleague.",
+      "timeframe": "Weeks 5-6"
+     },
+     {
+      "title": "Compare real-time and batch payments",
+      "action": "Build a comparison table for real-time and batch payments covering speed, availability, checks, limits, and exception handling. Add one requirement difference for each row, such as what must be validated before release. Use the table when you review requirements for a new payment product.",
+      "timeframe": "Weeks 6-7"
+     },
+     {
+      "title": "Trace a cross-border payment",
+      "action": "Draw the journey of a cross-border payment through the sending bank, any intermediary banks, and the receiving bank. Label the accounts used for settlement, the checks at each step, and the details that must travel with the payment. Note where fees, currency conversion, and time zones affect the outcome.",
+      "timeframe": "Weeks 7-8"
+     },
+     {
+      "title": "Explain cut-offs and value dating",
+      "action": "Write three worked examples showing how cut-off times and value dates affect a payment sent in the morning, late in the day, and before a non-working day. State the processing date and value date for each example in plain words. Share the examples with the operations team and correct them from feedback.",
+      "timeframe": "Weeks 8-9"
+     }
+    ],
+    "keyPoints": [
+     "The payment rail decides timing, data, limits, and exception handling.",
+     "Real-time payments need checks before release; batch payments allow more repair time.",
+     "Cross-border payments may pass through intermediary banks that hold settlement accounts.",
+     "Cut-off times and value dates must be stated clearly in every payment requirement."
+    ]
+   },
+   {
+    "heading": "Messaging: SWIFT and ISO 20022",
+    "paragraphs": [
+     "Payment messages carry the structured details that systems need to process a payment without manual retyping. A message states the sender and receiver, the amount and currency, account details, dates, charges, and any extra information the recipient needs for reconciliation. If a detail is missing, unclear, or in the wrong field, the payment can be delayed, repaired by hand, or returned. The analyst must understand what each message is for, what it must contain, and how systems use each field.",
+     "The MT family is the older generation of structured financial messages, written in a compact format with coded fields. The MX family is the newer generation based on ISO 20022 and written in XML, which carries richer and more clearly labelled data. In plain terms, MT messages say the same kinds of things as MX messages, but MX messages organise the data more clearly and allow more detail, such as structured addresses and richer remittance information. Learning programmes offered by standards bodies can help here, but focus first on reading real message structures and understanding what each part means.",
+     "Two messages are worth learning early. The pain.001 message is a customer-to-bank instruction that starts a credit transfer, carrying the payment details the bank needs to act. The pacs.008 message is a bank-to-bank instruction for a customer credit transfer, carrying the details from one bank to the next so the payment can be processed and settled. When you read either message, start with the parties, amount, currency, dates, and accounts, then look at charges, purpose, and remittance details. A statement message such as camt.053 then reports account activity back to the customer, which supports reconciliation.",
+     "Mapping fields between old and new formats is core payments analysis work. A mapping shows which field in the old message feeds which field in the new message, what transformation is needed, and what to do when there is no direct match. For example, a customer credit transfer sent as an MT103 maps in the new world to a pacs.008, and the analyst must confirm that every needed detail survives the move. The migration from MT to MX is therefore not only a technical change: it needs business decisions about data quality, structured addresses, character sets, and how to handle information that has no exact equivalent. Requirements must cover mandatory fields, optional fields, validation rules, and fallback handling, and testing must prove that mapped messages still produce the right payment outcome."
+    ],
+    "steps": [
+     {
+      "title": "Learn what a message carries",
+      "action": "List the details a payment message must carry, grouped as parties, amount and currency, accounts, dates, charges, and remittance information. For each group, note what goes wrong if the detail is missing or wrong. Keep the list as a reference when you read any payment message.",
+      "timeframe": "Weeks 9-10"
+     },
+     {
+      "title": "Read a pain.001 and a pacs.008",
+      "action": "Obtain sample structures for a pain.001 and a pacs.008 from training material or a test environment and read them field by field. Identify the parties, amount, currency, dates, accounts, and remittance details in each message. Write a plain-language summary of what each message does and who sends it to whom.",
+      "timeframe": "Weeks 10-11"
+     },
+     {
+      "title": "Practise mapping old to new fields",
+      "action": "Build a field mapping in Excel with columns for the source field, the target field, the transformation rule, and the handling when no match exists. Map a small set of fields from an MT message to its MX equivalent and add validation notes for each row. Ask a technical colleague to review the mapping for gaps and unclear rules.",
+      "timeframe": "Weeks 11-13"
+     },
+     {
+      "title": "Summarise the MT to MX migration",
+      "action": "Write a two-page summary of the MT to MX migration in plain language, covering why the change is happening, what data improves, and what decisions the business must make. Include data quality, structured addresses, and fallback handling for unmatched information. Use the summary to explain the migration to a non-technical stakeholder.",
+      "timeframe": "Weeks 12-14"
+     }
+    ],
+    "keyPoints": [
+     "Messages carry structured payment details; missing or wrong fields cause delays and returns.",
+     "MT is the older compact format; MX is the ISO 20022 format with richer, clearer data.",
+     "pain.001 starts a customer credit transfer; pacs.008 carries it between banks.",
+     "Mapping must cover transformations, validation, and handling for unmatched fields."
+    ]
+   },
+   {
+    "heading": "Cards, settlement, and liquidity",
+    "paragraphs": [
+     "A card payment has three main stages: authorisation, clearing, and settlement. Authorisation checks, at the time of purchase, whether the card is valid, whether funds or credit are available, and whether fraud checks pass. Clearing sends the transaction details from the accepting side to the issuing side so the amounts can be checked and agreed. Settlement then moves funds between accounts to pay for the cleared transactions, and the cardholder sees the transaction on a statement.",
+     "Settlement accounts and funding keep this movement orderly. Banks and providers hold settlement accounts where cleared amounts are collected and paid, and they must fund those accounts so payments can settle on time. If funding is short, settlement can be delayed, which affects merchants, customers, and downstream reconciliation. Requirements for card and payment changes must state settlement timing, funding responsibilities, and what happens when funds are not available as expected.",
+     "Liquidity is the ability to meet payment obligations when they fall due, and intraday positions show how that ability changes during the day. As payments go out and come in, balances move, and the operations and treasury teams watch positions to avoid shortfalls. A payment that settles early in the day uses funds differently from one that settles late, and large or unexpected payments can change the position quickly. The analyst does not need to manage liquidity directly, but must understand timing, cut-offs, and funding needs well enough to write requirements that do not create avoidable strain.",
+     "Reconciliation checks that records match across systems, accounts, and external reports, and exception handling deals with the breaks. Common breaks include missing transactions, amount differences, duplicate records, and timing differences where one side has recorded an item and the other has not yet done so. Good exception handling defines how breaks are found, who investigates them, what evidence is needed, and how long resolution should take. The analyst helps by mapping reconciliation points, defining break categories, and writing clear rules for investigation and correction."
+    ],
+    "steps": [
+     {
+      "title": "Draw a card payment flow",
+      "action": "Draw a flow showing authorisation, clearing, and settlement for one card purchase, with the cardholder, merchant, and banks shown as separate parties. Label the checks at authorisation and the records created at each stage. Walk through the flow with a colleague and fix any steps that are out of order.",
+      "timeframe": "Weeks 14-15"
+     },
+     {
+      "title": "Explain settlement and funding",
+      "action": "Write a short explanation of settlement accounts and funding, covering where cleared amounts collect, who funds the account, and when settlement happens. Add one example of what happens if funding is short. Keep the language simple enough for a stakeholder who has not worked in operations.",
+      "timeframe": "Weeks 15-16"
+     },
+     {
+      "title": "Describe intraday liquidity simply",
+      "action": "Write a one-page note explaining intraday liquidity in plain terms, using a simple timeline of payments in and out during a day. Show how timing and large payments change the position and why cut-offs matter. Ask someone in operations or treasury to check the note for accuracy.",
+      "timeframe": "Weeks 16-17"
+     },
+     {
+      "title": "Work through reconciliation breaks",
+      "action": "Collect five example break types, such as a missing item, an amount difference, a duplicate, a timing difference, and a fee difference, and write the investigation steps for each. State the evidence needed, the owner, and the correction action for every type. Build the examples into a checklist in Excel for use during testing.",
+      "timeframe": "Weeks 17-19"
+     }
+    ],
+    "keyPoints": [
+     "Card payments move through authorisation, clearing, and settlement.",
+     "Settlement accounts must be funded on time or settlement is delayed.",
+     "Intraday positions change as payments arrive and leave during the day.",
+     "Reconciliation finds breaks; exception handling defines owners, evidence, and fixes."
+    ]
+   },
+   {
+    "heading": "Compliance, risk, and controls",
+    "paragraphs": [
+     "Anti-money-laundering rules require banks to understand their customers, monitor activity for unusual patterns, and report concerns through proper channels. Sanctions screening checks payment parties and details against lists of restricted persons, organisations, and places, and payments that match must be held for review. These checks happen alongside payment processing, so requirements must state when screening occurs, what happens to a held payment, and who reviews it. The analyst must treat these controls as part of the payment flow, not as an extra step added at the end.",
+     "Fraud controls protect customers and the bank from unauthorised or deceptive payments. Controls include authentication checks, transaction limits, velocity checks that spot unusual frequency, and monitoring rules that flag patterns for review. Each control needs clear rules: what triggers it, what action follows, how the customer is told, and how a genuine payment is released without undue delay. Requirements must balance protection with customer experience, and must state how controls are tested without exposing real customer data.",
+     "Audit trails and evidence prove what happened, when it happened, and who acted. A good audit trail records the instruction, checks performed, decisions made, changes to payment details, and confirmations sent, in a form that can be retrieved later. Evidence also includes approved requirements, test results, and records of stakeholder agreement, which show that a change was properly understood and checked. The analyst helps by defining what must be logged, how long records are kept under internal policy, and how reviewers can find the evidence they need.",
+     "Regulation shapes requirements because payment products must follow the rules that apply in each place where they operate. A new feature may need extra customer checks, clearer disclosures, stronger controls, or different handling for certain payment types. Working well with compliance and risk teams means involving them early, asking what rules apply, and writing requirements that show how each rule is met. Early involvement avoids late rework, when a missing control or a misunderstood rule forces a design to change after build has started."
+    ],
+    "steps": [
+     {
+      "title": "Learn screening concepts simply",
+      "action": "Write plain-language definitions for customer checks, transaction monitoring, sanctions screening, and payment holds. For each term, add one example of how it affects a payment in flight. Review the definitions with a compliance colleague and correct any loose wording.",
+      "timeframe": "Weeks 19-20"
+     },
+     {
+      "title": "Map fraud controls to payment steps",
+      "action": "Take one payment flow and mark where each fraud control applies, such as authentication, limits, velocity checks, and monitoring rules. For each control, state the trigger, the action, and how a genuine payment is released. Note what must be tested for each control without using real customer data.",
+      "timeframe": "Weeks 20-21"
+     },
+     {
+      "title": "Define audit evidence for a change",
+      "action": "For a sample payment change, list the audit evidence required, including logs, decisions, approvals, and test results. State what each item must show, who can retrieve it, and how it will be stored under internal policy. Share the list with a risk colleague and add any missing evidence types.",
+      "timeframe": "Weeks 21-22"
+     },
+     {
+      "title": "Practise working with control teams",
+      "action": "Draft a short set of questions to ask compliance and risk teams at the start of a payment change, covering applicable rules, required controls, and evidence needs. Practise the conversation with a colleague playing the reviewer role and note where your questions were unclear. Refine the question set into a reusable checklist for future changes.",
+      "timeframe": "Weeks 22-24"
+     }
+    ],
+    "keyPoints": [
+     "Screening and monitoring are part of the payment flow, not an afterthought.",
+     "Fraud controls need clear triggers, actions, and release paths for genuine payments.",
+     "Audit trails must show what happened, when, and who acted.",
+     "Involve compliance and risk teams early to avoid late rework."
+    ]
+   },
+   {
+    "heading": "Build the specialism",
+    "paragraphs": [
+     "A payments portfolio proves the specialism better than a list of courses. It should show real analytical work, even when the examples are anonymised or built as practice exercises: a message mapping, a payment flow diagram, an exception case write-up, and a requirements pack for a payment change. Each item should be clean, clearly labelled, and explained in plain language, so a reviewer can see your thinking without needing a guided tour. Certificates help, but evidence of domain work matters more than certificates when a hiring manager judges whether you can do payments analysis.",
+     "Learning from operations teams and real cases builds judgement that theory alone cannot give. Operations staff see where payments fail, which exceptions recur, and which requirements were unclear in practice, and their stories teach the details that matter. Ask to sit with the operations team, review anonymised exception cases, and trace how each case was investigated and resolved. Keep notes on patterns you see, such as repeated data errors or unclear cut-off rules, and turn the patterns into better requirements and better test scenarios.",
+     "Credibility in payments comes from precision with terms, checking facts, and admitting what you do not yet know. Use each term the same way every time, confirm field meanings and timetables before writing them into requirements, and ask when a stakeholder uses a term loosely. Small errors, such as mixing up clearing and settlement or misstating a value date rule, damage trust quickly because payment work depends on exact detail. Build the habit of verifying every payment fact against a reliable source and recording where you confirmed it.",
+     "Landing the first payments business analyst role usually starts close to where you already are: a payments team in your current organisation, a project that needs payments knowledge, or a role that values operations experience. Use the portfolio to show what you can do, talk about real cases and flows in interviews, and be clear about the rails, messages, and controls you understand. Once in role, keep growing by taking on harder mappings, larger changes, and closer work with compliance, operations, and technical teams, and by keeping your portfolio current as your experience deepens."
+    ],
+    "steps": [
+     {
+      "title": "Build a message mapping sample",
+      "action": "Create a polished mapping sample in Excel covering a small set of fields from an MT message to its MX equivalent, with transformation rules and validation notes. Add a one-page cover note explaining the purpose, scope, and decisions in the mapping. Treat the sample as a portfolio piece and check every field meaning before finalising it.",
+      "timeframe": "Months 6-7"
+     },
+     {
+      "title": "Write up three exception cases",
+      "action": "Write up three anonymised exception cases, each covering what went wrong, how it was found, how it was investigated, and how it was fixed. Remove all real customer and account details and use generic parties throughout. Add a lessons section to each case showing what requirement or check would prevent a repeat.",
+      "timeframe": "Months 6-8"
+     },
+     {
+      "title": "Build credibility habits",
+      "action": "Start a personal glossary of payments terms with your own plain-language definitions and one example for each term. Review the glossary weekly, correct loose definitions, and check new terms against a reliable source before using them in requirements. Share the glossary with a peer and invite corrections.",
+      "timeframe": "Months 7-9"
+     },
+     {
+      "title": "Plan the move into a payments role",
+      "action": "Write a short plan naming the payments teams, projects, or roles you will target, the portfolio items you will show, and the gaps you will close first. For each gap, set a practical next step with a date, such as completing a flow diagram or shadowing the operations team. Review the plan monthly and update it as you complete items and learn more.",
+      "timeframe": "Months 8-10"
+     }
+    ],
+    "keyPoints": [
+     "A portfolio of mappings, flows, and case write-ups proves payments ability.",
+     "Operations experience and real exception cases build practical judgement.",
+     "Precision with terms and checked facts build credibility fast.",
+     "Target roles close to your current experience and grow from there."
+    ]
+   }
+  ],
+  "skills": [
+   "Payment life cycle knowledge",
+   "Payment message reading",
+   "Field mapping and data analysis",
+   "Process modelling and flow diagrams",
+   "Requirements writing for payment changes",
+   "Reconciliation and exception analysis",
+   "Risk and control thinking",
+   "Stakeholder interviewing and workshops",
+   "Testing payment scenarios and edge cases",
+   "Clear writing with precise payment terms"
+  ],
+  "tools": [
+   "Excel",
+   "SQL",
+   "Jira",
+   "Confluence",
+   "Visio",
+   "Lucidchart",
+   "Postman",
+   "Power BI",
+   "Tableau",
+   "Miro"
+  ],
+  "certifications": [
+   {
+    "name": "CCBA",
+    "body": "IIBA",
+    "note": "Suits analysts with some business analysis experience who want a recognised foundation before specialising further in payments."
+   },
+   {
+    "name": "CBAP",
+    "body": "IIBA",
+    "note": "Suits experienced analysts who want an advanced credential after building several years of business analysis experience."
+   },
+   {
+    "name": "PMI-PBA",
+    "body": "PMI",
+    "note": "Suits analysts who work closely with project teams and want to evidence business analysis within a project delivery setting."
+   }
+  ],
+  "portfolio": [
+   "Payment life cycle flow diagram",
+   "Message field mapping sample",
+   "Card payment flow diagram",
+   "Exception handling case write-up",
+   "Reconciliation break analysis example",
+   "Requirements pack for a payment change",
+   "Controls and audit evidence checklist"
+  ],
+  "mistakes": [
+   "Learning message names without understanding what each field means in a real payment.",
+   "Using payments terms loosely and mixing up clearing, settlement, and authorisation.",
+   "Skipping operations experience and trying to learn payments from theory alone.",
+   "Treating compliance checks as an afterthought instead of part of the requirements from the start.",
+   "Writing requirements without cut-off times, value dates, and exception paths.",
+   "Collecting certificates without building portfolio evidence that shows payments work.",
+   "Assuming one payment type explains all payment types, instead of comparing rails and flows."
+  ]
+ },
+ {
+  "id": "how-to-become-a-product-owner",
+  "title": "How to Become a Product Owner",
+  "level": "practitioner",
+  "description": [
+   "This guide explains what a Product Owner owns, how to build backlog and stakeholder skills, and how to move into the role with proof of work. It covers the move from business analysis, value based ordering, and the first steps in the role."
+  ],
+  "audience": "This guide is for business analysts moving into the Product Owner role, for testers, developers, and support and operations staff aiming at the role, and for new Product Owners finding their feet.",
+  "timeframe": "Most learners need three to six months of steady part time study and practice to be ready to apply for Product Owner roles, depending on prior experience and time available.",
+  "sections": [
+   {
+    "heading": "What a Product Owner actually owns",
+    "paragraphs": [
+     "A Product Owner is accountable for the product backlog and for the value the product delivers. That accountability means the Product Owner decides what gets built next, what waits, and what does not get built at all. The backlog is not a wish list. It is an ordered list that reflects judgement about value, risk, learning, and the needs of the people who use the product.",
+     "Owning decisions is different from writing tickets. Writing a clear ticket matters, but the core of the role is deciding why an item matters, how it fits the wider goal, and whether it is worth doing now. A Product Owner who only records other people's requests has not taken ownership. Ownership shows when the Product Owner can explain each ordering choice in plain language and can change the order when new evidence appears.",
+     "The role works alongside a Scrum Master and a development team, and each role has a different focus. The Scrum Master helps the team work well and remove obstacles. The development team decides how to build the work. The Product Owner decides what the work should achieve and in which order it should be tackled. In payments and banking work, this separation matters because the Product Owner often carries the conversation with operations, risk, and compliance colleagues while the team focuses on building a safe and workable change.",
+     "Good looks ordinary from the outside. The backlog is ready for the next sprint without being over specified. Stakeholders know what is coming and why. The team gets quick answers and honest feedback. The Product Owner spends time with users, reads feedback, checks what happened after a release, and adjusts the plan. The work is steady rather than dramatic, and the value comes from many small, well judged decisions."
+    ],
+    "steps": [
+     {
+      "title": "Write down what the Product Owner decides",
+      "action": "Write a one page list of the decisions a Product Owner owns, including backlog order, acceptance of work, and release scope. For each decision, write one sentence on what good judgement looks like. Keep the list where you can revisit it as you learn, and update it when your understanding changes.",
+      "timeframe": "Weeks 1-2"
+     },
+     {
+      "title": "Map the backlog to value, not to requests",
+      "action": "Take five real or fictional requests and sort them by the value they would deliver, not by who asked first. Write one sentence of reasoning for each position in the order. Share the order with a colleague and ask them to challenge your reasoning.",
+      "timeframe": "Weeks 1-2"
+     },
+     {
+      "title": "Observe how the role works with the team",
+      "action": "Observe or read about how a Product Owner, a Scrum Master, and a development team work together during a sprint. Note who decides what, and where the boundaries sit. Write down two questions you would ask to clarify the boundaries in your own workplace.",
+      "timeframe": "Weeks 2-3"
+     },
+     {
+      "title": "Describe a good Product Owner day in writing",
+      "action": "Write a short description of a good Product Owner day, hour by hour, including time with users, time with the team, and time reviewing feedback. Compare it with how you spend your day now. Identify one habit to start and one habit to reduce.",
+      "timeframe": "Weeks 2-3"
+     }
+    ],
+    "keyPoints": [
+     "The Product Owner is accountable for the backlog and for value.",
+     "Owning decisions matters more than writing tickets.",
+     "The Product Owner, Scrum Master, and development team have different focuses.",
+     "Good looks like a ready backlog, quick answers, and learning after release."
+    ]
+   },
+   {
+    "heading": "The BA to PO path",
+    "paragraphs": [
+     "Business analysts bring a strong starting point to this role. Elicitation, modelling, stakeholder work, and careful thinking about requirements all transfer directly. An analyst who can listen well, ask precise questions, and explain a complex process in simple terms already has much of the craft a Product Owner needs. In banking and payments, knowledge of how money moves, where controls sit, and what operations teams need day to day is also valuable, because it helps the Product Owner judge what matters and what is risky.",
+     "What changes is who makes the final call. As an analyst, you often present options and recommend a course of action while someone else decides. As a Product Owner, you own the decision and the ordering that follows from it. You also own saying no, or not yet, when a request does not serve the product goal. That shift can feel uncomfortable at first, especially when the request comes from a senior stakeholder or a loud voice in the room.",
+     "Some analyst habits need to be unlearned, or at least loosened. Trying to specify every detail before work starts slows the team down and leaves little room for learning. Waiting for perfect agreement before deciding also slows delivery. A Product Owner needs enough clarity to start, a way to learn quickly, and the willingness to revisit a decision when the evidence changes. Detail still matters, but it is added where it reduces risk, not everywhere by default.",
+     "You do not need the title before you practise ownership. Volunteer to own the ordering of a small backlog, a set of defects, or a list of small improvements. Make the order visible, explain your reasons, and invite challenge. Ask for feedback on your decisions after a release or a sprint. People moving from testing, development, support, or operations can do the same by owning one area, learning how users experience it, and showing that they can decide, explain, and learn from the result."
+    ],
+    "steps": [
+     {
+      "title": "List the BA skills that transfer directly",
+      "action": "List your analysis skills and mark which ones transfer directly, such as elicitation, process modelling, and stakeholder management. Add an example of each skill from your own work. Use the list to write a short paragraph on why your background fits the Product Owner role.",
+      "timeframe": "Weeks 3-4"
+     },
+     {
+      "title": "Practise making a decision and recording it",
+      "action": "Choose a real decision you can make this week, such as the order of a small list of improvements. Make the decision, record your reasons in writing, and tell the people affected. After a week, review whether the decision held up and note what you learned.",
+      "timeframe": "Weeks 3-4"
+     },
+     {
+      "title": "Spot habits that keep you in analysis mode",
+      "action": "Review a recent piece of analysis and highlight where you added detail that did not change the decision. Rewrite the same material with only the detail needed to start safely. Ask a colleague whether the shorter version is clear enough to act on.",
+      "timeframe": "Weeks 4-5"
+     },
+     {
+      "title": "Take ownership of one small area end to end",
+      "action": "Volunteer to own one small area end to end, such as a set of defects, a help page, or a list of small fixes. Keep the order visible, explain changes, and report on what happened after each change. Treat questions and pushback as practice for stakeholder conversations.",
+      "timeframe": "Weeks 4-6"
+     }
+    ],
+    "keyPoints": [
+     "Elicitation, modelling, and stakeholder work transfer directly.",
+     "The change is owning decisions, ordering, and saying no.",
+     "Loosen the habit of specifying everything before starting.",
+     "Practise ownership on a small area before holding the title."
+    ]
+   },
+   {
+    "heading": "Backlog craft",
+    "paragraphs": [
+     "Backlog craft is the daily work of turning needs into items a team can build and test. A good item states who it is for, what they need to do, and why it matters. It is small enough to finish within a sprint and clear enough that the team can discuss it without guessing. The story is a starting point for conversation, not a contract that removes the need to talk.",
+     "Acceptance criteria describe how you will know the item works. Write them as checks that can be observed, using concrete behaviour rather than vague words. For a payments example, a criterion might describe what the user sees after a payment is submitted, what happens when a required field is missing, and what record is kept for later checking. Criteria like these help the team, help testers, and give the Product Owner a fair basis for accepting the work.",
+     "Large items need splitting before they can be built well. Split by user need, by a single workflow step, or by a simple version first with extra cases later. Avoid splitting by technical layer alone, because that often leaves nothing usable until every layer is done. Each split item should still deliver something real, even if it is a narrow slice of the whole.",
+     "Ordering is a judgement about value and risk, not a queue in arrival order. Ask what reduces the largest risk, what teaches the most, what unblocks other work, and what users need soonest. Refinement keeps the backlog ready by discussing items before the sprint, asking questions early, and removing items that no longer matter. Keep near term items clear and detailed, and keep later items light, so effort goes where it helps most."
+    ],
+    "steps": [
+     {
+      "title": "Rewrite vague requests as clear user stories",
+      "action": "Rewrite three vague requests as user stories that state who the user is, what they need, and why it matters. Remove jargon and keep each story to two or three sentences. Ask someone unfamiliar with the work to read them and tell you what is still unclear.",
+      "timeframe": "Weeks 5-6"
+     },
+     {
+      "title": "Add acceptance criteria that can be checked",
+      "action": "Add three to five acceptance criteria to each story you rewrote, written as checks that can be observed. Include a normal case, an error case, and an edge case where one exists. Check that each criterion could be tested without further explanation from you.",
+      "timeframe": "Weeks 5-7"
+     },
+     {
+      "title": "Split one large item into smaller usable items",
+      "action": "Take one large item and split it into three or four smaller items, each delivering something usable on its own. Use a backlog tool such as Jira to record the split and link the smaller items to the original need. Review the split with a colleague and remove any item that adds no value alone.",
+      "timeframe": "Weeks 6-7"
+     },
+     {
+      "title": "Order a practice backlog and explain the order",
+      "action": "Order a practice backlog of ten items by value and risk, and write a short reason for the top three positions. Move one item up and one item down, and write down what would need to change for that new order to be right. Keep the exercise to one page so the reasoning stays sharp.",
+      "timeframe": "Weeks 6-8"
+     }
+    ],
+    "keyPoints": [
+     "A good item states who it is for, what they need, and why.",
+     "Acceptance criteria describe observable checks.",
+     "Split large items into small, usable slices.",
+     "Order by value and risk, and refine just enough, just in time."
+    ]
+   },
+   {
+    "heading": "Working with the team and stakeholders",
+    "paragraphs": [
+     "Sprint events give the Product Owner regular points to listen, decide, and learn. In sprint planning, the Product Owner explains the goal and the most important items, and answers questions so the team can plan with confidence. In the daily standup, the Product Owner listens for blocks and questions, and offers help or decisions without taking over the meeting. In the sprint review, the Product Owner shows what was built, gathers feedback, and discusses what should change. In the retrospective, the Product Owner listens to how the team worked and agrees improvements together.",
+     "Fast feedback is one of the most valuable things a Product Owner gives the team. When a question waits for days, work stalls or the team guesses. When feedback arrives quickly and clearly, the team can adjust while the work is still fresh. If you cannot answer at once, say when you will answer and keep to that time. A short, honest answer is better than a long silence.",
+     "Stakeholders will bring competing demands, and many of them will be reasonable on their own. The Product Owner manages this by keeping one visible order, explaining the reasons behind it, and showing what a change would displace. Invite stakeholders to discuss the trade off rather than arguing item by item. When people understand the goal and the limits on time, they are more willing to accept that their item must wait.",
+     "Trust with the delivery team grows from consistency. Say what you mean, keep decisions stable unless new evidence appears, and protect the team from constant changes of direction during a sprint. Credit the team for the work, share user feedback directly, and admit it plainly when a decision did not work out. Teams work best with a Product Owner who is present, prepared, and willing to learn alongside them."
+    ],
+    "steps": [
+     {
+      "title": "Learn the purpose of each sprint event",
+      "action": "For each sprint event, write one paragraph on its purpose and what the Product Owner contributes. Include sprint planning, the daily standup, the sprint review, and the retrospective. Use this as a checklist before your next sprint, and note where you added value in each event.",
+      "timeframe": "Weeks 7-9"
+     },
+     {
+      "title": "Practise giving feedback within one working day",
+      "action": "For one sprint, answer every team question within one working day, or reply within that time with a clear time for a full answer. Keep a simple log of questions, answers, and waiting time. At the end of the sprint, review the log and identify questions you could have answered earlier.",
+      "timeframe": "Weeks 7-9"
+     },
+     {
+      "title": "Handle competing requests with a shared order",
+      "action": "When two stakeholders ask for conflicting work, put both requests in one visible order and explain the trade off in plain language. Show what would be delayed if the order changed. Record the agreed order and the reasons, and share it with both stakeholders.",
+      "timeframe": "Weeks 8-10"
+     },
+     {
+      "title": "Build trust by closing the loop with the team",
+      "action": "After each sprint, share user feedback with the team promptly and name what the team did well. Follow up on any promise you made during the sprint, even if the answer is that the work must wait. Ask the team for one thing you could do differently to help them next sprint.",
+      "timeframe": "Weeks 8-10"
+     }
+    ],
+    "keyPoints": [
+     "Use each sprint event for its own purpose.",
+     "Give fast, clear feedback, or say when it will come.",
+     "Manage competing demands with one visible order.",
+     "Build trust through consistency and follow through."
+    ]
+   },
+   {
+    "heading": "Value, outcomes, and saying no",
+    "paragraphs": [
+     "Outputs are what you ship. Outcomes are what changes for users or for the business as a result. A new screen, a new report, or a faster process is an output. Fewer failed payments, less manual rework for operations, or faster answers for customers are outcomes. A Product Owner should define the outcome before the work starts, so the team knows what success looks like beyond finishing the build.",
+     "Judging value does not need complex methods. Ask who benefits, how much it matters to them, what happens if the work is delayed, and what risk it removes. Look for simple evidence, such as user complaints, support contacts, manual workarounds, failed transactions, or time spent on a task. Use that evidence to compare items, and be honest when the evidence is thin. A decision based on stated assumptions is better than a decision based on the loudest request.",
+     "Prioritisation is always a trade off. Choosing one item means delaying another, and the Product Owner should make that cost visible. Consider value, urgency, risk, effort, and learning together, rather than relying on a single score. Sometimes the right choice is a small item that removes a large risk. Sometimes it is a larger item that unlocks several later items. Explain the reasoning in plain language so others can challenge it fairly.",
+     "Saying no is part of protecting value. Decline with a reason tied to the product goal, offer an alternative where one exists, and say what would need to change for the answer to change. After a release, check whether the intended outcome happened, share what was learned, and adjust the backlog. Learning from releases, including releases that missed the mark, is how judgement improves over time."
+    ],
+    "steps": [
+     {
+      "title": "Rewrite output goals as outcome goals",
+      "action": "Take three output goals, such as shipping a new screen, and rewrite each one as an outcome goal that describes what changes for users. Add a simple way to observe whether the outcome happened. Discuss the rewritten goals with a colleague and refine any that are still vague.",
+      "timeframe": "Weeks 9-11"
+     },
+     {
+      "title": "Judge value with simple questions and evidence",
+      "action": "Choose five backlog items and judge each one with four questions: who benefits, how much it matters, what happens if it waits, and what risk it removes. Use simple evidence such as support contacts, manual workarounds, or user comments. Rank the items and write one sentence on the evidence behind each rank.",
+      "timeframe": "Weeks 9-11"
+     },
+     {
+      "title": "Make a trade-off decision and explain it plainly",
+      "action": "Pick a real trade off, such as a new feature against fixing a painful defect, and decide which comes first. Write a short explanation covering value, risk, effort, and learning. Share the explanation with a colleague and revise it until a non specialist can follow the reasoning.",
+      "timeframe": "Weeks 10-12"
+     },
+     {
+      "title": "Decline a request with reasons and an alternative",
+      "action": "Practise declining a request by writing a reply that gives the reason, ties it to the product goal, and offers an alternative or a later date. State what would need to change for the answer to change. Read the reply aloud and remove any wording that sounds dismissive or unclear.",
+      "timeframe": "Weeks 10-12"
+     }
+    ],
+    "keyPoints": [
+     "Define outcomes, not just outputs, before work starts.",
+     "Judge value with simple questions and real evidence.",
+     "Make trade offs visible when you choose an order.",
+     "Decline with reasons and alternatives, then learn from releases."
+    ]
+   },
+   {
+    "heading": "Certification, proof, and landing the role",
+    "paragraphs": [
+     "Two well known entry certifications are CSPO and PSPO. CSPO is earned by completing a training course with an approved trainer, and it suits learners who want guided learning with discussion and examples. PSPO is earned by passing an assessment, and it suits learners who prefer self study and are comfortable preparing on their own. Check the current format, cost, and renewal requirements from the official source before you commit, because these details change over time.",
+     "Certification supports your move into the role, but it does not replace evidence of work. Hiring managers look for proof that you can order a backlog, make decisions, work with a team, and learn from outcomes. A certificate on its own does not show those things. Use certification to build knowledge and shared language, and use a portfolio to show how you apply that knowledge in practice. For analysts, a BA certification such as CBAP can also support the path by evidencing analysis depth, but the same rule applies: evidence of ownership matters more than any single credential.",
+     "Build a small portfolio that a hiring manager can read quickly. Include an ordered backlog example with acceptance criteria, a simple roadmap, and a short release story that explains a decision, what happened, and what you learned. Use fictional or anonymised examples if your real work cannot be shared, and make clear what you decided and why. Keep each artifact short, clean, and focused on judgement rather than volume.",
+     "In interviews, prepare stories about real decisions, including one that did not work out and what you changed as a result. Practise explaining ordering choices, trade offs, and how you handled a difficult stakeholder request. Once in role, use the first 90 days to listen, learn the product and its users, build trust with the team, and make the backlog visible. Avoid large changes in the first weeks. Earn credibility through steady decisions, clear communication, and follow through on what you promise."
+    ],
+    "steps": [
+     {
+      "title": "Compare CSPO and PSPO before choosing one",
+      "action": "Compare CSPO and PSPO on learning style, format, cost, and time needed, using the official sources for current details. Choose the option that fits how you learn best and the time you have available. Set a study plan with weekly goals and a target date, and record why you chose that option.",
+      "timeframe": "Weeks 11-13"
+     },
+     {
+      "title": "Build a small portfolio with three artifacts",
+      "action": "Build three portfolio artifacts: an ordered backlog example, a simple roadmap, and a short release story. Use fictional or anonymised examples where real work cannot be shared. Keep each artifact to one or two pages and make your decisions and reasoning easy to find.",
+      "timeframe": "Weeks 12-14"
+     },
+     {
+      "title": "Prepare interview stories about real decisions",
+      "action": "Prepare five interview stories covering an ordering decision, a trade off, a difficult stakeholder request, a release that taught you something, and a time you changed your mind. Practise telling each story in under three minutes, covering the situation, your decision, and the result. Ask a colleague to listen and note where your reasoning is unclear.",
+      "timeframe": "Weeks 13-16"
+     },
+     {
+      "title": "Plan your first 90 days as a Product Owner",
+      "action": "In your first 90 days, listen first, learn the product, meet users and stakeholders, and make the backlog visible. Set up regular feedback loops with the team and agree how questions will be answered. Avoid large changes in the first weeks, and earn trust through steady decisions and follow through.",
+      "timeframe": "First 90 days in role"
+     }
+    ],
+    "keyPoints": [
+     "Choose CSPO or PSPO based on how you learn best.",
+     "Certification supports, but does not replace, evidence of work.",
+     "Show judgement through a small, focused portfolio.",
+     "Use the first 90 days to listen, learn, and earn trust."
+    ]
+   }
+  ],
+  "skills": [
+   "Product backlog ordering",
+   "Writing user stories and acceptance criteria",
+   "Stakeholder management and expectation setting",
+   "Facilitating refinement and sprint events",
+   "Outcome definition and measurement",
+   "Prioritisation and trade-off decisions",
+   "User research and feedback analysis",
+   "Clear written and verbal communication",
+   "Basic data interpretation for product decisions",
+   "Understanding of agile delivery practices",
+   "Negotiation and saying no constructively",
+   "Roadmap planning and release thinking"
+  ],
+  "tools": [
+   "Jira",
+   "Azure DevOps",
+   "Trello",
+   "Miro",
+   "Figma",
+   "Confluence",
+   "Notion",
+   "Excel",
+   "Google Sheets",
+   "Lucidchart"
+  ],
+  "certifications": [
+   {
+    "name": "PSPO",
+    "body": "Scrum.org",
+    "note": "Suits self directed learners who want to test their understanding through an assessment before or soon after starting Product Owner work."
+   },
+   {
+    "name": "CSPO",
+    "body": "Scrum Alliance",
+    "note": "Suits learners who prefer guided training with discussion, taken when starting out or preparing for a first Product Owner role."
+   },
+   {
+    "name": "CBAP",
+    "body": "IIBA",
+    "note": "Suits experienced business analysts on the BA to PO path who want a supporting credential that evidences analysis depth alongside Product Owner experience."
+   }
+  ],
+  "portfolio": [
+   "A sample ordered product backlog with acceptance criteria",
+   "A product roadmap showing themes and sequencing",
+   "A release story describing a decision, outcome, and lesson",
+   "Before and after examples of split user stories",
+   "A stakeholder map with communication approach",
+   "A prioritisation example with trade-offs explained",
+   "A refinement summary showing questions and decisions"
+  ],
+  "mistakes": [
+   "The Product Owner writes tickets all day while avoiding the ordering and value decisions the role exists to make.",
+   "The Product Owner orders the backlog by who shouted loudest instead of by value and risk.",
+   "The Product Owner over specifies items months ahead instead of refining near term work and leaving later items light.",
+   "The Product Owner leaves team questions unanswered for days, so the team guesses or stalls.",
+   "The Product Owner says yes to every stakeholder request, so the backlog grows and nothing has a clear priority.",
+   "The Product Owner measures success by output shipped instead of checking whether the intended outcome happened.",
+   "The Product Owner relies on a certificate alone instead of building a portfolio that shows real decisions and learning.",
+   "The Product Owner changes direction constantly during a sprint, so the team loses trust and momentum."
+  ]
+ },
+ {
+  "id": "how-to-become-a-product-manager",
+  "title": "How to Become a Product Manager",
+  "level": "practitioner",
+  "description": [
+   "This guide explains what product managers do, the skills the role needs, and practical steps to move into product management from business analysis, Product Owner work, or another role."
+  ],
+  "audience": "This guide is for business analysts, Product Owners, and people in engineering, design, marketing, operations, or customer support who want to move into product management.",
+  "timeframe": "A realistic preparation period is around six to eighteen months of steady learning and practice, depending on prior experience and the time available each week.",
+  "sections": [
+   {
+    "heading": "What product management is",
+    "paragraphs": [
+     "A product manager is accountable for deciding what a product should do, who it is for, and what success looks like. The role brings together user needs, business goals, technical possibilities, and design choices into a clear direction that a team can follow. Product managers usually do not build the product themselves. They work through engineers, designers, data specialists, and other colleagues, and they stay accountable for the outcome even when they do not control every part of the work.",
+     "Business analysis, Product Owner work, and product management overlap, and the boundaries vary between organisations. A business analyst often focuses on understanding a business problem, working with stakeholders, and defining what a change must achieve. A Product Owner often focuses on ordering and clarifying work for one delivery team over the short term. A product manager holds a wider view across the whole product life cycle, from early discovery through launch, measurement, and later improvement or retirement, and is accountable for whether the product achieves its intended outcomes.",
+     "Accountability for outcomes means more than delivering a list of features. It means checking whether users can complete their tasks, whether the product solves the problem it set out to solve, and whether the business result follows. When evidence shows a different direction is needed, the product manager is expected to raise it, explain the trade-off, and help the team change course. This responsibility continues after launch, when real use, feedback, and measures show what is working and what needs attention.",
+     "Product management roles differ a great deal in practice. Some roles focus on products used by the public, others on products used by other businesses, and others on internal tools used by employees. Some roles are close to technology and data, while others are close to customers, operations, or commercial decisions. In banking and payments, for example, a customer facing payment product and an internal operations tool serve different users and carry different risks and constraints, but both need the same core work: understand the problem, choose a direction, align the people involved, and learn from results."
+    ],
+    "steps": [
+     {
+      "title": "Describe the role in your own words",
+      "action": "Write a short paragraph that explains what a product manager does, in plain language, without copying a job description. Include who the users are, what decisions the role owns, and how success would be recognised. Compare your version with two or three real role descriptions and note where your understanding needs to grow.",
+      "timeframe": "Weeks 1-2"
+     },
+     {
+      "title": "Map PM, BA, and Product Owner work",
+      "action": "Draw a simple table with three columns, one for product management, one for business analysis, and one for Product Owner work. For a product or change you know well, list the tasks, decisions, and time horizons that belong in each column. Mark the overlaps honestly, and note which tasks you already do and which are new to you.",
+      "timeframe": "Weeks 1-2"
+     },
+     {
+      "title": "Trace one product through its life cycle",
+      "action": "Choose a product you use regularly and trace its journey from first idea to current use, including launch, changes, and any features that were removed. For each stage, note what problem was being solved, who benefited, and what evidence might have guided the decision. Write a short summary of what the product manager would have been accountable for at each stage.",
+      "timeframe": "Weeks 2-3"
+     },
+     {
+      "title": "Compare PM roles across product types",
+      "action": "Find role descriptions for three different kinds of product roles, such as a public facing product, a business product, and an internal tool. Compare their users, decisions, skills, and measures of success, and note what is shared and what differs. Use the comparison to decide which type of role fits your background and interests best for a first move.",
+      "timeframe": "Weeks 2-4"
+     }
+    ],
+    "keyPoints": [
+     "Product managers are accountable for outcomes, not only for delivering features.",
+     "The role works through others, so clarity, influence, and trust matter as much as analysis.",
+     "Business analysis and Product Owner work overlap with product management, but the product manager holds the wider life cycle view.",
+     "Titles and scope vary, so read each role description for its users, decisions, and measures."
+    ]
+   },
+   {
+    "heading": "Strategy, discovery, and customers",
+    "paragraphs": [
+     "Strong product work starts with a clear understanding of users and their problems. A user may be a customer, an employee, or another team that depends on the product to get work done. Understanding means learning about their goals, their context, the obstacles they face, and the workarounds they already use. Without that grounding, it is easy to build something that looks complete but does not help in real use.",
+     "Discovery is the regular habit of gathering that understanding, not a single exercise at the start of a project. Useful habits include short interviews, watching how people carry out tasks, reviewing feedback and requests, and looking at how the product is actually used. Good discovery listens for evidence and surprises, rather than seeking confirmation of an existing idea. Small, frequent checks usually teach more than occasional large studies, because learning stays close to decisions.",
+     "Market and competitor awareness adds context to what users say. It helps to know what alternatives users already have, including manual methods, spreadsheets, phone calls, and other products, and what each alternative does well or poorly. Awareness of wider trends, constraints, and risks also matters, including rules and controls that shape what is possible in regulated areas such as banking and payments. The aim is not to copy others, but to understand the choices users face and where a product can offer something genuinely better.",
+     "Over time, discovery should form a product point of view: a clear statement of who the product serves, which problem matters most, why it matters now, and what a good result would look like. A point of view helps a team choose between competing ideas and explain those choices to others. It should be firm enough to guide decisions, and open enough to change when new evidence appears. Writing it down, testing it with users and colleagues, and revising it is part of the work, not an extra task."
+    ],
+    "steps": [
+     {
+      "title": "Interview three users about a problem",
+      "action": "Arrange short interviews with three people who face the same problem, and prepare open questions about their goals, tasks, and frustrations. Ask about recent examples and what they did next, and listen without pitching a solution. Write up what you heard, including concrete examples, patterns across the three conversations, and questions that remain open.",
+      "timeframe": "Weeks 3-5"
+     },
+     {
+      "title": "Observe how work really happens",
+      "action": "Spend time watching how users carry out a task in their normal setting, with their permission, and note the steps, tools, interruptions, and workarounds you see. Pay attention to what people do, not only what they say they do, and ask short clarifying questions where helpful. Summarise the gaps between the intended process and the real process, and what those gaps suggest about the underlying problem.",
+      "timeframe": "Weeks 3-5"
+     },
+     {
+      "title": "Review feedback and support themes",
+      "action": "Gather recent feedback, requests, complaints, and support themes for a product or service you know, and group them by underlying problem rather than by requested feature. Count how often each theme appears in your sample, and note which themes affect the most important tasks. Write a one page summary that separates frequent frustrations, rare but serious problems, and requests that may not point to a real need.",
+      "timeframe": "Weeks 4-6"
+     },
+     {
+      "title": "Write a one-page product point of view",
+      "action": "On one page, state who the product serves, the main problem it should solve, why that problem matters now, and what success would look like for users and for the business. Support each claim with a piece of evidence from your interviews, observation, or feedback review, and mark any claim that is still an assumption. Share the page with a colleague for challenge, and revise it based on the questions they raise.",
+      "timeframe": "Weeks 5-6"
+     }
+    ],
+    "keyPoints": [
+     "Start with the user problem, not with a feature idea.",
+     "Discovery is a regular habit of interviews, observation, and feedback review.",
+     "Alternatives include manual workarounds, not only other products.",
+     "A written point of view turns scattered findings into a direction the team can test."
+    ]
+   },
+   {
+    "heading": "Roadmaps and prioritisation",
+    "paragraphs": [
+     "A roadmap communicates direction. It shows the goals a product is working towards, the broad themes of work that support those goals, and the rough sequence in which they will be explored. A good roadmap helps people outside the team understand why work is planned in a certain order, and helps the team stay focused when new requests arrive. It is a communication and alignment tool first, and a schedule second.",
+     "Prioritisation is the work of choosing what to do first when time and capacity are limited. Every choice to pursue one item is also a choice to delay or decline another, so trade-offs should be made openly. Simple frameworks can help structure the discussion, such as comparing expected value with effort, weighing urgency against importance, or considering risk and what the team needs to learn next. Frameworks support judgement, they do not replace it, and the reasons behind a ranking matter more than the score itself.",
+     "Saying no is a normal and necessary part of the role. A clear no explains what is being deferred or declined, why, and what evidence or trade-off supports the decision. It also leaves room for change by stating what new information would lead to a different answer. Handled with respect and reasons, a no protects focus and builds trust, while an unclear yes that cannot be delivered damages both.",
+     "A roadmap stays honest only if it changes when facts change. New user evidence, technical findings, business shifts, or results from launched work can all justify a revised order or a changed goal. When that happens, update the roadmap visibly, explain what changed and why, and note what is affected. A roadmap that never changes is rarely a sign of good planning, it is often a sign that learning is being ignored."
+    ],
+    "steps": [
+     {
+      "title": "Draft a goal-led roadmap for one product",
+      "action": "Choose a product or service you know and draft a roadmap covering the next two or three periods of work, organised by goals and themes rather than by features. For each theme, write the goal it supports, the problem it addresses, and how progress would be recognised. Keep dates rough and labelled as intentions, and add a short note on what is deliberately not included yet.",
+      "timeframe": "Weeks 6-8"
+     },
+     {
+      "title": "Prioritise ten items with clear reasons",
+      "action": "List ten possible items of work for the same product, including new ideas, improvements, and fixes, and rank them in order. For each item, write one or two sentences on expected value, effort, risk, and what would be delayed by choosing it. Ask a colleague to challenge your order, and revise the ranking where their challenge is supported by evidence.",
+      "timeframe": "Weeks 6-8"
+     },
+     {
+      "title": "Practise saying no with reasons",
+      "action": "Write three short responses to realistic requests you cannot accept now, each giving the reason, the trade-off involved, and what would need to change for a different answer. Practise delivering one of them aloud in a calm, respectful tone, and ask for feedback on clarity and tone. Keep the written versions as templates you can adapt, so future replies stay consistent and based on evidence.",
+      "timeframe": "Weeks 7-9"
+     },
+     {
+      "title": "Update a roadmap after new evidence",
+      "action": "Take the roadmap you drafted earlier and introduce one realistic piece of new evidence, such as user feedback, a technical constraint, or a changed business priority. Update the goals, themes, or sequence to reflect the new evidence, and write a short explanation of what changed, why, and what is affected. Review the updated roadmap for honesty, and remove any item that no longer earns its place.",
+      "timeframe": "Weeks 8-10"
+     }
+    ],
+    "keyPoints": [
+     "A roadmap communicates goals, themes, and sequence, not a fixed list of features and dates.",
+     "Prioritisation is an open trade-off, and the reasons matter more than any score.",
+     "A clear no, with reasons and a route back, protects focus and trust.",
+     "Revisit the roadmap when evidence changes, and explain each revision."
+    ]
+   },
+   {
+    "heading": "Delivery partnership",
+    "paragraphs": [
+     "Delivery works best when product, engineering, design, and data colleagues act as partners on a shared problem. Each discipline brings knowledge the others do not have, from technical constraints and design possibilities to patterns in data and user behaviour. Early and regular involvement helps the team spot risks sooner, shape better solutions, and avoid late surprises. Partnership shows in how decisions are made together, how disagreements are handled, and how credit is shared.",
+     "Clear problem statements help a partnership work well. A good statement describes who is affected, what problem they face, what evidence supports it, what outcome would count as success, and any constraints that must be respected. It leaves room for the team to explore solutions, rather than prescribing a detailed answer in advance. When the problem is clear, engineers and designers can propose approaches the product manager might not have considered, and the discussion stays focused on the outcome.",
+     "Unblocking delivery is a core part of the role during build. Blockers often come from unclear decisions, missing inputs, dependencies on other teams, or changing expectations. The product manager helps by making timely decisions, securing the information or agreement the team needs, resolving dependencies early, and communicating changes promptly. Protecting the team from unnecessary churn, while staying available for genuine questions, keeps momentum without hiding real problems.",
+     "Scope pressure is common during build, as new requests, edge cases, and ideas appear once work is visible. Each addition should be assessed against the original outcome, the added effort and risk, and the effect on other work. Sometimes the right answer is to include a small change, sometimes to defer it, and sometimes to revisit the scope as a whole. Being open about the trade-off, and agreeing the revised scope with the team and stakeholders, is better than quietly absorbing extra work until quality or timing suffers."
+    ],
+    "steps": [
+     {
+      "title": "Write problem statements, not solutions",
+      "action": "Rewrite three solution focused requests as problem statements, each covering who is affected, the problem, the evidence, the desired outcome, and the constraints. Remove any wording that prescribes a detailed solution, and leave the approach open for the team to explore. Share one statement with a colleague from another discipline and revise it based on what they find unclear.",
+      "timeframe": "Weeks 9-11"
+     },
+     {
+      "title": "Join design and engineering discussions early",
+      "action": "Ask to join early design and engineering discussions for a piece of work, even if your role is mainly to listen and ask questions at first. Note the constraints, options, and risks raised, and how they shape the possible solutions. After the discussion, write a short summary of what you learned and how it affects the problem statement or the plan.",
+      "timeframe": "Weeks 9-12"
+     },
+     {
+      "title": "Keep a decision and blocker log",
+      "action": "Start a simple log for a current piece of work, recording each decision, who made it, the reasons, and the date, plus each blocker, its owner, and its next step. Review the log twice a week, chase overdue items, and update entries when decisions change. At the end of the work, review the log for patterns, such as repeated blockers or decisions that were revisited too often.",
+      "timeframe": "Weeks 10-12"
+     },
+     {
+      "title": "Handle a late scope request calmly",
+      "action": "Take a realistic late request and work through it in writing: restate the original outcome, assess the added effort and risk, and note the effect on other work and timing. Draft a response that offers clear options, such as include, defer, or swap with another item, with the trade-off for each option stated plainly. Discuss the options with the team and the requester, and record the agreed scope and reasons.",
+      "timeframe": "Weeks 11-13"
+     }
+    ],
+    "keyPoints": [
+     "Involve engineering, design, and data early, as partners on the problem.",
+     "State the problem, evidence, outcome, and constraints, and leave solution space open.",
+     "Unblock delivery with timely decisions, clear inputs, and early handling of dependencies.",
+     "Assess scope changes against the outcome, and agree revised scope openly."
+    ]
+   },
+   {
+    "heading": "Metrics, experimentation, and commercial sense",
+    "paragraphs": [
+     "Measures help a product manager judge whether a product is achieving its intended result. The most useful measures connect directly to a user outcome and a business outcome, such as whether users complete a key task successfully and whether that completion supports the wider goal. A small set of clear measures is usually more helpful than a long list, because the team can focus on moving the measures that matter. Each measure needs a clear definition, so everyone interprets it in the same way.",
+     "Reading data well requires care. Before drawing a conclusion, check how a measure is defined, which users and time period it covers, and whether the sample is large enough to support the reading. Look at segments separately where useful, since an overall average can hide very different experiences for different groups. Combine numbers with qualitative evidence, such as interviews and feedback, and ask what else could explain a change before attributing it to a single cause.",
+     "Simple experiments turn assumptions into learning. An experiment starts with a clear statement of what is expected to happen, a small change or test that can reveal whether the expectation holds, and a measure that will show the result. The learning matters whether the result confirms the expectation or not, because both outcomes guide the next decision. Short learning loops, where the team tests, reviews, and decides quickly, reduce the risk of committing heavily to an untested idea.",
+     "Commercial sense means understanding how a product creates value and what it costs to run. This includes how the product earns money or saves money, what users value enough to pay for or keep using, and the ongoing costs of building, supporting, and operating it. In payments and banking, reliability, trust, and the cost and risk of each transaction or case also shape what good looks like, and a commercially sound decision must weigh those factors alongside user benefit. Knowing when to stop or change direction is part of the same judgement: when evidence stays weak, costs outweigh benefits, or a better use of effort appears, a clear decision to stop, pause, or pivot protects resources for work with stronger prospects."
+    ],
+    "steps": [
+     {
+      "title": "Choose three measures for one product",
+      "action": "For a product you know, choose three measures that together show user success, business value, and product health, and write a clear definition for each one. Note how each measure would be collected, how often it would be reviewed, and what change would count as meaningful progress. Share the set with a colleague and revise any measure that is vague, easy to game, or disconnected from the intended outcome.",
+      "timeframe": "Weeks 12-14"
+     },
+     {
+      "title": "Analyse a metric change with care",
+      "action": "Take a real or realistic change in a measure and investigate it before concluding what caused it, checking the definition, time period, segments, and any known events or changes. Write down at least two other explanations for the change besides the most obvious one, and note what extra evidence would help distinguish between them. Summarise your conclusion with its limits stated plainly, including what remains uncertain.",
+      "timeframe": "Weeks 13-15"
+     },
+     {
+      "title": "Design and run a small experiment",
+      "action": "Choose one assumption about users or a product change, and design a small test with a clear expectation, a defined audience or sample, and one main measure. Run the test at a scale that limits risk while still producing useful learning, and record the result without overstating what it proves. Write a short learning note stating what you learned, what you will do next, and what you will not do as a result.",
+      "timeframe": "Weeks 14-17"
+     },
+     {
+      "title": "Review the commercial picture simply",
+      "action": "For a product you know, write a simple one page review of how it creates value, what it costs to build and run, and what users value most about it. Include the main risks and dependencies that could affect value or cost, and note where your understanding is incomplete. Use the review to identify one commercial question to explore further with a finance, operations, or commercial colleague.",
+      "timeframe": "Weeks 15-18"
+     }
+    ],
+    "keyPoints": [
+     "Choose a small set of measures linked to user and business outcomes, with clear definitions.",
+     "Check definitions, segments, and context before drawing conclusions from data.",
+     "Run small experiments with a clear expectation, and treat learning as the result.",
+     "Weigh value, cost, and risk together, and be willing to stop or change direction on the evidence."
+    ]
+   },
+   {
+    "heading": "The path in",
+    "paragraphs": [
+     "There is no single required route into product management. Business analysts often bring stakeholder, analysis, and change skills that transfer well, and Product Owners bring backlog, delivery, and team working experience. People from engineering bring technical understanding, designers bring user insight, and colleagues in marketing, operations, and customer support bring direct knowledge of customers and how work flows in practice. Many first moves happen inside the same organisation, through taking on product work alongside a current role, volunteering for discovery or roadmap tasks, or moving into a junior or associate product role.",
+     "A portfolio makes that experience visible. Useful pieces include a case study that shows a problem, the evidence gathered, the decisions made, and the outcome or learning, a teardown of an existing product with thoughtful improvement ideas, and a roadmap example with goals and trade-offs explained. The portfolio should show thinking and judgement, not only polished outputs, and it should be honest about what was real work, what was practice, and what remains uncertain. Generic product management courses and certificates can help structure learning, but evidence of real work and decisions matters more than certificates alone when showing readiness for the role.",
+     "Interview preparation should cover product sense, execution, and communication. Product sense questions explore how you understand users, structure an ambiguous problem, and form a point of view, often using an unfamiliar product or scenario. Execution questions explore prioritisation, metrics, trade-offs, and how you would handle delivery challenges. Prepare by practising aloud, structuring answers clearly, asking clarifying questions before answering, and drawing on real examples from your portfolio and past work.",
+     "The first 90 days in a product role are mainly about learning, trust, and steady progress. Spend time understanding users, the team, the product, the systems and constraints, and how decisions are currently made. Build relationships by listening, delivering small useful wins, and following through on commitments, rather than proposing sweeping changes before the context is clear. Keep notes on decisions, open questions, and lessons learned, set learning goals with your manager, and seek feedback early and often."
+    ],
+    "steps": [
+     {
+      "title": "Choose your route into product work",
+      "action": "Review your current skills and experience against the skills in this guide, and identify the two or three gaps that matter most for the kind of product role you want. Choose a realistic route, such as product work inside your current organisation, a junior product role, or a gradual shift through Product Owner work, and note the first step for that route. Write a short plan with dates for closing one gap, and share it with a trusted colleague or mentor for feedback.",
+      "timeframe": "Weeks 18-20"
+     },
+     {
+      "title": "Build a three-piece PM portfolio",
+      "action": "Create three portfolio pieces: a case study, a product teardown, and a roadmap example, each showing the problem, evidence, decisions, trade-offs, and outcome or learning. Keep each piece concise, honest about what was real work and what was practice, and free of confidential information from any employer. Ask two people to review the set for clarity and credibility, and revise it based on their feedback before sharing it further.",
+      "timeframe": "Weeks 18-22"
+     },
+     {
+      "title": "Prepare for product sense interviews",
+      "action": "Practise product sense and execution questions aloud, using a clear structure: clarify the problem, consider users and evidence, weigh options and trade-offs, and state a recommendation with reasons. Use products you know well and unfamiliar scenarios, and time your answers so they stay focused. After each practice answer, note what was strong, what was unclear, and one improvement to make next time.",
+      "timeframe": "Weeks 20-24"
+     },
+     {
+      "title": "Plan your first 90 days",
+      "action": "Draft a first 90 days plan in three parts: learning users, team, product, and constraints in the first month, building relationships and delivering small wins in the second, and shaping clearer direction with the team in the third. For each part, list the meetings, questions, and outputs that would help, and the habits you will keep, such as a decision log and regular feedback. Keep the plan flexible, so it can adapt to what you actually learn once in the role.",
+      "timeframe": "First 90 days in role"
+     }
+    ],
+    "keyPoints": [
+     "Routes into product management vary, and skills from analysis, delivery, and customer facing roles all transfer.",
+     "A portfolio should show thinking, evidence, and trade-offs, with honest notes on what was real and what was practice.",
+     "Interview practice should cover product sense, execution, and clear communication, using real examples.",
+     "The first 90 days are for learning, trust, and small wins, not sweeping change."
+    ]
+   }
+  ],
+  "skills": [
+   "Product strategy and roadmapping",
+   "Customer discovery and user research",
+   "Prioritisation and trade-off decisions",
+   "Writing clear problem statements",
+   "Working with engineering and design teams",
+   "Data analysis and metric interpretation",
+   "Experiment design and learning from results",
+   "Stakeholder communication and alignment",
+   "Commercial awareness and pricing basics",
+   "Storytelling with evidence",
+   "Facilitation and decision making",
+   "Product sense and market awareness"
+  ],
+  "tools": [
+   "Jira",
+   "Confluence",
+   "Trello",
+   "Asana",
+   "Miro",
+   "Figma",
+   "Excel",
+   "Power BI",
+   "Tableau",
+   "Amplitude",
+   "Mixpanel",
+   "Notion"
+  ],
+  "certifications": [
+   {
+    "name": "PSPO",
+    "body": "Scrum.org",
+    "note": "Suits people moving into Product Owner or product work who want a recognised grounding in product ownership, best taken after some practical backlog or delivery experience."
+   },
+   {
+    "name": "CSPO",
+    "body": "Scrum Alliance",
+    "note": "Suits people new to Product Owner work who want structured learning in the role, best taken when starting or preparing for Product Owner responsibilities."
+   },
+   {
+    "name": "PMI-PBA",
+    "body": "PMI",
+    "note": "Suits business analysts and others with analysis experience who want a related business analysis credential alongside product work, best taken after building solid analysis experience."
+   }
+  ],
+  "portfolio": [
+   "A product case study showing problem, evidence, and outcome",
+   "A teardown of an existing product with improvement ideas",
+   "A sample roadmap with goals, themes, and trade-offs explained",
+   "A discovery summary from user interviews or feedback review",
+   "A problem statement and success measures for a real workflow",
+   "A prioritisation write-up showing options considered and reasons",
+   "A simple experiment plan with a learning goal and measures",
+   "A launch or change summary written for non-technical readers"
+  ],
+  "mistakes": [
+   "Jumping to a solution before understanding the problem it should solve.",
+   "Treating a roadmap as a fixed promise instead of a plan that changes with new evidence.",
+   "Measuring activity, such as features shipped, instead of outcomes for users and the business.",
+   "Saying yes to every request and spreading the team too thin to finish anything well.",
+   "Writing requirements that describe a solution in detail but never state the problem clearly.",
+   "Avoiding difficult trade-off conversations and letting unclear priorities decide by default.",
+   "Relying on certificates alone without showing real product work and decisions.",
+   "Copying another product without checking whether the same approach fits your users and context."
+  ]
+ },
+ {
+  "id": "how-to-become-a-successful-business-analyst",
+  "title": "How to Become a Successful Business Analyst",
+  "level": "advanced",
+  "description": [
+   "This guide shows working business analysts how to move from completing assigned tasks to shaping outcomes, influencing decisions, and leading analysis with confidence. It covers craft, stakeholder management, domain depth, and visibility, with practical steps you can apply in your current role."
+  ],
+  "audience": "This guide is for working business analysts who can already gather requirements and want to grow from junior to senior and lead roles.",
+  "timeframe": "Allow 12 to 24 months of steady, deliberate practice to work through this guide fully, although the pace depends on prior experience and time available.",
+  "sections": [
+   {
+    "heading": "From task taker to trusted adviser",
+    "paragraphs": [
+     "Many analysts start by doing what they are asked to do. A stakeholder describes a change, the analyst writes it down, and the work moves forward. That approach is useful early on, because it builds accuracy and familiarity with the work. It becomes limiting when the request itself is unclear, incomplete, or aimed at the wrong problem.",
+     "A trusted adviser still listens carefully, but does not stop at the first request. The adviser asks what outcome the change should produce, who it affects, and what will be different if it succeeds. These questions often reveal that the stated request is only one possible answer, and that a simpler or safer answer exists. Asking them early saves rework later and shows that the analyst is thinking about results, not only about documents.",
+     "This shift also means owning ambiguity instead of waiting for perfect clarity. When information is missing, name what is unknown, state the working assumption, and agree how it will be checked. Push back when a request conflicts with evidence, creates avoidable risk, or harms the people who will use the result. Pushback works best when it is specific, calm, and paired with an alternative, so the conversation stays focused on the outcome rather than becoming a contest."
+    ],
+    "steps": [
+     {
+      "title": "Ask the outcome question first",
+      "action": "For your next assignment, ask what outcome the request should produce before you start writing anything down. Write the answer in one plain sentence and confirm it with the requester. If the requester cannot state the outcome, agree a short session to define it together.",
+      "timeframe": "Weeks 1-2"
+     },
+     {
+      "title": "Clarify ambiguity in writing",
+      "action": "Start a short list of unknowns, assumptions, and open questions for one live piece of work. Share the list with the people who can answer it and record each answer as it arrives. Update the list at least twice a week until the main unknowns are resolved.",
+      "timeframe": "Weeks 2-3"
+     },
+     {
+      "title": "Practise respectful pushback",
+      "action": "Choose one request where the evidence points to a different approach and prepare your case in advance. State the concern, the evidence, and one workable alternative in a short conversation or note. Note what happened afterwards so you can learn which phrasing and timing worked best.",
+      "timeframe": "Weeks 3-6"
+     },
+     {
+      "title": "Summarise decisions and owners",
+      "action": "After each meeting you attend for two weeks, write a short summary of decisions, owners, and next steps. Share it the same day and ask for corrections if anything is wrong. This habit builds trust, because people can see that outcomes are tracked and nothing important is left vague.",
+      "timeframe": "Weeks 4-6"
+     }
+    ],
+    "keyPoints": [
+     "A trusted adviser asks about outcomes, not only about requests.",
+     "Ambiguity is part of the work, so name it, record assumptions, and check them.",
+     "Pushback should be specific, calm, and paired with an alternative.",
+     "Clear decision summaries build trust faster than long documents."
+    ]
+   },
+   {
+    "heading": "Deepen the craft",
+    "paragraphs": [
+     "Good analysis is not about producing more pages. It is about producing work that is accurate, complete enough for the decision at hand, and easy for others to check. Senior analysts learn to judge how much rigour a question needs, and they spend their effort where an error would cost the most. That judgement comes from practice, review, and learning from mistakes, not from following one fixed template for every task.",
+     "Modelling helps when it matches the depth of the question. A simple flow may be enough to agree the main steps, while a detailed model is needed when handoffs, exceptions, and controls matter. The same care applies to data and evidence. Check the source, check the date range, and check whether a small sample can really support the conclusion being drawn. When evidence is weak, say so plainly and explain what stronger evidence would look like.",
+     "Critical thinking means slowing down before accepting the first explanation. Look for alternative causes, missing cases, and unstated assumptions, and test your own reasoning as hard as you test the reasoning of others. Review your own work before you share it, as if you were the person who must approve it or build from it. Work that has been checked once by its author reaches review with fewer avoidable errors and earns a reputation for care."
+    ],
+    "steps": [
+     {
+      "title": "Model at the right depth",
+      "action": "For one current process, draw a simple model showing the main steps, handoffs, and exceptions in Visio or Lucidchart. Walk through it with one person who does the work daily and correct anything that does not match reality. Keep only the detail that helps a decision, and remove detail that adds clutter without adding understanding.",
+      "timeframe": "Months 2-3"
+     },
+     {
+      "title": "Check claims against evidence",
+      "action": "Take one claim in your current work, such as a volume, a failure rate, or a delay, and trace it back to its source. Check the figures in Excel against the original records, including the date range and any filters that were applied. Record the source and the checks you made so another analyst could repeat them.",
+      "timeframe": "Months 2-3"
+     },
+     {
+      "title": "Review your own work first",
+      "action": "Build a short personal checklist covering logic, completeness, consistency, and readability. Apply it to every document before you send it for review, and leave a gap between writing and checking when you can. Track the errors you catch yourself so you can see which checks help you most.",
+      "timeframe": "Months 3-4"
+     },
+     {
+      "title": "Invite a peer review early",
+      "action": "Ask a more experienced analyst to review one draft while it is still early enough to change direction. Share the questions you most want answered, rather than asking for general comments. Act on the feedback visibly and thank the reviewer by showing what changed as a result.",
+      "timeframe": "Months 3-4"
+     }
+    ],
+    "keyPoints": [
+     "Match the depth of analysis and modelling to the decision being made.",
+     "Check the source, date range, and limits of any evidence you rely on.",
+     "Test alternative explanations and unstated assumptions before you conclude.",
+     "Review your own work first, as if you must approve it or build from it."
+    ]
+   },
+   {
+    "heading": "Stakeholder management and influence",
+    "paragraphs": [
+     "Analysis work succeeds or fails through people. A sound recommendation can stall if the people affected were not involved, and a weak idea can move forward because it has strong support. Stakeholder management is therefore a core analytical skill, not an extra task to fit around the real work. It starts with understanding who cares about the change, who can influence it, and what each person needs from the outcome.",
+     "Mapping influence and interest helps you plan where to spend your time. Some stakeholders need close involvement in decisions, others need regular updates, and others only need to know the final result. Difficult stakeholders are often protecting a real concern, such as workload, risk, or loss of control, so listen for that concern before you respond. A private conversation, held early and with respect, often resolves more than a public debate held late.",
+     "Workshops work when they have a clear purpose, the right people, and a decision to reach. Prepare the material in advance, keep the discussion focused on the decision, and record what was agreed before people leave the room. When conflict arises, stay focused on the issue and the evidence, acknowledge what is valid in the other view, and separate the disagreement from the relationship. Trust survives disagreement when people feel heard, even when the final decision goes another way."
+    ],
+    "steps": [
+     {
+      "title": "Map influence and interest",
+      "action": "For one live change, list every stakeholder group and note its influence, its interest, and its main concern. Decide how each group should be involved, whether through decisions, consultation, or updates. Review the map with your manager or a senior colleague and update it as the work progresses.",
+      "timeframe": "Months 4-5"
+     },
+     {
+      "title": "Prepare for difficult conversations",
+      "action": "Before a difficult conversation, write down the outcome you want, the concern the other person is likely to hold, and the evidence you will use. Practise your opening lines so you can start calmly and stay focused on the issue. After the conversation, record what was agreed and share it promptly.",
+      "timeframe": "Months 4-6"
+     },
+     {
+      "title": "Run workshops that decide",
+      "action": "Plan your next workshop around one clear decision, with the background material shared in advance. Open by stating the decision, the options, and the time available, and keep the group returning to that decision. Close by reading back the decision, the owner, and the next steps, and circulate the record the same day.",
+      "timeframe": "Months 5-6"
+     },
+     {
+      "title": "Repair trust after disagreement",
+      "action": "After a disagreement, speak to the other person directly and acknowledge the points where their concern was valid. Restate what was decided, why it was decided, and what will happen next, without reopening the argument. Follow through on any commitment you made, because reliable follow through rebuilds trust faster than words alone.",
+      "timeframe": "Months 5-7"
+     }
+    ],
+    "keyPoints": [
+     "Know who influences the change, who cares about it, and what each person needs.",
+     "Difficult behaviour often protects a real concern, so listen for it first.",
+     "A workshop needs one clear decision, the right people, and a record of what was agreed.",
+     "Handle conflict on the issue and the evidence, and protect the relationship."
+    ]
+   },
+   {
+    "heading": "Domain depth and commercial sense",
+    "paragraphs": [
+     "Analysts who understand the business domain ask better questions and spot problems earlier. Domain depth means knowing how the work is really done, where it breaks down, and which details matter most to customers and operations. It is built slowly, through reading, observation, and conversation with the people who live with the consequences of a change. General analysis skill travels across industries, and domain depth is what makes that skill useful in a particular setting.",
+     "Commercial sense means understanding how the organisation earns its income, where its main costs sit, and where risk concentrates. In banking, for example, it helps to follow how a payment moves from instruction to completion, what can go wrong along the way, and what the operations team must do when an exception arises. The same habit applies anywhere, because every change has a cost, a benefit, and a risk, and an analyst should be able to explain all three in plain language.",
+     "Speaking the language of operations and finance builds credibility with the people who must approve and run a change. Learn the key terms, the measures that matter, and the constraints that shape daily work, and use them accurately rather than loosely. Stay current by following changes in the domain, asking questions when practice changes, and updating your notes as you learn. Over time, this depth lets you challenge assumptions with knowledge, not only with technique."
+    ],
+    "steps": [
+     {
+      "title": "Learn how money and risk flow",
+      "action": "For your current area, write a one page summary of how income is earned, where the main costs sit, and where risk concentrates. Check your summary with a finance or operations colleague and correct anything you misunderstood. Use the summary to test whether each new request makes commercial sense.",
+      "timeframe": "Months 6-8"
+     },
+     {
+      "title": "Shadow operations for a day",
+      "action": "Arrange to observe the operations team doing the daily work affected by your current change. Note the manual steps, the workarounds, and the points where delays or errors occur most often. Write up what you observed and use it to improve your analysis and your questions.",
+      "timeframe": "Months 6-7"
+     },
+     {
+      "title": "Build a plain language glossary",
+      "action": "Start a glossary of domain terms used in your work, with a short plain language definition and one example for each term. Share it with colleagues and invite corrections and additions. Keep it updated, because a shared vocabulary prevents many misunderstandings.",
+      "timeframe": "Months 7-9"
+     },
+     {
+      "title": "Follow one change end to end",
+      "action": "Choose one item of work, such as a payment instruction or a customer request, and follow it from start to finish. Record each handoff, check, and exception, and note who acts at each stage. Use what you learn to improve your models, your test thinking, and your conversations with stakeholders.",
+      "timeframe": "Months 8-10"
+     }
+    ],
+    "keyPoints": [
+     "Domain depth comes from observation and conversation, not only from reading.",
+     "Understand how income is earned, where costs sit, and where risk concentrates.",
+     "Use the language of operations and finance accurately and in plain terms.",
+     "Stay current, and update your notes as practice changes."
+    ]
+   },
+   {
+    "heading": "Visibility, mentoring, and leading",
+    "paragraphs": [
+     "Good work that no one sees helps only the immediate task, while visible good work helps the analyst, the team, and the next project. Visibility does not mean boasting or claiming credit that belongs to others. It means making your reasoning, your decisions, and your results easy for others to find and learn from. When your work is visible, the right people can use it, challenge it, and remember who produced it.",
+     "Mentoring junior analysts is one of the clearest signs of senior practice. A mentor reviews work with care, explains the reasoning behind a suggestion, and creates room for the junior analyst to try, make mistakes safely, and improve. Mentoring also sharpens the mentor, because explaining a method clearly exposes gaps in understanding. The aim is to build independence, not dependence, so give guidance and then step back.",
+     "Leading analysis on larger change means planning the work, coordinating with others, and keeping quality steady when pressure rises. A lead analyst sets the approach, agrees who does what, and spots risks early enough to act on them. Reputation for reliability grows from small habits repeated over time, such as meeting commitments, flagging problems early, and following through without being chased. Reliability, more than any single success, is what earns larger responsibility."
+    ],
+    "steps": [
+     {
+      "title": "Share short progress updates",
+      "action": "Write a short weekly update for your current work covering progress, decisions, risks, and next steps, and post it in Confluence or your shared workspace. Keep it brief enough to read in two minutes and link to the detail for those who need it. Ask one stakeholder whether the update is useful and adjust the format based on the answer.",
+      "timeframe": "Months 9-10"
+     },
+     {
+      "title": "Mentor one junior analyst",
+      "action": "Offer to review the work of one junior analyst regularly, focusing on reasoning and quality rather than only on corrections. Explain why you suggest each change and invite the analyst to question your suggestions. Agree one skill for the analyst to develop and track progress together over several weeks.",
+      "timeframe": "Months 9-12"
+     },
+     {
+      "title": "Lead analysis on a larger piece",
+      "action": "Volunteer to lead the analysis for a larger piece of change, with a clear plan covering scope, stakeholders, deliverables, and review points. Agree roles with the team early and hold short check-ins to surface risks and blockers. At the end, record lessons learned and share them with the team.",
+      "timeframe": "Months 10-14"
+     },
+     {
+      "title": "Build a reliability record",
+      "action": "Keep a simple log of commitments you make, including the date promised and the date delivered. Review the log weekly and flag any commitment at risk as soon as you see the risk. Over time, use the log to judge your workload honestly and to negotiate dates you can keep.",
+      "timeframe": "Months 10-14"
+     }
+    ],
+    "keyPoints": [
+     "Make reasoning, decisions, and results easy for others to find and use.",
+     "Mentoring builds independence, so explain the reasoning and then step back.",
+     "Leading analysis means planning the work, coordinating people, and spotting risks early.",
+     "Reliability grows from meeting commitments and flagging problems early."
+    ]
+   },
+   {
+    "heading": "Sustain success over a career",
+    "paragraphs": [
+     "Success over a career depends on feedback, because strengths and blind spots are hard to see from inside your own work. Seek honest feedback from managers, peers, and stakeholders, and ask for specific examples rather than general praise or criticism. Treat feedback as information to test, not as a verdict to accept or reject at once. The analysts who improve fastest are often those who ask for feedback often and act on it visibly.",
+     "Senior and lead paths are not the same, and the choice deserves deliberate thought. A senior path deepens craft, judgement, and domain expertise, while a lead path adds responsibility for people, planning, and the quality of a team. Both paths are valuable, and the right choice depends on what you enjoy, what you do well, and what your organisation needs. Certification supports but does not replace evidence of work, so pair any study with real examples that show what you can do.",
+     "Sustaining success also means protecting your energy and keeping your skills fresh. Watch for signs of overload, such as rushed reviews, missed follow-ups, and fading curiosity, and act on them before quality drops. Keep learning through new problems, peer discussion, and regular review of your own work, and plan each next move around the skills and evidence you still need. A career built this way grows steadily, rather than depending on one opportunity or one role."
+    ],
+    "steps": [
+     {
+      "title": "Ask for honest feedback quarterly",
+      "action": "Every three months, ask your manager and two colleagues for feedback on one recent piece of work. Ask for specific examples of what worked, what could improve, and what they would do differently. Choose one improvement, act on it, and tell the people who gave feedback what changed.",
+      "timeframe": "Months 12-15"
+     },
+     {
+      "title": "Choose a senior or lead direction",
+      "action": "Write down what you enjoy most, what you do well, and what each path would ask of you over the next two years. Discuss the options with your manager and with one person already working in each direction. Choose a direction for the next stage, while keeping the other path open for later.",
+      "timeframe": "Months 12-18"
+     },
+     {
+      "title": "Protect time and energy",
+      "action": "Review your workload each week and identify tasks that can be simplified, delegated, or stopped. Protect regular time for review, learning, and rest, and treat that time as part of doing good work. If overload persists, raise it early with evidence about volume and deadlines, and agree priorities together.",
+      "timeframe": "Months 12-18"
+     },
+     {
+      "title": "Plan the next move deliberately",
+      "action": "Set a twelve-month plan naming the skills to build, the evidence to produce, and the experience to seek. Review the plan monthly and update it as opportunities and priorities change. Before accepting a new role or assignment, check that it moves the plan forward rather than only adding pressure.",
+      "timeframe": "Months 18-24"
+     }
+    ],
+    "keyPoints": [
+     "Ask for specific feedback often, and act on it visibly.",
+     "Choose a senior or lead direction deliberately, based on strengths and enjoyment.",
+     "Protect energy and quality by managing workload early.",
+     "Plan each next move around the skills and evidence you still need."
+    ]
+   }
+  ],
+  "skills": [
+   "Requirements elicitation",
+   "Process modelling",
+   "Stakeholder analysis",
+   "Workshop facilitation",
+   "Data analysis and interpretation",
+   "Critical thinking",
+   "Clear business writing",
+   "Systems thinking",
+   "Negotiation and conflict handling",
+   "Prioritisation and trade-off judgement"
+  ],
+  "tools": [
+   "Jira",
+   "Confluence",
+   "Excel",
+   "PowerPoint",
+   "Visio",
+   "Lucidchart",
+   "Miro",
+   "Figma",
+   "Postman",
+   "Power BI"
+  ],
+  "certifications": [
+   {
+    "name": "CCBA",
+    "body": "IIBA",
+    "note": "Suits analysts with some practical experience who want a recognised foundation before aiming for a more advanced credential."
+   },
+   {
+    "name": "CBAP",
+    "body": "IIBA",
+    "note": "Suits experienced analysts who want to evidence senior level practice, and certification supports but does not replace evidence of work."
+   },
+   {
+    "name": "PMI-PBA",
+    "body": "PMI",
+    "note": "Suits analysts who work closely with projects and programmes and want to evidence business analysis within project delivery."
+   },
+   {
+    "name": "PSPO",
+    "body": "Scrum.org",
+    "note": "Suits analysts moving toward product ownership who want to evidence skills in maximising value and managing a product backlog."
+   },
+   {
+    "name": "CSPO",
+    "body": "Scrum Alliance",
+    "note": "Suits analysts moving toward product ownership who prefer a course-based route to evidencing product owner skills."
+   }
+  ],
+  "portfolio": [
+   "A process model with decision and exception notes",
+   "A stakeholder map with engagement plans",
+   "A workshop plan with decisions and actions",
+   "A requirements pack with traceability to outcomes",
+   "An options appraisal with costs, benefits, and risks",
+   "A domain glossary with plain language definitions",
+   "A mentoring log showing guidance and progress"
+  ],
+  "mistakes": [
+   "Accepting the first request without asking what outcome it should produce.",
+   "Producing long documents that no one can check or use for a decision.",
+   "Modelling in too much detail before the main question is agreed.",
+   "Treating stakeholder concerns as obstacles instead of listening for the real issue.",
+   "Relying on weak evidence while presenting conclusions as certain.",
+   "Keeping good work private and then wondering why it is not recognised.",
+   "Chasing new titles without building the evidence that the work is ready for them."
+  ]
+ }
+]

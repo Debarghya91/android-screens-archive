@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- ic_notification is looked up by NAME (getIdentifier) in
+     NotificationDisplay, so resource shrinking cannot see the
+     reference and would strip it from release builds. Keep it. -->
+<resources xmlns:tools="http://schemas.android.com/tools"
+    tools:keep="@drawable/ic_notification" />

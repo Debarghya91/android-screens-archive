@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Design tokens shared with iOS (PfColors in code). Only the
+         launcher icon background lives here; screens read colors
+         from PfColors, not from resources. -->
+    <color name="pf_navy_deep">#050F24</color>
+    <color name="pf_navy">#0D1C38</color>
+    <color name="pf_royal">#17408C</color>
+    <color name="pf_gold">#C9A326</color>
+    <color name="ic_launcher_background">#0D1C38</color>
+</resources>

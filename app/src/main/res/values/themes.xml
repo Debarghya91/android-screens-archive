@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- The Activity theme. The app UI is Compose (PfTheme), so this
+         only sets the window: no action bar, edge to edge with
+         transparent system bars, dark icons on the light surfaces.
+         The parent is a PLATFORM theme on purpose: the Compose
+         material3 library ships no XML themes, and the project does
+         not depend on the Material Components (MDC) library, so a
+         Theme.Material3.* parent cannot resolve. PfTheme is always
+         light, so the light platform parent matches. -->
+    <style name="Theme.TrainingHub" parent="android:Theme.Material.Light.NoActionBar">
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:navigationBarColor">@android:color/transparent</item>
+        <item name="android:windowLightStatusBar">true</item>
+        <!-- windowLightNavigationBar needs API 27; it lives in the
+             values-v27 overlay of this same style. -->
+    </style>
+</resources>

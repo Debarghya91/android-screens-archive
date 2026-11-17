@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- API 27+ overlay of Theme.TrainingHub: identical to the base
+         style in values/themes.xml, plus android:windowLightNavigationBar,
+         which requires API 27 and cannot live in the base file (minSdk
+         is 26). On API 27+ this whole style replaces the base one. -->
+    <style name="Theme.TrainingHub" parent="android:Theme.Material.Light.NoActionBar">
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:navigationBarColor">@android:color/transparent</item>
+        <item name="android:windowLightStatusBar">true</item>
+        <item name="android:windowLightNavigationBar">true</item>
+    </style>
+</resources>
