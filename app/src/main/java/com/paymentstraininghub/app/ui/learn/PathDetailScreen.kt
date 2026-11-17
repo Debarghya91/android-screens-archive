@@ -81,10 +81,6 @@ fun PathDetailScreen(pathId: String, onBack: () -> Unit, onNavigate: (String) ->
     val ownedIds by BillingManager.ownedProductIds.collectAsState()
     @Suppress("UNUSED_VARIABLE")
     val serverIds by BillingManager.serverEntitledProductIds.collectAsState()
-    // Admin flips land on restore without touching any
-    // entitlement flow, so the flag is a gate input too: it
-    // is a key of the per-row unlock remember below.
-    val isAdmin by AuthManager.isAdmin.collectAsState()
     val activePathId by ActivePathStore.activePathId.collectAsState()
     val competencyScores by CompetencyStore.scores.collectAsState()
     val scope = rememberCoroutineScope()
@@ -188,6 +184,13 @@ private fun PathDetailContent(
     onNavigate: (String) -> Unit
 ) {
     val agendas by AgendaStore.agendas.collectAsState()
+    // Gate inputs for the per-row unlock remember below: the
+    // admin flag flips on session restore without touching any
+    // entitlement flow, so it is collected here, in the scope
+    // that uses it, alongside the entitlement flows.
+    val ownedIds by BillingManager.ownedProductIds.collectAsState()
+    val serverIds by BillingManager.serverEntitledProductIds.collectAsState()
+    val isAdmin by AuthManager.isAdmin.collectAsState()
     val lessons = remember(path, entries) { path.lessons(entries) }
     val (completedCount, totalCount) = remember(path, entries, completedIds) {
         path.progress(entries, completedIds)
