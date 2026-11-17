@@ -44,6 +44,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import com.paymentstraininghub.app.auth.AuthManager
 import com.paymentstraininghub.app.billing.BillingManager
 import com.paymentstraininghub.app.data.ContentRepository
 import com.paymentstraininghub.app.data.LearningPaths
@@ -65,6 +66,11 @@ fun CertificatesScreen(onBack: () -> Unit, onNavigate: (String) -> Unit) {
     val ownedIds by BillingManager.ownedProductIds.collectAsState()
     val serverIds by BillingManager.serverEntitledProductIds.collectAsState()
     val gateState by BillingManager.premiumGateState.collectAsState()
+    // Collected so owned state refreshes when the admin flag
+    // lands on restore: the bare gate call below only
+    // re-evaluates on recomposition.
+    @Suppress("UNUSED_VARIABLE")
+    val isAdmin by AuthManager.isAdmin.collectAsState()
     val certificates by FinalAssessmentStore.certificates.collectAsState()
     val attemptsMap by FinalAssessmentStore.attemptsUsed.collectAsState()
 

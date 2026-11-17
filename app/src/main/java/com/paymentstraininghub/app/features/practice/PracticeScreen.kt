@@ -63,6 +63,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.paymentstraininghub.app.auth.AuthManager
 import com.paymentstraininghub.app.billing.BillingManager
 import com.paymentstraininghub.app.data.ContentRepository
 import com.paymentstraininghub.app.data.PracticeModeGate
@@ -92,7 +93,10 @@ fun PracticeScreen(
     val ownedIds by BillingManager.ownedProductIds.collectAsState()
     val serverIds by BillingManager.serverEntitledProductIds.collectAsState()
     val gateState by BillingManager.premiumGateState.collectAsState()
-    val isSituationsUnlocked = remember(ownedIds, serverIds, gateState) {
+    // Admin flips land on restore without touching any
+    // entitlement flow, so the flag is a gate input too.
+    val isAdmin by AuthManager.isAdmin.collectAsState()
+    val isSituationsUnlocked = remember(ownedIds, serverIds, gateState, isAdmin) {
         BillingManager.isSituationsUnlocked()
     }
 

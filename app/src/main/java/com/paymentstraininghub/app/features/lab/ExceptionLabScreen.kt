@@ -23,6 +23,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import com.paymentstraininghub.app.auth.AuthManager
 import com.paymentstraininghub.app.billing.BillingManager
 import com.paymentstraininghub.app.data.ProductCatalogue
 import com.paymentstraininghub.app.features.investigation.InvestigationStore
@@ -44,7 +45,15 @@ fun ExceptionLabScreen(onNavigate: (String) -> Unit) {
     // gate: Practice Experiences, or the Integrated Course, unlocks it.
     var situationsUnlocked by remember { mutableStateOf(false) }
     var gatingChecked by remember { mutableStateOf(false) }
-    LaunchedEffect(Unit) {
+    // Collected so the gate refreshes when entitlements load or
+    // change, when the premium gate resolves, and when the
+    // admin flag lands on restore. A one-shot read here used
+    // to freeze the guest-time value for the screen's lifetime.
+    val ownedIds by BillingManager.ownedProductIds.collectAsState()
+    val serverIds by BillingManager.serverEntitledProductIds.collectAsState()
+    val gateState by BillingManager.premiumGateState.collectAsState()
+    val isAdmin by AuthManager.isAdmin.collectAsState()
+    LaunchedEffect(ownedIds, serverIds, gateState, isAdmin) {
         situationsUnlocked = runCatching {
             BillingManager.isSituationsUnlocked()
         }.getOrDefault(false)

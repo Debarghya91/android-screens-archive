@@ -29,6 +29,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.paymentstraininghub.app.auth.AuthManager
 import com.paymentstraininghub.app.billing.BillingManager
 import com.paymentstraininghub.app.features.analytics.AnalyticsEvent
 import com.paymentstraininghub.app.features.analytics.AnalyticsService
@@ -50,10 +51,13 @@ fun CommunityChallengeScreen() {
     val ownedIds by BillingManager.ownedProductIds.collectAsState()
     val serverIds by BillingManager.serverEntitledProductIds.collectAsState()
     val gateState by BillingManager.premiumGateState.collectAsState()
+    // Admin flips land on restore without touching any
+    // entitlement flow, so the flag is a gate input too.
+    val isAdmin by AuthManager.isAdmin.collectAsState()
     LaunchedEffect(Unit) {
         AnalyticsService.track(AnalyticsEvent.ChallengeViewed)
     }
-    LaunchedEffect(ownedIds, serverIds, gateState) {
+    LaunchedEffect(ownedIds, serverIds, gateState, isAdmin) {
         situationsUnlocked = runCatching {
             BillingManager.isSituationsUnlocked()
         }.getOrDefault(false)

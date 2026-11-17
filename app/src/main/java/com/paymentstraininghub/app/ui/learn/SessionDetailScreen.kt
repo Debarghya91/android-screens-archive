@@ -37,6 +37,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import com.paymentstraininghub.app.auth.AuthManager
 import com.paymentstraininghub.app.billing.BillingManager
 import com.paymentstraininghub.app.data.AgendaStore
 import com.paymentstraininghub.app.data.ContentRepository
@@ -69,6 +70,10 @@ fun SessionDetailScreen(sessionId: Int, onBack: () -> Unit, onNavigate: (String)
     val ownedIds by BillingManager.ownedProductIds.collectAsState()
     @Suppress("UNUSED_VARIABLE")
     val serverIds by BillingManager.serverEntitledProductIds.collectAsState()
+    // Admin flips land on restore without touching any
+    // entitlement flow, so the flag is a gate input too: it
+    // is a key of the per-row unlock remember below.
+    val isAdmin by AuthManager.isAdmin.collectAsState()
 
     val session = remember(sessionId) { GuidedSessions.byId(sessionId) }
     var chapters by remember { mutableStateOf<List<Chapter>?>(null) }
@@ -210,7 +215,13 @@ fun SessionDetailScreen(sessionId: Int, onBack: () -> Unit, onNavigate: (String)
                         val chapterNumber = ContentRepository.chapterNumberFromId(lesson.id)
                         val chapterId = chapterNumber?.let { "ch$it" } ?: ""
                         val isSample = chapters?.let { ContentRepository.isSampleLesson(lesson.id, it) } ?: false
-                        val unlocked = isLessonOpen(lesson.id, chapterId, isSample)
+                        // Keyed on every gate input, including the
+                        // admin flag: a bare call here would keep
+                        // the guest-time value when restore lands
+                        // while this list is on screen.
+                        val unlocked = remember(
+                            lesson.id, isSample, chapterId, ownedIds, serverIds, isAdmin
+                        ) { isLessonOpen(lesson.id, chapterId, isSample) }
                         LearnLessonRow(
                             lessonId = lesson.id,
                             title = lesson.title,

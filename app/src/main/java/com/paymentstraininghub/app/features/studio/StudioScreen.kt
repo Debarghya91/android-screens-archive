@@ -51,6 +51,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.paymentstraininghub.app.auth.AuthManager
 import com.paymentstraininghub.app.billing.BillingManager
 import com.paymentstraininghub.app.billing.FreeSampleRules
 import com.paymentstraininghub.app.data.ContentRepository
@@ -90,7 +91,10 @@ fun StudioScreen(onNavigate: ((String) -> Unit)? = null) {
     val serverIds by BillingManager.serverEntitledProductIds.collectAsState()
     @Suppress("UNUSED_VARIABLE")
     val gateState by BillingManager.premiumGateState.collectAsState()
-    val studioUnlocked = remember(ownedIds, serverIds, gateState) {
+    // Admin flips land on restore without touching any
+    // entitlement flow, so the flag is a gate input too.
+    val isAdmin by AuthManager.isAdmin.collectAsState()
+    val studioUnlocked = remember(ownedIds, serverIds, gateState, isAdmin) {
         runCatching { BillingManager.isStudioUnlocked() }.getOrDefault(false)
     }
     // Free samples: the first 2 teaching units and the first 2
@@ -104,11 +108,16 @@ fun StudioScreen(onNavigate: ((String) -> Unit)? = null) {
     val isStudioGuideOpen: (StudioCareerGuide) -> Boolean = { guide ->
         studioUnlocked || guide.id in freeGuideIds
     }
-    LaunchedEffect(Unit) {
+    // The situations gate is read in its own keyed effect, not
+    // in the one-shot load below: a one-shot read froze the
+    // guest-time value for the screen's lifetime.
+    LaunchedEffect(ownedIds, serverIds, gateState, isAdmin) {
         situationsUnlocked = runCatching {
             BillingManager.isSituationsUnlocked()
         }.getOrDefault(false)
         gatingChecked = true
+    }
+    LaunchedEffect(Unit) {
         // Weekly list only. Null leaves only the free samples.
         val weekly = ContentRepository.weeklyCasesOrNull()
         weeklyCaseId = if (weekly.isNullOrEmpty()) {

@@ -72,6 +72,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import com.paymentstraininghub.app.auth.AppStore
+import com.paymentstraininghub.app.auth.AuthManager
 import com.paymentstraininghub.app.billing.BillingManager
 import com.paymentstraininghub.app.data.AgendaStore
 import com.paymentstraininghub.app.data.Agendas
@@ -141,9 +142,12 @@ fun SearchScreen(onNavigate: (String) -> Unit, onOpenDrawer: () -> Unit) {
     val ownedIds by BillingManager.ownedProductIds.collectAsState()
     val serverIds by BillingManager.serverEntitledProductIds.collectAsState()
     val gateState by BillingManager.premiumGateState.collectAsState()
+    // Admin flips land on restore without touching any
+    // entitlement flow, so the flag is a gate input too.
+    val isAdmin by AuthManager.isAdmin.collectAsState()
     @Suppress("UNUSED_VARIABLE")
     val billingProducts by BillingManager.products.collectAsState()
-    val situationsUnlocked = remember(ownedIds, serverIds, gateState) {
+    val situationsUnlocked = remember(ownedIds, serverIds, gateState, isAdmin) {
         BillingManager.isSituationsUnlocked()
     }
     val agendas by AgendaStore.agendas.collectAsState()

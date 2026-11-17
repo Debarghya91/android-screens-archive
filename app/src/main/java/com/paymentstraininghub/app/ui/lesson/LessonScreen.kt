@@ -78,6 +78,7 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.paymentstraininghub.app.auth.AppStore
+import com.paymentstraininghub.app.auth.AuthManager
 import com.paymentstraininghub.app.billing.BillingManager
 import com.paymentstraininghub.app.data.AgendaEntry
 import com.paymentstraininghub.app.data.AgendaStore
@@ -145,6 +146,12 @@ fun LessonScreen(
     val ownedIds by BillingManager.ownedProductIds.collectAsState()
     val serverIds by BillingManager.serverEntitledProductIds.collectAsState()
     val gateState by BillingManager.premiumGateState.collectAsState()
+    // The admin flag is a fourth gate input: it flips when the
+    // session restore lands, after this screen has composed,
+    // without touching any entitlement flow. Without it as a
+    // flip-effect key, an admin with no purchases keeps the
+    // guest-time Locked state until re-entry.
+    val isAdmin by AuthManager.isAdmin.collectAsState()
     val agendas by AgendaStore.agendas.collectAsState()
 
     // Agendas refresh on entry; failure is silent and leaves the
@@ -272,8 +279,9 @@ fun LessonScreen(
     // locked, rebuild the Locked state from the cached detail
     // without refetching. Gate emissions never reset the screen
     // to the spinner (Tester 2 P1). isLessonUnlocked ignores the
-    // gate, matching the load effect above.
-    LaunchedEffect(ownedIds, serverIds, gateState) {
+    // gate, matching the load effect above. The admin flag is a
+    // key too: it flips on restore, after composition.
+    LaunchedEffect(ownedIds, serverIds, gateState, isAdmin) {
         val chapterId = chapterIdFromLessonId(lessonId) ?: return@LaunchedEffect
         val unlocked = BillingManager.isLessonUnlocked(lessonId, chapterId)
         if (unlocked == isUnlocked) return@LaunchedEffect
@@ -408,7 +416,18 @@ fun LessonScreen(
                         state.bookPositionLine
                     ),
                     fromCache = fromCache,
-                    isFreeSample = isSample && !isUnlocked,
+                    // The card names this lesson a free sample only
+                    // when its chapter is locked: a sample inside
+                    // an owned chapter, or for an admin, is
+                    // simply part of the course. The old predicate
+                    // (isSample && !isUnlocked) could never be
+                    // true, because a sample is always unlocked.
+                    isFreeSample = isSample &&
+                        runCatching {
+                            val sampleChapterId = chapterIdFromLessonId(lessonId)
+                            sampleChapterId != null &&
+                                !BillingManager.isChapterUnlocked(sampleChapterId)
+                        }.getOrDefault(false),
                     agendaEntry = agendas.lesson(lessonId),
                     modifier = Modifier.padding(padding),
                     onRetryLoad = { reloadKey++ },

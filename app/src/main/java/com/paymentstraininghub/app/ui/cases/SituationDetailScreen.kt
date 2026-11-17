@@ -59,6 +59,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import com.paymentstraininghub.app.auth.AuthManager
 import com.paymentstraininghub.app.billing.BillingManager
 import com.paymentstraininghub.app.data.AgendaStore
 import com.paymentstraininghub.app.data.ContentManifest
@@ -99,8 +100,11 @@ fun SituationDetailScreen(
     val ownedIds by BillingManager.ownedProductIds.collectAsState()
     val serverIds by BillingManager.serverEntitledProductIds.collectAsState()
     val gateState by BillingManager.premiumGateState.collectAsState()
+    // Admin flips land on restore without touching any
+    // entitlement flow, so the flag is a gate input too.
+    val isAdmin by AuthManager.isAdmin.collectAsState()
     val billingProducts by BillingManager.products.collectAsState()
-    val situationsUnlocked = remember(ownedIds, serverIds, gateState) {
+    val situationsUnlocked = remember(ownedIds, serverIds, gateState, isAdmin) {
         BillingManager.isSituationsUnlocked()
     }
 

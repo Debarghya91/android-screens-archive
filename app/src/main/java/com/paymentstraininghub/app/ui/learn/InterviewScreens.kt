@@ -39,6 +39,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import com.paymentstraininghub.app.auth.AuthManager
 import com.paymentstraininghub.app.billing.BillingManager
 import com.paymentstraininghub.app.billing.FreeSampleRules
 import com.paymentstraininghub.app.data.InterviewBank
@@ -75,7 +76,10 @@ fun InterviewQuestionsScreen(onBack: () -> Unit, onNavigate: (String) -> Unit) {
     val serverIds by BillingManager.serverEntitledProductIds.collectAsState()
     @Suppress("UNUSED_VARIABLE")
     val gateState by BillingManager.premiumGateState.collectAsState()
-    val interviewUnlocked = remember(ownedIds, serverIds, gateState) {
+    // Admin flips land on restore without touching any
+    // entitlement flow, so the flag is a gate input too.
+    val isAdmin by AuthManager.isAdmin.collectAsState()
+    val interviewUnlocked = remember(ownedIds, serverIds, gateState, isAdmin) {
         runCatching { BillingManager.isInterviewUnlocked() }.getOrDefault(false)
     }
     val freeQuestionIds = remember(bank) {
@@ -213,7 +217,10 @@ fun InterviewCategoryScreen(categoryId: String, onBack: () -> Unit, onNavigate: 
     val serverIds by BillingManager.serverEntitledProductIds.collectAsState()
     @Suppress("UNUSED_VARIABLE")
     val gateState by BillingManager.premiumGateState.collectAsState()
-    val interviewUnlocked = remember(ownedIds, serverIds, gateState) {
+    // Admin flips land on restore without touching any
+    // entitlement flow, so the flag is a gate input too.
+    val isAdmin by AuthManager.isAdmin.collectAsState()
+    val interviewUnlocked = remember(ownedIds, serverIds, gateState, isAdmin) {
         runCatching { BillingManager.isInterviewUnlocked() }.getOrDefault(false)
     }
     val freeQuestionIds = remember(bank) {

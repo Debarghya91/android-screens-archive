@@ -50,6 +50,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.paymentstraininghub.app.auth.AppStore
+import com.paymentstraininghub.app.auth.AuthManager
 import com.paymentstraininghub.app.billing.BillingManager
 import com.paymentstraininghub.app.data.ContentRepository
 import com.paymentstraininghub.app.data.model.Situation
@@ -74,7 +75,10 @@ fun DailyChallengeScreen(onBack: () -> Unit, onNavigate: (String) -> Unit) {
     val ownedIds by BillingManager.ownedProductIds.collectAsState()
     val serverIds by BillingManager.serverEntitledProductIds.collectAsState()
     val gateState by BillingManager.premiumGateState.collectAsState()
-    val situationsUnlocked = remember(ownedIds, serverIds, gateState) {
+    // Admin flips land on restore without touching any
+    // entitlement flow, so the flag is a gate input too.
+    val isAdmin by AuthManager.isAdmin.collectAsState()
+    val situationsUnlocked = remember(ownedIds, serverIds, gateState, isAdmin) {
         BillingManager.isSituationsUnlocked()
     }
 

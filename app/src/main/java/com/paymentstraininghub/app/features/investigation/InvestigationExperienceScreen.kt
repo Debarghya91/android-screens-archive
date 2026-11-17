@@ -75,6 +75,7 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.paymentstraininghub.app.auth.AuthManager
 import com.paymentstraininghub.app.billing.BillingManager
 import com.paymentstraininghub.app.data.ProductCatalogue
 import com.paymentstraininghub.app.ui.navigation.Routes
@@ -310,6 +311,11 @@ fun InvestigationExperienceScreen(
     // Collected so the gate refreshes when BillingManager loads.
     @Suppress("UNUSED_VARIABLE")
     val billingProducts by BillingManager.products.collectAsState()
+    // Collected so the lock state refreshes when the admin
+    // flag lands on restore: the bare gate call below only
+    // re-evaluates on recomposition.
+    @Suppress("UNUSED_VARIABLE")
+    val isAdmin by AuthManager.isAdmin.collectAsState()
 
     // A retained run for this case, when one is in progress: a
     // rotation or a navigation away and back resumes it instead

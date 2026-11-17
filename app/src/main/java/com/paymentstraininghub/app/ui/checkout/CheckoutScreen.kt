@@ -102,6 +102,10 @@ fun CheckoutScreen(
     val serverIds by BillingManager.serverEntitledProductIds.collectAsState()
     @Suppress("UNUSED_VARIABLE")
     val gateState by BillingManager.premiumGateState.collectAsState()
+    // Admin flips land on restore without touching any
+    // entitlement flow, so the flag is a gate input too: it
+    // is a key of the per-row owned remember below.
+    val isAdmin by AuthManager.isAdmin.collectAsState()
     // Collected so owned state refreshes when a DEBUG test unlock
     // lands. Always empty in Release.
     @Suppress("UNUSED_VARIABLE")
@@ -209,14 +213,24 @@ fun CheckoutScreen(
                 }
             }
             items(shownProducts, key = { it.productId }) { product ->
+                // Keyed on every gate input, including the admin
+                // flag and the DEBUG test-unlock set: bare calls
+                // here would keep the guest-time values when
+                // restore lands while this list is on screen.
+                val owned = remember(
+                    product.productId, ownedIds, serverIds, gateState, debugIds, isAdmin
+                ) { BillingManager.isProductUnlocked(product.productId) }
+                val renewalActive = remember(
+                    product.productId, renewalIds
+                ) { BillingManager.hasActiveRenewal(product.productId) }
                 ProductCard(
                     product = product,
                     priceText = BillingManager.priceText(product.productId),
                     cataloguePriceText = BillingManager.debugCataloguePriceText(product.productId),
                     renewalPriceText = BillingManager.renewalPriceText(product.productId),
                     catalogueRenewalPriceText = BillingManager.debugCatalogueRenewalPriceText(product.productId),
-                    owned = BillingManager.isProductUnlocked(product.productId),
-                    renewalActive = BillingManager.hasActiveRenewal(product.productId),
+                    owned = owned,
+                    renewalActive = renewalActive,
                     busy = purchasingId == product.productId,
                     renewBusy = renewingId == product.productId,
                     onNavigate = onNavigate,
