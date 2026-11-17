@@ -389,7 +389,7 @@ private fun ReviewDialog(
                                         )
                                     }
                                 } else {
-                                    val productId = ProductCatalogue.productForChapter(chapterId)?.productId
+                                    val productId = chapterId?.let { ProductCatalogue.productForChapter(it)?.productId }
                                     Text(
                                         "This lesson is locked. Your access to its course has ended. " +
                                             "Unlock the course to see the summary again.",
