@@ -1,0 +1,83 @@
+# Android emulator smoke check (run-before-send gate).
+#
+# DRAFT: this file is applied by the parent through the GitHub web UI
+# (the gh token lacks workflow scope) as a NEW workflow file at
+# .github/workflows/android-emulator-smoke.yml. Do not paste it over
+# android-apk.yml; the build workflow stays untouched.
+#
+# What it proves: the debug APK installs on a real (emulated) device,
+# launches, gets past the first-run introduction, renders Home, opens
+# the first lesson through the real deep-link route, and navigates
+# back, with the process alive throughout and no crash in logcat.
+# The job FAILS on any crash. See scripts/emulator-smoke-check.py
+# for the step-by-step gate; this file only builds, boots, and runs it.
+#
+# Software rendering: GitHub runners have no KVM, so the emulator
+# runs with swiftshader_indirect. Boot and UI work are slow; the
+# timeouts below are generous on purpose. Expected total runtime:
+# 12 to 20 minutes typical, up to about 30 minutes worst case.
+#
+# Screenshots in the artifacts are expected to be blank: MainActivity
+# sets FLAG_SECURE, so screencap pixels are empty by design. The UI
+# hierarchy dumps in the same artifact are the render proof.
+#
+# Phase 2 (not here): a Compose instrumentation test that taps the
+# first lesson row in a chapter list. It needs androidTest
+# dependencies the app does not have yet; until they land, the adb
+# scripted check in this workflow is the run gate.
+
+name: Android emulator smoke
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  emulator-smoke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+
+      - name: Install Android SDK 36 and API 29 system image
+        run: |
+          yes | "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" --licenses > /dev/null
+          "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" "platforms;android-36" "build-tools;36.0.0" "system-images;android-29;google_apis;x86_64"
+
+      - name: Restore sideload keystore
+        shell: bash
+        run: echo "${{ secrets.ANDROID_SIDELOAD_KEYSTORE_B64 }}" | base64 --decode > "$GITHUB_WORKSPACE/../persistent-sideload.keystore"
+
+      - name: Build debug APK
+        run: chmod +x gradlew && ./gradlew assembleDebug --no-daemon --stacktrace
+
+      - name: Verify APK exists
+        run: ls -l app/build/outputs/apk/debug/*.apk
+
+      - name: Run emulator smoke check
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 29
+          target: google_apis
+          arch: x86_64
+          profile: pixel_3a
+          emulator-options: -no-window -no-audio -no-boot-anim -gpu swiftshader_indirect -no-snapshot
+          disable-animations: true
+          emulator-boot-timeout: 900
+          script: python3 scripts/emulator-smoke-check.py --apk app/build/outputs/apk/debug/app-debug.apk --out emulator-smoke-out
+
+      - name: Upload smoke artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: emulator-smoke-${{ github.run_number }}
+          path: emulator-smoke-out/
+          if-no-files-found: error
+          retention-days: 14
